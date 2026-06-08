@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroCielo — Selección de asientos</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<nav class="navbar scrolled">
+  <div class="container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">✈</div>
+      <span class="nav-logo-text">Aero<span>Cielo</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="vuelos.html">Vuelos</a>
+      <a href="reservas.html">Mis Reservas</a>
+    </div>
+    <div class="nav-actions">
+      <a href="vuelos.html" class="btn btn-outline" style="border-color:rgba(10,22,40,0.3);color:var(--navy)">← Volver</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Progreso -->
+<div style="background:var(--white);border-bottom:1px solid var(--gray-100);padding:16px 0;margin-top:72px">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:0;max-width:500px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
+        <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Vuelo</span>
+      </div>
+      <div style="flex:1;height:2px;background:var(--gold)"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">2</div>
+        <span style="font-size:11px;margin-top:4px;font-weight:600;color:var(--navy)">Asientos</span>
+      </div>
+      <div style="flex:1;height:2px;background:var(--gray-100)"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--gray-100);color:var(--gray-500);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">3</div>
+        <span style="font-size:11px;margin-top:4px;color:var(--gray-300)">Pago</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="seat-page">
+  <div class="container">
+    <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:8px">Elegí tu asiento</h1>
+    <p style="color:var(--gray-500);margin-bottom:32px">Vuelo AC801 · Buenos Aires → Madrid · Boeing 787</p>
+
+    <div class="seat-layout">
+      <!-- Resumen lateral -->
+      <div class="seat-summary-card">
+        <h2 style="font-size:16px;font-weight:600;margin-bottom:16px">Tu selección</h2>
+        <div id="selected-seat-display" style="background:var(--navy);border-radius:var(--radius);padding:20px;text-align:center;color:var(--white);margin-bottom:20px">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px">Asiento seleccionado</div>
+          <div id="seat-name" style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--gold)">—</div>
+          <div id="seat-type" style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px">Ninguno aún</div>
+        </div>
+
+        <div class="seat-legend">
+          <div class="legend-item"><div class="legend-dot dot-first"></div><span>Primera clase</span></div>
+          <div class="legend-item"><div class="legend-dot dot-available"></div><span>Disponible</span></div>
+          <div class="legend-item"><div class="legend-dot dot-selected"></div><span>Tu elección</span></div>
+          <div class="legend-item"><div class="legend-dot dot-taken"></div><span>Ocupado</span></div>
+        </div>
+
+        <div style="border-top:1px solid var(--gray-100);padding-top:16px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px">
+            <span style="color:var(--gray-500)">Vuelo base</span>
+            <span id="base-price">$689</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px">
+            <span style="color:var(--gray-500)">Asiento</span>
+            <span id="seat-price">—</span>
+          </div>
+          <div style="border-top:1px solid var(--navy);padding-top:12px;margin-top:8px;display:flex;justify-content:space-between">
+            <span style="font-weight:600">Total</span>
+            <span style="font-family:var(--font-display);font-size:20px;font-weight:700" id="total-price">$689</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" onclick="continuarPago()" id="btn-continue" disabled>
+          Continuar con el pago →
+        </button>
+      </div>
+
+      <!-- Mapa de cabina -->
+      <div class="cabin-map" id="cabin-map">
+        <h2 class="sr-only">Mapa de asientos del avión</h2>
+        <div class="cabin-plane-nose">✈</div>
+        <!-- generado por JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" style="padding:24px 0">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <a href="vuelos.html" style="color:rgba(255,255,255,0.5)">← Volver a vuelos</a>
+      <span style="font-size:13px">© 2025 AeroCielo</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const basePrice = 689;
+let selectedSeat = null;
+
+// Asientos tomados pre-definidos
+const takenSeats = new Set(['1A','1C','2B','2D','3A','4C','5B','6D','7A','7C','8B','9A','9D','10C','11B','12A','13D','14B','15C','16A','17B','18D','19C','20A']);
+
+const seatPrices = { 'Primera': 300, 'Ejecutiva': 80, 'Económica': 0 };
+
+function buildCabin() {
+  const cabin = document.getElementById('cabin-map');
+  let html = '<div class="cabin-plane-nose">✈</div>';
+
+  // Primera clase: filas 1-2
+  html += '<div class="cabin-section-label">Primera clase · Asiento incluido</div>';
+  for (let r = 1; r <= 2; r++) {
+    html += buildRow(r, ['A','C'], ['E','G'], 'first-class', 'Primera');
+  }
+
+  // Ejecutiva: filas 3-6
+  html += '<div class="cabin-section-label">Clase ejecutiva</div>';
+  for (let r = 3; r <= 6; r++) {
+    html += buildRow(r, ['A','B','C'], ['D','E','F'], 'biz', 'Ejecutiva');
+  }
+
+  // Económica: filas 7-25
+  html += '<div class="cabin-section-label">Clase económica</div>';
+  for (let r = 7; r <= 25; r++) {
+    html += buildRow(r, ['A','B','C'], ['D','E','F'], 'eco', 'Económica');
+  }
+
+  cabin.innerHTML = html;
+}
+
+function buildRow(rowNum, leftCols, rightCols, zone, clase) {
+  let html = `<div class="seat-row"><span class="seat-row-num">${rowNum}</span>`;
+
+  [...leftCols].forEach(col => {
+    const id = rowNum + col;
+    const isTaken = takenSeats.has(id);
+    const isFirst = zone === 'first-class';
+    html += `<div class="seat ${isTaken ? 'taken' : ''} ${isFirst ? 'first-class' : ''}"
+      id="seat-${id}" onclick="${isTaken ? '' : `chooseSeat('${id}','${clase}')`}"
+      title="${isTaken ? 'Ocupado' : id + ' · ' + clase}">
+      ${isTaken ? '' : id}
+    </div>`;
+  });
+
+  html += '<div class="seat-aisle"></div>';
+
+  [...rightCols].forEach(col => {
+    const id = rowNum + col;
+    const isTaken = takenSeats.has(id);
+    const isFirst = zone === 'first-class';
+    html += `<div class="seat ${isTaken ? 'taken' : ''} ${isFirst ? 'first-class' : ''}"
+      id="seat-${id}" onclick="${isTaken ? '' : `chooseSeat('${id}','${clase}')`}"
+      title="${isTaken ? 'Ocupado' : id + ' · ' + clase}">
+      ${isTaken ? '' : id}
+    </div>`;
+  });
+
+  html += '</div>';
+  return html;
+}
+
+function chooseSeat(id, clase) {
+  // Deseleccionar anterior
+  if (selectedSeat) {
+    const prev = document.getElementById('seat-' + selectedSeat);
+    if (prev) prev.classList.remove('selected');
+  }
+
+  selectedSeat = id;
+  const el = document.getElementById('seat-' + id);
+  if (el) el.classList.add('selected');
+
+  const extra = seatPrices[clase] || 0;
+  const total = basePrice + extra;
+
+  document.getElementById('seat-name').textContent = id;
+  document.getElementById('seat-type').textContent = clase;
+  document.getElementById('seat-price').textContent = extra > 0 ? '+$' + extra : 'Sin costo';
+  document.getElementById('total-price').textContent = '$' + total.toLocaleString('es-AR');
+  document.getElementById('btn-continue').disabled = false;
+
+  sessionStorage.setItem('asiento_seleccionado', JSON.stringify({ id, clase, precio: extra, total }));
+}
+
+function continuarPago() {
+  if (!selectedSeat) return;
+  window.location.href = 'pago.html';
+}
+
+buildCabin();
+</script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroCielo — Mis Reservas</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<nav class="navbar scrolled">
+  <div class="container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">✈</div>
+      <span class="nav-logo-text">Aero<span>Cielo</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="vuelos.html">Vuelos</a>
+      <a href="reservas.html" style="color:var(--gold)">Mis Reservas</a>
+    </div>
+    <div class="nav-actions">
+      <a href="vuelos.html" class="btn btn-primary">Nueva reserva</a>
+    </div>
+  </div>
+</nav>
+
+<section class="booking-dashboard" style="margin-top:72px">
+  <div class="container">
+    <div class="dashboard-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <h1 class="dashboard-welcome">Mis reservas</h1>
+          <p style="color:var(--gray-500)">Gestioná tus vuelos, descargá documentos y hacé el check-in online</p>
+        </div>
+        <div style="display:flex;gap:12px">
+          <a href="vuelos.html" class="btn btn-primary">+ Nueva reserva</a>
+        </div>
+      </div>
+
+      <!-- Stats rápidas -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px">
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Reservas activas</div>
+          <div style="font-family:var(--font-display);font-size:30px;font-weight:700" id="stat-activas">0</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Vuelos realizados</div>
+          <div style="font-family:var(--font-display);font-size:30px;font-weight:700" id="stat-pasados">2</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Millas acumuladas</div>
+          <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--gold)">12.480</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Nivel viajero</div>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy)">✦ Silver</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="booking-tabs">
+      <div class="booking-tab active" onclick="showTab('activas',this)">Próximos vuelos</div>
+      <div class="booking-tab" onclick="showTab('pasadas',this)">Historial</div>
+      <div class="booking-tab" onclick="showTab('checkin',this)">Check-in online</div>
+    </div>
+
+    <!-- Buscar reserva -->
+    <div style="display:flex;gap:12px;margin-bottom:24px">
+      <input type="text" class="form-control" placeholder="Buscar por código, ruta o fecha..." id="search-booking" oninput="filtrarReservas()" style="max-width:360px" />
+    </div>
+
+    <!-- Lista activas -->
+    <div id="tab-activas">
+      <div class="booking-list" id="booking-list-activas">
+        <!-- generado por JS -->
+      </div>
+    </div>
+
+    <!-- Lista pasadas -->
+    <div id="tab-pasadas" style="display:none">
+      <div class="booking-list">
+        <div class="booking-card">
+          <div class="booking-status status-past"></div>
+          <div>
+            <div class="booking-route">Cancún → Buenos Aires</div>
+            <div class="booking-details">Vuelo AC234 · Asiento 14C Económica · 2 pasajeros</div>
+            <div style="font-size:12px;color:var(--gray-300);margin-top:4px">Código: AC-2024-7823</div>
+          </div>
+          <div class="booking-date">
+            <div class="booking-date-day">18</div>
+            <div class="booking-date-month">Mar 2024</div>
+          </div>
+          <div class="booking-actions">
+            <button class="btn btn-dark" style="padding:8px 16px;font-size:12px" onclick="showToast('Descargando comprobante...')">Comprobante</button>
+          </div>
+        </div>
+        <div class="booking-card">
+          <div class="booking-status status-past"></div>
+          <div>
+            <div class="booking-route">Madrid → Buenos Aires</div>
+            <div class="booking-details">Vuelo AC802 · Asiento 8A Ejecutiva · 1 pasajero</div>
+            <div style="font-size:12px;color:var(--gray-300);margin-top:4px">Código: AC-2023-5412</div>
+          </div>
+          <div class="booking-date">
+            <div class="booking-date-day">05</div>
+            <div class="booking-date-month">Nov 2023</div>
+          </div>
+          <div class="booking-actions">
+            <button class="btn btn-dark" style="padding:8px 16px;font-size:12px" onclick="showToast('Descargando comprobante...')">Comprobante</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in -->
+    <div id="tab-checkin" style="display:none">
+      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:40px;text-align:center;max-width:480px;margin:0 auto">
+        <div style="font-size:48px;margin-bottom:16px">🎫</div>
+        <h3 style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px">Check-in online</h3>
+        <p style="color:var(--gray-500);margin-bottom:24px">El check-in abre 48 hs antes del vuelo. Ingresá tu código de reserva para continuar.</p>
+        <div class="form-group" style="margin-bottom:16px;text-align:left">
+          <label>Código de reserva</label>
+          <input type="text" class="form-control" placeholder="Ej. AC-2025-1234" id="checkin-code" />
+        </div>
+        <div class="form-group" style="margin-bottom:20px;text-align:left">
+          <label>Apellido del pasajero</label>
+          <input type="text" class="form-control" placeholder="González" />
+        </div>
+        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" onclick="hacerCheckin()">Iniciar check-in</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal detalle de reserva -->
+<div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:999;align-items:center;justify-content:center">
+  <div style="background:var(--white);border-radius:var(--radius-lg);padding:36px;max-width:500px;width:90%;animation:fadeInUp 0.3s ease">
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:24px">
+      <h3 style="font-family:var(--font-display);font-size:22px;font-weight:800" id="modal-ruta">—</h3>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--gray-500)">×</button>
+    </div>
+    <div style="background:var(--navy);border-radius:var(--radius);padding:16px;margin-bottom:20px;color:var(--white)">
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px">Código de reserva</div>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold)" id="modal-codigo">—</div>
+    </div>
+    <div id="modal-detalles" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="showToast('Descargando boarding pass...');closeModal()">Boarding pass</button>
+      <button class="btn btn-dark" style="flex:1;justify-content:center" onclick="cancelarReserva()">Cancelar reserva</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer" style="padding:24px 0">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <a href="index.html" style="color:rgba(255,255,255,0.5)">← Volver al inicio</a>
+      <span style="font-size:13px">© 2025 AeroCielo</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Reservas de demostración + las guardadas
+const defaultReservas = [
+  { codigo:'AC-2025-4521', ruta:'Buenos Aires → París', vuelo:'AC205', fecha:'22 Ago 2025', asiento:'12B', clase:'Económica', total:890, estado:'activo', pasajero:'Usuario Demo' },
+  { codigo:'AC-2025-3198', ruta:'Buenos Aires → Nueva York', vuelo:'AC330', fecha:'10 Sep 2025', asiento:'5A', clase:'Ejecutiva', total:1850, estado:'pendiente', pasajero:'Usuario Demo' },
+];
+
+function cargarReservas() {
+  const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]');
+  return [...defaultReservas, ...guardadas];
+}
+
+let todasLasReservas = cargarReservas();
+let reservaSeleccionada = null;
+
+function renderActivas(lista) {
+  const activas = lista.filter(r => r.estado === 'activo' || r.estado === 'pendiente');
+  document.getElementById('stat-activas').textContent = activas.length;
+  const container = document.getElementById('booking-list-activas');
+  if (activas.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--gray-500)">
+      <div style="font-size:48px;margin-bottom:16px">✈</div>
+      <p style="font-size:18px;font-weight:600;margin-bottom:8px">No tenés reservas activas</p>
+      <p style="margin-bottom:20px">¡Empezá a planificar tu próximo viaje!</p>
+      <a href="vuelos.html" class="btn btn-primary">Buscar vuelos</a>
+    </div>`;
+    return;
+  }
+  container.innerHTML = activas.map(r => `
+    <div class="booking-card" onclick="verDetalle('${r.codigo}')">
+      <div class="booking-status ${r.estado === 'activo' ? 'status-active' : 'status-pending'}"></div>
+      <div>
+        <div class="booking-route">${r.ruta}</div>
+        <div class="booking-details">Vuelo ${r.vuelo} · Asiento ${r.asiento} ${r.clase} · ${r.pasajero}</div>
+        <div style="display:inline-block;margin-top:6px;font-size:11px;padding:3px 10px;border-radius:4px;background:${r.estado==='activo'?'#EAF3DE':'#FAEEDA'};color:${r.estado==='activo'?'#3B6D11':'#854F0B'};font-weight:600">
+          ${r.estado === 'activo' ? '● Confirmado' : '◌ Pendiente de pago'}
+        </div>
+      </div>
+      <div class="booking-date">
+        <div class="booking-date-day">${r.fecha.split(' ')[0]}</div>
+        <div class="booking-date-month">${r.fecha.split(' ').slice(1).join(' ')}</div>
+      </div>
+      <div class="booking-actions">
+        <button class="btn btn-primary" style="padding:8px 16px;font-size:12px" onclick="event.stopPropagation();showToast('Descargando boarding pass...')">Check-in</button>
+        <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--gray-100)" onclick="event.stopPropagation();verDetalle('${r.codigo}')">Ver</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function verDetalle(codigo) {
+  const r = todasLasReservas.find(x => x.codigo === codigo);
+  if (!r) return;
+  reservaSeleccionada = codigo;
+  document.getElementById('modal-ruta').textContent = r.ruta;
+  document.getElementById('modal-codigo').textContent = r.codigo;
+  document.getElementById('modal-detalles').innerHTML = `
+    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Vuelo</div><div style="font-weight:600">${r.vuelo}</div></div>
+    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Fecha</div><div style="font-weight:600">${r.fecha}</div></div>
+    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Asiento</div><div style="font-weight:600">${r.asiento} · ${r.clase}</div></div>
+    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Total pagado</div><div style="font-weight:600;color:var(--navy)">$${r.total?.toLocaleString('es-AR')}</div></div>
+  `;
+  document.getElementById('detail-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('detail-modal').style.display = 'none';
+}
+
+function cancelarReserva() {
+  if (!confirm('¿Confirmar la cancelación de esta reserva?')) return;
+  const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]');
+  const nuevas = guardadas.filter(r => r.codigo !== reservaSeleccionada);
+  localStorage.setItem('reservas', JSON.stringify(nuevas));
+  todasLasReservas = cargarReservas();
+  renderActivas(todasLasReservas);
+  closeModal();
+  showToast('Reserva cancelada. El reembolso se procesará en 3-5 días hábiles.');
+}
+
+function showTab(tab, el) {
+  ['activas','pasadas','checkin'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.booking-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function filtrarReservas() {
+  const q = document.getElementById('search-booking').value.toLowerCase();
+  const filtradas = q ? todasLasReservas.filter(r =>
+    r.codigo.toLowerCase().includes(q) ||
+    r.ruta.toLowerCase().includes(q) ||
+    r.vuelo.toLowerCase().includes(q) ||
+    r.fecha.toLowerCase().includes(q)
+  ) : todasLasReservas;
+  renderActivas(filtradas);
+}
+
+function hacerCheckin() {
+  const codigo = document.getElementById('checkin-code').value;
+  const reserva = todasLasReservas.find(r => r.codigo.toLowerCase() === codigo.toLowerCase());
+  if (!reserva) { showToast('Código no encontrado. Verificá los datos.'); return; }
+  showToast('✓ Check-in exitoso para ' + reserva.ruta + ' · Imprimí tu boarding pass.');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+renderActivas(todasLasReservas);
+</script>
+</body>
+</html>
