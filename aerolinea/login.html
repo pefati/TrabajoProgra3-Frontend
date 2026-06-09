@@ -20,8 +20,7 @@
 
 <!-- MAIN -->
 <main class="section">
-  <div class="container auth-container">
-    
+  <div class="auth-container-log">
     <div class="auth-card animate">
       <div class="auth-header">
         <h2 class="auth-title">Iniciar <em>Sesión</em></h2>
@@ -46,6 +45,15 @@
       </form>
     </div>
 
-
   </div>
 </main>
+
+<!-- FOOTER -->
+<div id="footer"></div>
+<script>
+    fetch("footer.html")
+    .then ( res => res.text())
+    .then (html => {
+        document.getElementById('footer').innerHTML = html;
+    })
+</script>

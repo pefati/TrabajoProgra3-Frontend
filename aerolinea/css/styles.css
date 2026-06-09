@@ -587,13 +587,27 @@ select.form-control { cursor: pointer; }
 
 
 /* ── Apartado: Autenticación (Login & Registro) ── */
-.auth-container {
+.auth-container-sign {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    padding-top: 140px;
+    padding-bottom: 100px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.auth-container-log {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     align-items: start;
     padding-top: 40px;
+    max-width: 900px;
+    margin: 0 auto;
 }
+
 
 .auth-card {
     background: var(--white);
@@ -622,7 +636,7 @@ select.form-control { cursor: pointer; }
 
 .auth-title em {
     font-style: italic;
-    color: var(--pink);
+    color: var(--blue);
 }
 
 .auth-subtitle {
