@@ -9,27 +9,14 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar" id="navbar">
-  <div class="container">
-      <a href="index.html" class="nav-logo">
-          <div class="nav-logo-icon">
-              <img src="/images/logo_aeroGest.png" alt="logo" style="width:24px;height:24px;">
-          </div>
-          <span class="nav-logo-text">Aero<span>Gest</span></span>
-      </a>
-    <div class="nav-links">
-      <a href="index.html ">Inicio</a>
-      <a href="vuelos.html">Vuelos</a>
-      <a href="reservas.html">Mis Reservas</a>
-      <a href="#destinos">Destinos</a>
-      <a href="#ayuda">Ayuda</a>
-    </div>
-    <div class="nav-actions">
-      <a href="reservas.html" class="btn btn-outline">Mi cuenta</a>
-      <a href="vuelos.html" class="btn btn-primary">Reservar</a>
-    </div>
-  </div>
-</nav>
+<div id="navbar-container"></div>
+<script>
+    fetch('navbar.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('navbar-container').innerHTML = html;
+        });
+</script>
 
 <!-- HERO -->
 <section class="hero">

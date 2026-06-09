@@ -8,7 +8,7 @@
   --light-blue-1: #6e90e3;
   --blue: #3ca5e3;
   --blue-light: #6ebee3;
-  --blue-pale: #c8e4f5;
+  --blue-pale: #c3e3f7;
   --cream: #e7eeff;
   --white: #f1edff;
   --pink: #d50488;
@@ -94,7 +94,7 @@ select.form-control { cursor: pointer; }
 .navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 20px 0;
-  background: transparent;
+  background: var(--navy);
   transition: background var(--transition), padding var(--transition), box-shadow var(--transition);
 }
 .navbar.scrolled {
@@ -449,6 +449,7 @@ select.form-control { cursor: pointer; }
 .seat.first-class { background: var(--blue-pale); border-color: var(--blue); }
 .seat.first-class:hover:not(.taken):not(.selected) { background: var(--cream); border-color: var(--blue); }
 .seat.first-class.selected { background: var(--pink); }
+.seat.first-class.taken { background: var(--navy-light); border-color: var(--navy-light); color: rgba(255,255,255,0.3); cursor: not-allowed; }
 
 /* ── Page: Pago ── */
 .checkout-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
@@ -581,4 +582,115 @@ select.form-control { cursor: pointer; }
   border-left: 4px solid var(--blue);
   animation: slideInRight 0.3s ease;
   max-width: 320px;
+
+}
+
+
+/* ── Apartado: Autenticación (Login & Registro) ── */
+.auth-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    padding-top: 40px;
+}
+
+.auth-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--light-blue-1);
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+    transition: border-color var(--transition);
+}
+
+.auth-card:hover {
+    border-color: var(--blue);
+}
+
+.auth-header {
+    margin-bottom: 28px;
+}
+
+.auth-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 8px;
+}
+
+.auth-title em {
+    font-style: italic;
+    color: var(--pink);
+}
+
+.auth-subtitle {
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.auth-forgot {
+    font-size: 13px;
+    color: var(--gray-500);
+    text-align: right;
+    transition: color var(--transition);
+}
+
+.auth-forgot:hover {
+    color: var(--pink);
+}
+
+.auth-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-700);
+    cursor: pointer;
+}
+
+.auth-checkbox input {
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+/* Botón adaptado para ocupar el 100% del ancho del formulario */
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Estilo estético para el botón de registro secundario */
+.auth-btn-accent {
+    background: var(--navy);
+    color: var(--white);
+    border: 1.5px solid var(--navy);
+}
+
+.auth-btn-accent:hover {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: var(--white);
+}
+
+/* ── Responsive para Autenticación ── */
+@media (max-width: 900px) {
+    .auth-container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
 }
