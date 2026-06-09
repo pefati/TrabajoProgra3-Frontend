@@ -608,7 +608,6 @@ select.form-control { cursor: pointer; }
     margin: 0 auto;
 }
 
-
 .auth-card {
     background: var(--white);
     border-radius: var(--radius-lg);

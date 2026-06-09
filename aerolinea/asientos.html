@@ -111,14 +111,15 @@
   </div>
 </section>
 
-<footer class="footer" style="padding:24px 0">
-  <div class="container">
-    <div class="footer-bottom" style="border-top:none;padding-top:0">
-      <a href="vuelos.html" style="color:rgba(255,255,255,0.5)">← Volver a vuelos</a>
-      <span style="font-size:13px">© 2026 AeroGest</span>
-    </div>
-  </div>
-</footer>
+<!-- FOOTER -->
+<div id="footer"></div>
+<script>
+    fetch("footer.html")
+        .then ( res => res.text())
+        .then (html => {
+            document.getElementById('footer').innerHTML = html;
+        })
+</script>
 
 <script>
 const basePrice = 689;

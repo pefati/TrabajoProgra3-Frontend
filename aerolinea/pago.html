@@ -244,6 +244,16 @@
   </div>
 </div>
 
+<!-- FOOTER -->
+<div id="footer"></div>
+<script>
+    fetch("footer.html")
+        .then ( res => res.text())
+        .then (html => {
+            document.getElementById('footer').innerHTML = html;
+        })
+</script>
+
 <script>
 let extras = 0;
 const basePago = 689;
