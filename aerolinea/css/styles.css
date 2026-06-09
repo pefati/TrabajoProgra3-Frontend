@@ -4,7 +4,7 @@
   --navy: #0b1b32;
   --navy-mid: #142240;
   --navy-light: #1E3460;
-  --gold: #6e90e3;
+  --gold: #3ca5e3;
   --gold-light: #6ebee3;
   --gold-pale: #c8e4f5;
   --cream: #e7eeff;
@@ -109,7 +109,7 @@ select.form-control { cursor: pointer; }
 }
 .nav-logo-icon {
   width: 36px; height: 36px;
-  background: var(--gold);
+  background: var(--white);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px;
