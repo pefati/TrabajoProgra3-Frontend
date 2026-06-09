@@ -1,16 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --navy: #0b1b32;
-  --navy-mid: #142240;
-  --navy-light: #1E3460;
-  --gold: #3ca5e3;
-  --gold-light: #6ebee3;
-  --gold-pale: #c8e4f5;
+  --black:#000000;
+  --navy: #0b123b;
+  --navy-mid: #0a123f;
+  --navy-light: #182366;
+  --light-blue-1: #6e90e3;
+  --blue: #3ca5e3;
+  --blue-light: #6ebee3;
+  --blue-pale: #c8e4f5;
   --cream: #e7eeff;
   --white: #f1edff;
-  --gray-100: #6e90e3;
-  --gray-300: #1A7A4A;
+  --pink: #d50488;
   --gray-500: #8f91ae;
   --gray-700: #40414a;
   --danger: #c02b2b;
@@ -58,12 +59,12 @@ img { max-width: 100%; display: block; }
 .btn-primary {
   background: var(--white); color: var(--navy);
 }
-.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-primary:hover { background: var(--blue-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .btn-outline {
   background: transparent; color: var(--white);
   border: 1.5px solid rgba(255,255,255,0.5);
 }
-.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); }
 .btn-dark {
   background: var(--navy); color: var(--white);
 }
@@ -78,14 +79,14 @@ img { max-width: 100%; display: block; }
 }
 .form-control {
   width: 100%; padding: 12px 14px;
-  border: 1.5px solid var(--gray-300);
+  border: 1.5px solid var(--pink);
   border-radius: var(--radius);
   font-family: var(--font-body); font-size: 15px; color: var(--navy);
   background: var(--white); transition: border-color var(--transition);
   outline: none;
 }
-.form-control:focus { border-color: var(--gold); }
-.form-control::placeholder { color: var(--gray-300); }
+.form-control:focus { border-color: var(--blue); }
+.form-control::placeholder { color: var(--pink); }
 
 select.form-control { cursor: pointer; }
 
@@ -119,13 +120,13 @@ select.form-control { cursor: pointer; }
   font-size: 22px; font-weight: 700; color: var(--white);
   letter-spacing: 0.02em;
 }
-.nav-logo-text span { color: var(--gold); }
+.nav-logo-text span { color: var(--blue); }
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-links a {
   color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 500;
   letter-spacing: 0.03em; transition: color var(--transition);
 }
-.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover { color: var(--blue); }
 .nav-actions { display: flex; align-items: center; gap: 12px; }
 
 /* ── Hero ── */
@@ -157,12 +158,12 @@ select.form-control { cursor: pointer; }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--gold);
+  text-transform: uppercase; color: var(--blue);
   margin-bottom: 24px;
 }
 .hero-eyebrow::before {
   content: ''; display: block;
-  width: 28px; height: 1.5px; background: var(--gold);
+  width: 28px; height: 1.5px; background: var(--blue);
 }
 .hero-title {
   font-family: var(--font-display);
@@ -170,7 +171,7 @@ select.form-control { cursor: pointer; }
   font-weight: 900; color: var(--white);
   line-height: 1.08; margin-bottom: 20px;
 }
-.hero-title em { font-style: italic; color: var(--gold); }
+.hero-title em { font-style: italic; color: var(--blue); }
 .hero-subtitle {
   font-size: 17px; color: rgba(255,255,255,0.65);
   line-height: 1.7; margin-bottom: 36px; max-width: 480px;
@@ -203,7 +204,7 @@ select.form-control { cursor: pointer; }
 }
 .search-card-header {
   display: flex; gap: 0; margin-bottom: 24px;
-  border-bottom: 1.5px solid var(--gray-100);
+  border-bottom: 1.5px solid var(--light-blue-1);
 }
 .search-tab {
   flex: 1; padding: 10px; text-align: center;
@@ -212,7 +213,7 @@ select.form-control { cursor: pointer; }
   cursor: pointer; border-bottom: 2px solid transparent;
   margin-bottom: -1.5px; transition: all var(--transition);
 }
-.search-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+.search-tab.active { color: var(--navy); border-bottom-color: var(--blue); }
 .search-row { display: grid; gap: 14px; margin-bottom: 14px; }
 .search-row-2 { grid-template-columns: 1fr 1fr; }
 .search-row-3 { grid-template-columns: 1fr 1fr 1fr; }
@@ -228,7 +229,7 @@ select.form-control { cursor: pointer; }
   font-size: 16px; transition: all var(--transition);
   position: absolute; z-index: 1;
 }
-.search-swap:hover { background: var(--gold); color: var(--navy); transform: rotate(180deg); }
+.search-swap:hover { background: var(--blue); color: var(--navy); transform: rotate(180deg); }
 
 /* ── Section commons ── */
 .section { padding: 100px 0; }
@@ -238,7 +239,7 @@ select.form-control { cursor: pointer; }
 .section-eyebrow {
   display: inline-block;
   font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--gold);
+  text-transform: uppercase; color: var(--blue);
   margin-bottom: 14px;
 }
 .section-title {
@@ -290,7 +291,7 @@ select.form-control { cursor: pointer; }
 .dest-price-from { font-size: 11px; color: rgba(255,255,255,0.5); }
 .dest-price-amount {
   font-family: var(--font-display); font-size: 20px;
-  font-weight: 700; color: var(--gold);
+  font-weight: 700; color: var(--blue);
 }
 .dest-card-featured {
   grid-column: span 1;
@@ -302,14 +303,14 @@ select.form-control { cursor: pointer; }
 .why-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; }
 .why-card {
   text-align: center; padding: 36px 24px;
-  border: 1px solid var(--gray-100);
+  border: 1px solid var(--light-blue-1);
   border-radius: var(--radius-md);
   transition: all var(--transition);
 }
-.why-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+.why-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
 .why-icon {
   width: 60px; height: 60px; border-radius: 50%;
-  background: var(--gold-pale);
+  background: var(--blue-pale);
   display: flex; align-items: center; justify-content: center;
   font-size: 26px; margin: 0 auto 20px;
 }
@@ -334,7 +335,7 @@ select.form-control { cursor: pointer; }
 }
 .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .footer-links a { font-size: 14px; transition: color var(--transition); }
-.footer-links a:hover { color: var(--gold); }
+.footer-links a:hover { color: var(--blue); }
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 28px;
@@ -355,7 +356,7 @@ select.form-control { cursor: pointer; }
 .results-count { font-size: 14px; color: var(--gray-500); }
 .results-count span { font-weight: 600; color: var(--navy); }
 .sort-select {
-  padding: 8px 14px; border: 1.5px solid var(--gray-300);
+  padding: 8px 14px; border: 1.5px solid var(--pink);
   border-radius: var(--radius); font-family: var(--font-body);
   font-size: 14px; color: var(--navy); cursor: pointer;
   background: var(--white);
@@ -363,15 +364,15 @@ select.form-control { cursor: pointer; }
 .flight-list { display: flex; flex-direction: column; gap: 16px; }
 .flight-card {
   background: var(--white); border-radius: var(--radius-md);
-  border: 1px solid var(--gray-100);
+  border: 1px solid var(--light-blue-1);
   padding: 24px 28px;
   display: grid; grid-template-columns: 1fr auto auto;
   align-items: center; gap: 24px;
   transition: all var(--transition);
   cursor: pointer;
 }
-.flight-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
-.flight-card.selected { border-color: var(--gold); border-width: 2px; }
+.flight-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.flight-card.selected { border-color: var(--blue); border-width: 2px; }
 .flight-airline { font-size: 12px; color: var(--gray-500); margin-bottom: 6px; }
 .flight-route {
   display: flex; align-items: center; gap: 14px;
@@ -383,12 +384,12 @@ select.form-control { cursor: pointer; }
 }
 .flight-duration { font-size: 12px; color: var(--gray-500); }
 .flight-line-bar {
-  width: 100%; height: 1px; background: var(--gray-300);
+  width: 100%; height: 1px; background: var(--pink);
   position: relative;
 }
 .flight-line-bar::before, .flight-line-bar::after {
   content: ''; position: absolute; top: 50%; transform: translateY(-50%);
-  width: 6px; height: 6px; border-radius: 50%; background: var(--gray-300);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--pink);
 }
 .flight-line-bar::before { left: 0; }
 .flight-line-bar::after { right: 0; }
@@ -400,68 +401,69 @@ select.form-control { cursor: pointer; }
   font-family: var(--font-display); font-size: 28px;
   font-weight: 700; color: var(--navy); margin-bottom: 4px;
 }
-.flight-price-label { font-size: 11px; color: var(--gray-300); }
+.flight-price-label { font-size: 11px; color: var(--pink); }
 
 /* ── Page: Asientos ── */
 .seat-page { padding: 40px 0 80px; }
 .seat-layout { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; }
 .seat-summary-card {
   background: var(--white); border-radius: var(--radius-md);
-  border: 1px solid var(--gray-100); padding: 28px;
+  border: 1px solid var(--light-blue-1); padding: 28px;
   position: sticky; top: 100px;
 }
 .seat-legend { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
 .legend-item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
 .legend-dot { width: 20px; height: 20px; border-radius: var(--radius); }
-.dot-available { background: var(--gray-100); border: 1.5px solid var(--gray-300); }
-.dot-selected { background: var(--gold); }
+.dot-available { background: var(--light-blue-1); border: 1.5px solid var(--black); }
+.dot-selected { background: var(--pink); }
 .dot-taken { background: var(--navy-light); }
-.dot-first { background: #F5E9C8; border: 1.5px solid var(--gold); }
-.cabin-map { background: var(--white); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--gray-100); }
+.dot-first { background: var(--cream); border: 1.5px solid var(--black); }
+.cabin-map { background: var(--white); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--black); }
 .cabin-plane-nose { text-align: center; font-size: 36px; margin-bottom: 20px; }
 .cabin-section-label {
   font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--gold);
+  text-transform: uppercase; color: var(--navy);
   text-align: center; margin: 16px 0 12px;
-  padding-bottom: 8px; border-bottom: 1px solid var(--gold-pale);
+  padding-bottom: 8px; border-bottom: 1px solid var(--blue-pale);
 }
 .seat-row {
   display: flex; align-items: center; justify-content: center;
   gap: 6px; margin-bottom: 6px;
 }
 .seat-row-num {
-  width: 24px; font-size: 11px; color: var(--gray-300);
+  width: 24px; font-size: 11px; color: var(--navy);
   text-align: center; flex-shrink: 0;
 }
 .seat-aisle { width: 20px; }
 .seat {
   width: 34px; height: 34px; border-radius: 6px 6px 4px 4px;
-  border: 1.5px solid var(--gray-300);
-  background: var(--gray-100);
+  border: 1.5px solid var(--navy-light);
+  background: var(--light-blue-1);
   cursor: pointer; font-size: 11px; font-weight: 600;
-  color: var(--gray-500); display: flex; align-items: center;
+  color: var(--navy-mid); display: flex; align-items: center;
   justify-content: center; transition: all 0.15s;
 }
-.seat:hover:not(.taken):not(.selected) { background: var(--gold-pale); border-color: var(--gold); }
-.seat.selected { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.seat:hover:not(.taken):not(.selected) { background: var(--blue-pale); border-color: var(--blue); }
+.seat.selected { background: var(--pink); border-color: var(--navy-mid); color: var(--navy); }
 .seat.taken { background: var(--navy-light); border-color: var(--navy-light); color: rgba(255,255,255,0.3); cursor: not-allowed; }
-.seat.first-class { background: var(--gold-pale); border-color: var(--gold); }
-.seat.first-class.selected { background: var(--gold); }
+.seat.first-class { background: var(--blue-pale); border-color: var(--blue); }
+.seat.first-class:hover:not(.taken):not(.selected) { background: var(--cream); border-color: var(--blue); }
+.seat.first-class.selected { background: var(--pink); }
 
 /* ── Page: Pago ── */
 .checkout-layout { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
 .checkout-section {
   background: var(--white); border-radius: var(--radius-md);
-  border: 1px solid var(--gray-100); padding: 28px; margin-bottom: 20px;
+  border: 1px solid var(--light-blue-1); padding: 28px; margin-bottom: 20px;
 }
 .checkout-section-title {
   font-size: 16px; font-weight: 600; margin-bottom: 20px;
-  padding-bottom: 14px; border-bottom: 1px solid var(--gray-100);
+  padding-bottom: 14px; border-bottom: 1px solid var(--light-blue-1);
   display: flex; align-items: center; gap: 10px;
 }
 .checkout-step-num {
   width: 26px; height: 26px; border-radius: 50%;
-  background: var(--gold); color: var(--navy);
+  background: var(--blue); color: var(--navy);
   font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -469,13 +471,13 @@ select.form-control { cursor: pointer; }
 .checkout-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .card-icons { display: flex; gap: 8px; margin-bottom: 16px; }
 .card-icon {
-  padding: 4px 10px; border: 1px solid var(--gray-100);
+  padding: 4px 10px; border: 1px solid var(--light-blue-1);
   border-radius: var(--radius); font-size: 12px; color: var(--gray-500);
   font-weight: 600;
 }
 .order-summary {
   background: var(--white); border-radius: var(--radius-md);
-  border: 1px solid var(--gray-100); padding: 28px;
+  border: 1px solid var(--light-blue-1); padding: 28px;
   position: sticky; top: 100px;
 }
 .summary-flight-info {
@@ -486,7 +488,7 @@ select.form-control { cursor: pointer; }
   display: flex; align-items: center; gap: 10px;
   font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 4px;
 }
-.summary-line-list { margin: 16px 0; border-top: 1px solid var(--gray-100); padding-top: 16px; }
+.summary-line-list { margin: 16px 0; border-top: 1px solid var(--light-blue-1); padding-top: 16px; }
 .summary-line {
   display: flex; justify-content: space-between; align-items: center;
   font-size: 14px; padding: 6px 0;
@@ -508,17 +510,17 @@ select.form-control { cursor: pointer; }
 .dashboard-welcome {
   font-family: var(--font-display); font-size: 32px; font-weight: 800; margin-bottom: 4px;
 }
-.booking-tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--gray-100); margin-bottom: 28px; }
+.booking-tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--light-blue-1); margin-bottom: 28px; }
 .booking-tab {
   padding: 12px 24px; font-size: 14px; font-weight: 600;
   color: var(--gray-500); cursor: pointer; border-bottom: 2px solid transparent;
   margin-bottom: -1.5px; transition: all var(--transition);
 }
-.booking-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+.booking-tab.active { color: var(--navy); border-bottom-color: var(--blue); }
 .booking-list { display: flex; flex-direction: column; gap: 16px; }
 .booking-card {
   background: var(--white); border-radius: var(--radius-md);
-  border: 1px solid var(--gray-100); padding: 24px 28px;
+  border: 1px solid var(--light-blue-1); padding: 24px 28px;
   display: grid; grid-template-columns: auto 1fr auto auto;
   gap: 24px; align-items: center;
   transition: box-shadow var(--transition);
@@ -528,8 +530,8 @@ select.form-control { cursor: pointer; }
   width: 10px; height: 10px; border-radius: 50%;
 }
 .status-active { background: var(--success); }
-.status-pending { background: var(--gold); }
-.status-past { background: var(--gray-300); }
+.status-pending { background: var(--blue); }
+.status-past { background: var(--pink); }
 .booking-route {
   font-family: var(--font-display); font-size: 20px;
   font-weight: 700; color: var(--navy); margin-bottom: 4px;
@@ -576,7 +578,7 @@ select.form-control { cursor: pointer; }
   background: var(--navy); color: var(--white);
   padding: 14px 20px; border-radius: var(--radius-md);
   font-size: 14px; box-shadow: var(--shadow-lg);
-  border-left: 4px solid var(--gold);
+  border-left: 4px solid var(--blue);
   animation: slideInRight 0.3s ease;
   max-width: 320px;
 }
