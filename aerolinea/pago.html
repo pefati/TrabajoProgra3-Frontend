@@ -10,10 +10,12 @@
 
 <nav class="navbar scrolled">
   <div class="container">
-    <a href="index.html" class="nav-logo">
-      <div class="nav-logo-icon">✈</div>
-      <span class="nav-logo-text">Aero<span>Cielo</span></span>
-    </a>
+      <a href="index.html" class="nav-logo">
+          <div class="nav-logo-icon">
+              <img src="/images/logo_aeroGest.png" alt="logo" style="width:24px;height:24px;">
+          </div>
+          <span class="nav-logo-text">Aero<span>Gest</span></span>
+      </a>
     <div class="nav-links">
       <a href="index.html">Inicio</a>
       <a href="vuelos.html">Vuelos</a>
@@ -26,19 +28,19 @@
 </nav>
 
 <!-- Progreso -->
-<div style="background:var(--white);border-bottom:1px solid var(--gray-100);padding:16px 0;margin-top:72px">
+<div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0;margin-top:72px">
   <div class="container">
     <div style="display:flex;align-items:center;gap:0;max-width:500px;margin:0 auto">
       <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
         <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Vuelo</span>
       </div>
-      <div style="flex:1;height:2px;background:var(--gold)"></div>
+      <div style="flex:1;height:2px;background:var(--success)"></div>
       <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
         <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Asiento</span>
       </div>
-      <div style="flex:1;height:2px;background:var(--gold)"></div>
+      <div style="flex:1;height:2px;background:var(--success)"></div>
       <div style="display:flex;flex-direction:column;align-items:center;flex:1">
         <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">3</div>
         <span style="font-size:11px;margin-top:4px;font-weight:600;color:var(--navy)">Pago</span>
@@ -105,24 +107,24 @@
             <span class="checkout-step-num">2</span> Equipaje y extras
           </h2>
           <div style="display:grid;gap:12px">
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-100);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gray-100)'">
-              <input type="checkbox" id="eq-bodega" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--gold)" />
+            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
+              <input type="checkbox" id="eq-bodega" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
               <div style="flex:1">
                 <div style="font-weight:600;margin-bottom:2px">Equipaje de bodega (23 kg)</div>
                 <div style="font-size:13px;color:var(--gray-500)">Una valija adicional en bodega</div>
               </div>
               <span style="font-weight:600;color:var(--navy)">+$45</span>
             </label>
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-100);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gray-100)'">
-              <input type="checkbox" id="eq-extra" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--gold)" />
+            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
+              <input type="checkbox" id="eq-extra" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
               <div style="flex:1">
                 <div style="font-weight:600;margin-bottom:2px">Equipaje extra (32 kg)</div>
                 <div style="font-size:13px;color:var(--gray-500)">Una valija adicional de gran capacidad</div>
               </div>
               <span style="font-weight:600;color:var(--navy)">+$75</span>
             </label>
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--gray-100);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gray-100)'">
-              <input type="checkbox" id="seguro" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--gold)" />
+            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
+              <input type="checkbox" id="seguro" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
               <div style="flex:1">
                 <div style="font-weight:600;margin-bottom:2px">Seguro de viaje</div>
                 <div style="font-size:13px;color:var(--gray-500)">Cancelación, asistencia médica y equipaje</div>
@@ -186,7 +188,7 @@
         <div class="summary-flight-info">
           <div class="summary-route">
             <span>EZE</span>
-            <span style="color:var(--gold);font-size:14px">→</span>
+            <span style="color:var(--white);font-size:14px">→</span>
             <span>MAD</span>
           </div>
           <div style="font-size:13px;color:rgba(255,255,255,0.6)">Vuelo AC801 · Lun 14 jul 2025</div>
@@ -228,7 +230,7 @@
         <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:20px" onclick="confirmarPago()">
           🔒 Confirmar y pagar
         </button>
-        <p style="font-size:11px;color:var(--gray-300);text-align:center;margin-top:10px">
+        <p style="font-size:11px;color:var(--gray-500);text-align:center;margin-top:10px">
           Pago 100% seguro · SSL encriptado
         </p>
       </div>
@@ -242,11 +244,11 @@
     <div style="font-size:56px;margin-bottom:16px">🎉</div>
     <h2 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:8px">¡Reserva confirmada!</h2>
     <p style="color:var(--gray-500);margin-bottom:6px">Tu número de reserva es:</p>
-    <p style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--gold);margin-bottom:20px" id="booking-code">AC-2025-XXXX</p>
+    <p style="  font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--pink);margin-bottom:20px" id="booking-code">AC-2025-XXXX</p>
     <p style="font-size:14px;color:var(--gray-500);margin-bottom:28px">Te enviamos la confirmación a tu email. ¡Buen viaje!</p>
     <div style="display:flex;gap:12px;justify-content:center">
       <a href="reservas.html" class="btn btn-dark">Ver mis reservas</a>
-      <a href="index.html" class="btn btn-outline" style="border-color:var(--gray-300);color:var(--navy)">Inicio</a>
+      <a href="index.html" class="btn btn-outline" style="border-color:var(--navy);color:var(--navy)">Inicio</a>
     </div>
   </div>
 </div>

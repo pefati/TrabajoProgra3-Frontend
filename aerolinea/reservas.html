@@ -10,14 +10,16 @@
 
 <nav class="navbar scrolled">
   <div class="container">
-    <a href="index.html" class="nav-logo">
-      <div class="nav-logo-icon">✈</div>
-      <span class="nav-logo-text">Aero<span>Cielo</span></span>
-    </a>
+      <a href="index.html" class="nav-logo">
+          <div class="nav-logo-icon">
+              <img src="/images/logo_aeroGest.png" alt="logo" style="width:24px;height:24px;">
+          </div>
+          <span class="nav-logo-text">Aero<span>Gest</span></span>
+      </a>
     <div class="nav-links">
       <a href="index.html">Inicio</a>
       <a href="vuelos.html">Vuelos</a>
-      <a href="reservas.html" style="color:var(--gold)">Mis Reservas</a>
+      <a href="reservas.html" style="color:var(--blue-light)">Mis Reservas</a>
     </div>
     <div class="nav-actions">
       <a href="vuelos.html" class="btn btn-primary">Nueva reserva</a>
@@ -40,19 +42,19 @@
 
       <!-- Stats rápidas -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px">
-        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+        <div style="background:var(--white);border:1px solid var(--gray-500);border-radius:var(--radius-md);padding:20px">
           <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Reservas activas</div>
           <div style="font-family:var(--font-display);font-size:30px;font-weight:700" id="stat-activas">0</div>
         </div>
-        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+        <div style="background:var(--white);border:1px solid var(--gray-500);border-radius:var(--radius-md);padding:20px">
           <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Vuelos realizados</div>
           <div style="font-family:var(--font-display);font-size:30px;font-weight:700" id="stat-pasados">2</div>
         </div>
-        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+        <div style="background:var(--white);border:1px solid var(--gray-500);border-radius:var(--radius-md);padding:20px">
           <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Millas acumuladas</div>
-          <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--gold)">12.480</div>
+          <div style="font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--pink)">12.480</div>
         </div>
-        <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:20px">
+        <div style="background:var(--white);border:1px solid var(--gray-500);border-radius:var(--radius-md);padding:20px">
           <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px">Nivel viajero</div>
           <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy)">✦ Silver</div>
         </div>
@@ -86,7 +88,7 @@
           <div>
             <div class="booking-route">Cancún → Buenos Aires</div>
             <div class="booking-details">Vuelo AC234 · Asiento 14C Económica · 2 pasajeros</div>
-            <div style="font-size:12px;color:var(--gray-300);margin-top:4px">Código: AC-2024-7823</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px">Código: AC-2024-7823</div>
           </div>
           <div class="booking-date">
             <div class="booking-date-day">18</div>
@@ -101,7 +103,7 @@
           <div>
             <div class="booking-route">Madrid → Buenos Aires</div>
             <div class="booking-details">Vuelo AC802 · Asiento 8A Ejecutiva · 1 pasajero</div>
-            <div style="font-size:12px;color:var(--gray-300);margin-top:4px">Código: AC-2023-5412</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:4px">Código: AC-2023-5412</div>
           </div>
           <div class="booking-date">
             <div class="booking-date-day">05</div>
@@ -116,7 +118,7 @@
 
     <!-- Check-in -->
     <div id="tab-checkin" style="display:none">
-      <div style="background:var(--white);border:1px solid var(--gray-100);border-radius:var(--radius-md);padding:40px;text-align:center;max-width:480px;margin:0 auto">
+      <div style="background:var(--white);border:1px solid var(--cream);border-radius:var(--radius-md);padding:40px;text-align:center;max-width:480px;margin:0 auto">
         <div style="font-size:48px;margin-bottom:16px">🎫</div>
         <h3 style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px">Check-in online</h3>
         <p style="color:var(--gray-500);margin-bottom:24px">El check-in abre 48 hs antes del vuelo. Ingresá tu código de reserva para continuar.</p>
@@ -143,7 +145,7 @@
     </div>
     <div style="background:var(--navy);border-radius:var(--radius);padding:16px;margin-bottom:20px;color:var(--white)">
       <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px">Código de reserva</div>
-      <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--gold)" id="modal-codigo">—</div>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--navy-mid)" id="modal-codigo">—</div>
     </div>
     <div id="modal-detalles" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px"></div>
     <div style="display:flex;gap:10px">
@@ -206,7 +208,7 @@ function renderActivas(lista) {
       </div>
       <div class="booking-actions">
         <button class="btn btn-primary" style="padding:8px 16px;font-size:12px" onclick="event.stopPropagation();showToast('Descargando boarding pass...')">Check-in</button>
-        <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--gray-100)" onclick="event.stopPropagation();verDetalle('${r.codigo}')">Ver</button>
+        <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--white)" onclick="event.stopPropagation();verDetalle('${r.codigo}')">Ver</button>
       </div>
     </div>
   `).join('');
