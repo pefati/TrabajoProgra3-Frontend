@@ -479,7 +479,7 @@ select.form-control { cursor: pointer; }
 .order-summary {
   background: var(--white); border-radius: var(--radius-md);
   border: 1px solid var(--light-blue-1); padding: 28px;
-  position: sticky; top: 100px;
+  position: sticky; top: 100px; margin-bottom: 20px;
 }
 .summary-flight-info {
   background: var(--navy); border-radius: var(--radius);
