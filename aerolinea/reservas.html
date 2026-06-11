@@ -4,19 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Mis Reservas</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
 <body>
 
 <!--Navbar-->
 <div id="navbar-container"></div>
-<script>
-    fetch('navbar.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('navbar-container').innerHTML = html;
-        });
-</script>
+<div id="navbar-container"></div>
 
 
 <section class="booking-dashboard" style="margin-top:72px">
@@ -149,128 +143,7 @@
 
 <!-- FOOTER -->
 <div id="footer"></div>
-<script>
-    fetch("footer.html")
-        .then ( res => res.text())
-        .then (html => {
-            document.getElementById('footer').innerHTML = html;
-        })
-</script>
-
-<script>
-// Reservas de demostración + las guardadas
-const defaultReservas = [
-  { codigo:'AC-2025-4521', ruta:'Buenos Aires → París', vuelo:'AC205', fecha:'22 Ago 2025', asiento:'12B', clase:'Económica', total:890, estado:'activo', pasajero:'Usuario Demo' },
-  { codigo:'AC-2025-3198', ruta:'Buenos Aires → Nueva York', vuelo:'AC330', fecha:'10 Sep 2025', asiento:'5A', clase:'Ejecutiva', total:1850, estado:'pendiente', pasajero:'Usuario Demo' },
-];
-
-function cargarReservas() {
-  const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]');
-  return [...defaultReservas, ...guardadas];
-}
-
-let todasLasReservas = cargarReservas();
-let reservaSeleccionada = null;
-
-function renderActivas(lista) {
-  const activas = lista.filter(r => r.estado === 'activo' || r.estado === 'pendiente');
-  document.getElementById('stat-activas').textContent = activas.length;
-  const container = document.getElementById('booking-list-activas');
-  if (activas.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--gray-500)">
-      <div style="font-size:48px;margin-bottom:16px">✈</div>
-      <p style="font-size:18px;font-weight:600;margin-bottom:8px">No tenés reservas activas</p>
-      <p style="margin-bottom:20px">¡Empezá a planificar tu próximo viaje!</p>
-      <a href="vuelos.html" class="btn btn-primary">Buscar vuelos</a>
-    </div>`;
-    return;
-  }
-  container.innerHTML = activas.map(r => `
-    <div class="booking-card" onclick="verDetalle('${r.codigo}')">
-      <div class="booking-status ${r.estado === 'activo' ? 'status-active' : 'status-pending'}"></div>
-      <div>
-        <div class="booking-route">${r.ruta}</div>
-        <div class="booking-details">Vuelo ${r.vuelo} · Asiento ${r.asiento} ${r.clase} · ${r.pasajero}</div>
-        <div style="display:inline-block;margin-top:6px;font-size:11px;padding:3px 10px;border-radius:4px;background:${r.estado==='activo'?'#EAF3DE':'#FAEEDA'};color:${r.estado==='activo'?'#3B6D11':'#854F0B'};font-weight:600">
-          ${r.estado === 'activo' ? '● Confirmado' : '◌ Pendiente de pago'}
-        </div>
-      </div>
-      <div class="booking-date">
-        <div class="booking-date-day">${r.fecha.split(' ')[0]}</div>
-        <div class="booking-date-month">${r.fecha.split(' ').slice(1).join(' ')}</div>
-      </div>
-      <div class="booking-actions">
-        <button class="btn btn-primary" style="padding:8px 16px;font-size:12px" onclick="event.stopPropagation();showToast('Descargando boarding pass...')">Check-in</button>
-        <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--white)" onclick="event.stopPropagation();verDetalle('${r.codigo}')">Ver</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function verDetalle(codigo) {
-  const r = todasLasReservas.find(x => x.codigo === codigo);
-  if (!r) return;
-  reservaSeleccionada = codigo;
-  document.getElementById('modal-ruta').textContent = r.ruta;
-  document.getElementById('modal-codigo').textContent = r.codigo;
-  document.getElementById('modal-detalles').innerHTML = `
-    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Vuelo</div><div style="font-weight:600">${r.vuelo}</div></div>
-    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Fecha</div><div style="font-weight:600">${r.fecha}</div></div>
-    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Asiento</div><div style="font-weight:600">${r.asiento} · ${r.clase}</div></div>
-    <div><div style="font-size:11px;color:var(--gray-500);margin-bottom:3px">Total pagado</div><div style="font-weight:600;color:var(--navy)">$${r.total?.toLocaleString('es-AR')}</div></div>
-  `;
-  document.getElementById('detail-modal').style.display = 'flex';
-}
-
-function closeModal() {
-  document.getElementById('detail-modal').style.display = 'none';
-}
-
-function cancelarReserva() {
-  if (!confirm('¿Confirmar la cancelación de esta reserva?')) return;
-  const guardadas = JSON.parse(localStorage.getItem('reservas') || '[]');
-  const nuevas = guardadas.filter(r => r.codigo !== reservaSeleccionada);
-  localStorage.setItem('reservas', JSON.stringify(nuevas));
-  todasLasReservas = cargarReservas();
-  renderActivas(todasLasReservas);
-  closeModal();
-  showToast('Reserva cancelada. El reembolso se procesará en 3-5 días hábiles.');
-}
-
-function showTab(tab, el) {
-  ['activas','pasadas','checkin'].forEach(t => {
-    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
-  });
-  document.querySelectorAll('.booking-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function filtrarReservas() {
-  const q = document.getElementById('search-booking').value.toLowerCase();
-  const filtradas = q ? todasLasReservas.filter(r =>
-    r.codigo.toLowerCase().includes(q) ||
-    r.ruta.toLowerCase().includes(q) ||
-    r.vuelo.toLowerCase().includes(q) ||
-    r.fecha.toLowerCase().includes(q)
-  ) : todasLasReservas;
-  renderActivas(filtradas);
-}
-
-function hacerCheckin() {
-  const codigo = document.getElementById('checkin-code').value;
-  const reserva = todasLasReservas.find(r => r.codigo.toLowerCase() === codigo.toLowerCase());
-  if (!reserva) { showToast('Código no encontrado. Verificá los datos.'); return; }
-  showToast('✓ Check-in exitoso para ' + reserva.ruta + ' · Imprimí tu boarding pass.');
-}
-
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 4000);
-}
-
-renderActivas(todasLasReservas);
-</script>
+<div id="footer"></div>
+<script type="module" src="/src/scripts/reservas.ts"></script>
 </body>
 </html>

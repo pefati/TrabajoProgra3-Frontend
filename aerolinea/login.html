@@ -4,19 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Selección de asientos</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
 <body>
 
 <!-- NAVBAR -->
 <div id="navbar-container"></div>
-<script>
-    fetch('navbar.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('navbar-container').innerHTML = html;
-        });
-</script>
+<div id="navbar-container"></div>
 
 <!-- MAIN -->
 <main class="section">
@@ -50,10 +44,5 @@
 
 <!-- FOOTER -->
 <div id="footer"></div>
-<script>
-    fetch("footer.html")
-    .then ( res => res.text())
-    .then (html => {
-        document.getElementById('footer').innerHTML = html;
-    })
-</script>
+<div id="footer"></div>
+<script type="module" src="/src/scripts/login.ts"></script>

@@ -4,19 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Resultados de vuelos</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
 <body>
 
 <!--NAVBAR-->
 <div id="navbar-container"></div>
-<script>
-    fetch('navbar.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('navbar-container').innerHTML = html;
-        });
-</script>
 
 <!-- SEARCH BAR -->
 <div class="flight-search-bar" style="margin-top:72px">
@@ -84,122 +77,6 @@
 
 <!-- FOOTER -->
 <div id="footer"></div>
-<script>
-    fetch("footer.html")
-        .then ( res => res.text())
-        .then (html => {
-            document.getElementById('footer').innerHTML = html;
-        })
-</script>
-
-<script>
-const vuelos = [
-  { id:1, aerolinea:'AeroCielo directo', salida:'08:15', llegada:'22:30', duracion:'14h 15m', paradas:'Directo', precio:689, clase:'Económica' },
-  { id:2, aerolinea:'AeroCielo', salida:'11:40', llegada:'09:55+1', duracion:'16h 15m', paradas:'1 escala · GRU', precio:542, clase:'Económica' },
-  { id:3, aerolinea:'AeroCielo Plus', salida:'23:55', llegada:'17:10+1', duracion:'15h 15m', paradas:'Directo', precio:720, clase:'Económica premium' },
-  { id:4, aerolinea:'AeroCielo', salida:'06:00', llegada:'21:30', duracion:'15h 30m', paradas:'1 escala · SCL', precio:498, clase:'Económica' },
-  { id:5, aerolinea:'AeroCielo Executive', salida:'14:20', llegada:'07:45+1', duracion:'15h 25m', paradas:'Directo', precio:1850, clase:'Ejecutiva' },
-  { id:6, aerolinea:'AeroCielo', salida:'18:00', llegada:'12:20+1', duracion:'16h 20m', paradas:'1 escala · BOG', precio:510, clase:'Económica' },
-  { id:7, aerolinea:'AeroCielo directo', salida:'22:10', llegada:'14:05+1', duracion:'13h 55m', paradas:'Directo', precio:798, clase:'Económica' },
-  { id:8, aerolinea:'AeroCielo', salida:'03:30', llegada:'20:00', duracion:'16h 30m', paradas:'2 escalas', precio:389, clase:'Económica' },
-];
-
-let vuelosActuales = [...vuelos];
-
-function renderFlights(lista) {
-  const container = document.getElementById('flight-list');
-  document.getElementById('count').textContent = lista.length;
-  container.innerHTML = lista.map(v => `
-    <div class="flight-card" onclick="seleccionarVuelo(${v.id})" id="fc-${v.id}">
-      <div>
-        <div class="flight-airline">${v.aerolinea}</div>
-        <div class="flight-route">
-          <div>
-            <div class="flight-time">${v.salida}</div>
-            <div class="flight-city">EZE · Buenos Aires</div>
-          </div>
-          <div class="flight-line">
-            <div class="flight-duration">${v.duracion}</div>
-            <div class="flight-line-bar"></div>
-            <div class="flight-stops ${v.paradas === 'Directo' ? 'direct' : ''}">${v.paradas}</div>
-          </div>
-          <div>
-            <div class="flight-time">${v.llegada}</div>
-            <div class="flight-city">MAD · Madrid</div>
-          </div>
-        </div>
-      </div>
-      <div class="flight-class">
-        <div class="flight-class-name">${v.clase}</div>
-        <div class="flight-price">$${v.precio.toLocaleString('es-AR')}</div>
-        <div class="flight-price-label">por persona</div>
-      </div>
-      <div>
-        <button class="btn btn-primary" onclick="event.stopPropagation();elegirVuelo(${v.id})">Elegir →</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function seleccionarVuelo(id) {
-  document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('fc-' + id)?.classList.add('selected');
-}
-
-function elegirVuelo(id) {
-  const v = vuelos.find(x => x.id === id);
-  sessionStorage.setItem('vuelo_seleccionado', JSON.stringify(v));
-  window.location.href = 'asientos.html';
-}
-
-function sortFlights(criterio) {
-  if (criterio === 'precio') vuelosActuales.sort((a,b) => a.precio - b.precio);
-  if (criterio === 'duracion') vuelosActuales.sort((a,b) => a.duracion.localeCompare(b.duracion));
-  if (criterio === 'salida') vuelosActuales.sort((a,b) => a.salida.localeCompare(b.salida));
-  renderFlights(vuelosActuales);
-}
-
-function filtrarDirectos() {
-  vuelosActuales = vuelos.filter(v => v.paradas === 'Directo');
-  renderFlights(vuelosActuales);
-}
-function filtrarManana() { vuelosActuales = [...vuelos]; renderFlights(vuelosActuales); }
-function filtrarBaratos() {
-  vuelosActuales = vuelos.filter(v => v.precio < 800);
-  renderFlights(vuelosActuales);
-}
-
-function swapAirports() {
-  const o = document.getElementById('origen');
-  const d = document.getElementById('destino');
-  [o.value, d.value] = [d.value, o.value];
-}
-
-function actualizarBusqueda(e) {
-  e.preventDefault();
-  vuelosActuales = [...vuelos];
-  renderFlights(vuelosActuales);
-  showToast('Búsqueda actualizada');
-}
-
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-
-// Leer params de URL
-const params = new URLSearchParams(window.location.search);
-if (params.get('destino')) document.getElementById('destino').value = params.get('destino');
-if (params.get('origen')) document.getElementById('origen').value = params.get('origen');
-if (params.get('fechaIda')) document.getElementById('fecha-ida').value = params.get('fechaIda');
-
-const hoy = new Date().toISOString().split('T')[0];
-document.getElementById('fecha-ida').min = hoy;
-if (!document.getElementById('fecha-ida').value) document.getElementById('fecha-ida').value = hoy;
-
-renderFlights(vuelosActuales);
-</script>
+<script type="module" src="/src/scripts/vuelos.ts"></script>
 </body>
 </html>

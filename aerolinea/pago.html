@@ -4,19 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Pago seguro</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
 <body>
 
 <!--navbar-->
 <div id="navbar-container"></div>
-<script>
-    fetch('navbar.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('navbar-container').innerHTML = html;
-        });
-</script>
+<div id="navbar-container"></div>
 
 <!-- Progreso -->
 <div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0; margin-top: 88px; box-shadow: inset 0 2px 4px var(--light-blue-1);";>
@@ -246,92 +240,6 @@
 
 <!-- FOOTER -->
 <div id="footer"></div>
-<script>
-    fetch("footer.html")
-        .then ( res => res.text())
-        .then (html => {
-            document.getElementById('footer').innerHTML = html;
-        })
-</script>
-
-<script>
-let extras = 0;
-const basePago = 689;
-const impuestos = 85;
-let seatExtra = 0;
-
-// Cargar asiento de session
-const asiento = JSON.parse(sessionStorage.getItem('asiento_seleccionado') || '{}');
-if (asiento.id) {
-  document.getElementById('asiento-display').textContent = asiento.id;
-  document.getElementById('asiento-precio').textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
-  seatExtra = asiento.precio || 0;
-  calcTotal();
-}
-
-function actualizarExtras() {
-  extras = 0;
-  const bodega = document.getElementById('eq-bodega').checked;
-  const extra = document.getElementById('eq-extra').checked;
-  const seguro = document.getElementById('seguro').checked;
-  if (bodega) extras += 45;
-  if (extra) extras += 75;
-  if (seguro) extras += 29;
-  document.getElementById('eq-bodega-line').style.display = bodega ? 'flex' : 'none';
-  document.getElementById('eq-extra-line').style.display = extra ? 'flex' : 'none';
-  document.getElementById('seguro-line').style.display = seguro ? 'flex' : 'none';
-  calcTotal();
-}
-
-function calcTotal() {
-  const total = basePago + seatExtra + extras + impuestos;
-  document.getElementById('grand-total').textContent = '$' + total.toLocaleString('es-AR');
-}
-
-function formatCard(input) {
-  let v = input.value.replace(/\D/g,'').substring(0,16);
-  input.value = v.replace(/(.{4})/g,'$1 ').trim();
-}
-function formatExpiry(input) {
-  let v = input.value.replace(/\D/g,'').substring(0,4);
-  if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
-  input.value = v;
-}
-
-function confirmarPago() {
-  const nombre = document.getElementById('nombre').value;
-  const email = document.getElementById('email').value;
-  if (!nombre || !email) { showToast('Completá nombre y email'); return; }
-
-  const code = 'AC-2025-' + Math.floor(1000 + Math.random() * 9000);
-  document.getElementById('booking-code').textContent = code;
-
-  // Guardar en "base de datos" local
-  const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-  reservas.push({
-    codigo: code,
-    ruta: 'Buenos Aires → Madrid',
-    vuelo: 'AC801',
-    fecha: '14 Jul 2025',
-    asiento: asiento.id || '—',
-    clase: asiento.clase || 'Económica',
-    total: basePago + seatExtra + extras + impuestos,
-    estado: 'activo',
-    pasajero: nombre,
-  });
-  localStorage.setItem('reservas', JSON.stringify(reservas));
-
-  document.getElementById('confirm-modal').style.display = 'flex';
-}
-
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
-
-calcTotal();
-</script>
+<script type="module" src="/src/scripts/pago.ts"></script>
 </body>
 </html>

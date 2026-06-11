@@ -4,19 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Volá con nosotros</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
 <body>
 
 <!-- NAVBAR -->
 <div id="navbar-container"></div>
-<script>
-    fetch('navbar.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('navbar-container').innerHTML = html;
-        });
-</script>
 
 <!-- HERO -->
 <section class="hero">
@@ -240,72 +233,7 @@
 
 <!-- FOOTER -->
 <div id="footer"></div>
-<script>
-    fetch("footer.html")
-        .then ( res => res.text())
-        .then (html => {
-            document.getElementById('footer').innerHTML = html;
-        })
-</script>
 
-<script>
-  // Navbar scroll
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 60);
-  });
-
-  // Tabs
-  function setTab(el, tipo) {
-    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    const vueltaGroup = document.getElementById('fecha-vuelta-group');
-    vueltaGroup.style.display = tipo === 'solo-ida' ? 'none' : '';
-  }
-
-  // Swap aeropuertos
-  function swapAirports() {
-    const o = document.getElementById('origen');
-    const d = document.getElementById('destino');
-    [o.value, d.value] = [d.value, o.value];
-  }
-
-  // Buscar vuelos
-  function buscarVuelos(e) {
-    e.preventDefault();
-    const dest = document.getElementById('destino').value;
-    if (!dest.trim()) { showToast('Por favor ingresá un destino'); return; }
-    const params = new URLSearchParams({
-      origen: document.getElementById('origen').value,
-      destino: dest,
-      fechaIda: document.getElementById('fecha-ida').value,
-      fechaVuelta: document.getElementById('fecha-vuelta').value,
-      pasajeros: document.getElementById('pasajeros').value,
-      clase: document.getElementById('clase').value,
-    });
-    window.location.href = 'vuelos.html?' + params.toString();
-  }
-
-  function irADestino(ciudad) {
-    document.getElementById('destino').value = ciudad;
-    document.getElementById('destino').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    showToast('Destino seleccionado: ' + ciudad);
-  }
-
-  function showToast(msg) {
-    const t = document.createElement('div');
-    t.className = 'toast'; t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
-  }
-
-  // Fechas mínimas
-  const hoy = new Date().toISOString().split('T')[0];
-  document.getElementById('fecha-ida').min = hoy;
-  document.getElementById('fecha-vuelta').min = hoy;
-  document.getElementById('fecha-ida').addEventListener('change', function() {
-    document.getElementById('fecha-vuelta').min = this.value;
-  });
-</script>
+<script type="module" src="/src/scripts/index.ts"></script>
 </body>
 </html>
