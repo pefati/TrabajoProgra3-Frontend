@@ -13,9 +13,14 @@
             <a href="#destinos">Destinos</a>
             <a href="#ayuda">Ayuda</a>
         </div>
-        <div class="nav-actions">
-            <a href="reservas.html" class="btn btn-outline">Mi cuenta</a>
-            <a href="vuelos.html" class="btn btn-outline">Reservar</a>
+        <div class="nav-actions" id="guest-actions">
+            <a href="login.html" class="btn btn-outline">Ingresar</a>
+            <a href="signin.html" class="btn btn-primary" style="background: var(--navy); border-color: var(--navy); color: white;">Registrarse</a>
+        </div>
+        <div class="nav-actions" id="user-actions" style="display: none; align-items: center; gap: 10px;">
+            <span id="user-email" style="font-size: 14px; font-weight: 600;"></span>
+            <a href="#" id="admin-panel" class="btn btn-primary" style="display: none; padding: 6px 12px; font-size: 12px; background: var(--pink); border-color: var(--pink); color: white;">Admin</a>
+            <a href="#" id="logout-btn" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Salir</a>
         </div>
     </div>
 </nav>
