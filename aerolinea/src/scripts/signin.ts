@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // 1. Registro
-                const regResponse = await fetch('http://localhost:8080/api/auth/register', {
+                const regResponse = await fetch('api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const token = data.token;
                     
                     // 2. Completar Perfil
-                    await fetch('http://localhost:8080/api/auth/completarPerfil', {
+                    await fetch('api/auth/completarPerfil', {
                         method: 'PUT',
                         headers: { 
                             'Content-Type': 'application/json',

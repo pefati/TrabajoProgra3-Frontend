@@ -118,7 +118,7 @@ if (idaInput) {
 }
 
 function fetchVuelos() {
-    let url = 'http://localhost:8080/api/vuelos';
+    let url = 'api/vuelos';
     
     // Si queremos usar /filtrar, armamos los params
     const origenBusqueda = origInput?.value || '';
@@ -133,7 +133,7 @@ function fetchVuelos() {
         if (oCiudad) searchParams.append('origen', oCiudad);
         if (dCiudad) searchParams.append('destino', dCiudad);
         
-        url = 'http://localhost:8080/api/vuelos/filtrar?' + searchParams.toString();
+        url = 'api/vuelos/filtrar?' + searchParams.toString();
     }
 
     fetch(url)
