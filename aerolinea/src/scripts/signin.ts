@@ -1,76 +1,52 @@
-import { initAuth } from './auth';
+import { initAuth, setSession, showToast } from './auth';
 
-// Fetch Navbar
 fetch('/src/components/navbar.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('navbar-container')!.innerHTML = html;
-        initAuth();
-    });
+    .then(html => { document.getElementById('navbar-container')!.innerHTML = html; initAuth(); });
 
-// Fetch Footer
-fetch("/src/components/footer.html")
+fetch('/src/components/footer.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('footer')!.innerHTML = html;
-    });
+    .then(html => { document.getElementById('footer')!.innerHTML = html; });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.querySelector('.auth-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const emailInput = document.getElementById('reg-email') as HTMLInputElement;
-            const passwordInput = document.getElementById('reg-password') as HTMLInputElement;
-            const nameInput = document.getElementById('reg-name') as HTMLInputElement;
-            const lastnameInput = document.getElementById('reg-lastname') as HTMLInputElement;
+    const form = document.querySelector('.auth-form') as HTMLFormElement;
+    if (!form) return;
 
-            try {
-                // 1. Registro
-                const regResponse = await fetch('api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: emailInput.value,
-                        password: passwordInput.value
-                    })
-                });
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = (document.getElementById('reg-email') as HTMLInputElement).value;
+        const password = (document.getElementById('reg-password') as HTMLInputElement).value;
+        const terms = (document.getElementById('terms') as HTMLInputElement).checked;
 
-                if (regResponse.ok) {
-                    const data = await regResponse.json();
-                    const token = data.token;
-                    
-                    // 2. Completar Perfil
-                    await fetch('api/auth/completarPerfil', {
-                        method: 'PUT',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + token
-                        },
-                        body: JSON.stringify({
-                            nombre: nameInput.value,
-                            apellido: lastnameInput.value,
-                            numeroIdentificador: "00000000",
-                            identificador: "DNI",
-                            sexo: "MASCULINO",
-                            fechaNacimiento: "2000-01-01",
-                            telefono: "0000000000"
-                        })
-                    });
+        if (!terms) { showToast('Debés aceptar los términos', 'warn'); return; }
 
-                    // Guardar en local storage y redirigir
-                    localStorage.setItem('token', token);
-                    localStorage.setItem('user_email', data.email);
-                    window.location.href = 'index.html';
-                } else {
-                    const error = await regResponse.json();
-                    alert('Error en registro: ' + (error.message || 'Datos inválidos'));
-                }
-            } catch (err) {
-                console.error(err);
-                alert('No se pudo conectar con el servidor.');
+        const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = 'Creando cuenta...';
+
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'Error en registro');
             }
-        });
-    }
+
+            const data = await res.json();
+            setSession(data.token, data.email, data.userId, false, 'ROLE_INCOMPLETO');
+
+            showToast('Cuenta creada. Completá tu perfil para continuar.', 'warn');
+            setTimeout(() => window.location.href = 'perfil.html', 1200);
+
+        } catch (err: any) {
+            showToast(err.message || 'Error al registrarse', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Registrarme';
+        }
+    });
 });

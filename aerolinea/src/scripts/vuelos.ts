@@ -1,106 +1,145 @@
-import { initAuth } from './auth';
+import { initAuth, apiFetch, showToast, isLoggedIn, isPerfilCompleto } from './auth';
+
 fetch('/src/components/navbar.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('navbar-container')!.innerHTML = html; initAuth();
-    });
+    .then(html => { document.getElementById('navbar-container')!.innerHTML = html; initAuth(); });
 
-fetch("/src/components/footer.html")
+fetch('/src/components/footer.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('footer')!.innerHTML = html;
-    });
+    .then(html => { document.getElementById('footer')!.innerHTML = html; });
 
 let vuelosActuales: any[] = [];
+let favoritosIds = new Set<number>();
 
 function renderFlights(lista: any[]) {
     const container = document.getElementById('flight-list');
     const countEl = document.getElementById('count');
     if (countEl) countEl.textContent = lista.length.toString();
-    
-    if (container) {
-        container.innerHTML = lista.map(v => `
-            <div class="flight-card" onclick="seleccionarVuelo(${v.id})" id="fc-${v.id}">
-            <div>
-                <div class="flight-airline">${v.aerolinea || 'AeroCielo'}</div>
+
+    if (!container) return;
+
+    if (lista.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--gray-500)">
+            <div style="font-size:48px;margin-bottom:16px">🔍</div>
+            <p style="font-size:18px;font-weight:600;margin-bottom:8px">No se encontraron vuelos</p>
+            <p>Probá con otros criterios de búsqueda</p>
+        </div>`;
+        return;
+    }
+
+    container.innerHTML = lista.map(v => {
+        const salida = v.fechaSalida ? new Date(v.fechaSalida).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : (v.horaSalida || '—');
+        const llegada = v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : (v.horaLlegada || '—');
+        const origen = v.aeropuertoOrigen?.ciudad || v.origen || '—';
+        const destino = v.aeropuertoDestino?.ciudad || v.destino || '—';
+        const precio = v.precioVuelo ?? v.precio ?? 0;
+        const isFav = favoritosIds.has(v.id);
+
+        return `
+        <div class="flight-card" id="fc-${v.id}">
+            <div onclick="seleccionarVuelo(${v.id})" style="flex:1;cursor:pointer">
+                <div class="flight-airline">AeroGest</div>
                 <div class="flight-route">
-                <div>
-                    <div class="flight-time">${new Date(v.fechaSalida).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    <div class="flight-city">${v.origen}</div>
-                </div>
-                <div class="flight-line">
-                    <div class="flight-duration">Dir.</div>
-                    <div class="flight-line-bar"></div>
-                    <div class="flight-stops direct">Directo</div>
-                </div>
-                <div>
-                    <div class="flight-time">${new Date(v.fechaLlegada).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                    <div class="flight-city">${v.destino}</div>
-                </div>
+                    <div>
+                        <div class="flight-time">${salida}</div>
+                        <div class="flight-city">${origen}</div>
+                    </div>
+                    <div class="flight-line">
+                        <div class="flight-duration">—</div>
+                        <div class="flight-line-bar"></div>
+                        <div class="flight-stops ${!v.escala ? 'direct' : ''}">${v.escala ? '1 escala' : 'Directo'}</div>
+                    </div>
+                    <div>
+                        <div class="flight-time">${llegada}</div>
+                        <div class="flight-city">${destino}</div>
+                    </div>
                 </div>
             </div>
             <div class="flight-class">
                 <div class="flight-class-name">Económica</div>
-                <div class="flight-price">$${v.precio?.toLocaleString('es-AR') || '0'}</div>
+                <div class="flight-price">$${precio.toLocaleString('es-AR')}</div>
                 <div class="flight-price-label">por persona</div>
             </div>
-            <div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
                 <button class="btn btn-primary" onclick="event.stopPropagation();elegirVuelo(${v.id})">Elegir →</button>
+                <button class="btn ${isFav ? 'btn-dark' : ''}" style="padding:6px 12px;font-size:12px;border:1px solid var(--navy)" 
+                    id="fav-btn-${v.id}" onclick="event.stopPropagation();toggleFavorito(${v.id})">
+                    ${isFav ? '♥ Guardado' : '♡ Favorito'}
+                </button>
             </div>
-            </div>
-        `).join('');
-    }
+        </div>`;
+    }).join('');
 }
 
-(window as any).seleccionarVuelo = function(id: number) {
-  document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('fc-' + id)?.classList.add('selected');
+(window as any).seleccionarVuelo = function (id: number) {
+    document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('fc-' + id)?.classList.add('selected');
 };
 
-(window as any).elegirVuelo = function(id: number) {
-  const v = vuelosActuales.find(x => x.id === id);
-  if (v) {
-      sessionStorage.setItem('vuelo_seleccionado', JSON.stringify(v));
-      window.location.href = 'asientos.html';
-  }
+(window as any).elegirVuelo = function (id: number) {
+    if (!isLoggedIn()) { showToast('Iniciá sesión para comprar', 'warn'); return; }
+    if (!isPerfilCompleto()) return;
+    const v = vuelosActuales.find(x => x.id === id);
+    if (v) {
+        sessionStorage.setItem('vuelo_seleccionado', JSON.stringify(v));
+        window.location.href = 'asientos.html';
+    }
 };
 
-(window as any).sortFlights = function(criterio: string) {
-  if (criterio === 'precio') vuelosActuales.sort((a,b) => a.precio - b.precio);
-  if (criterio === 'duracion') vuelosActuales.sort((a,b) => new Date(a.fechaLlegada).getTime() - new Date(a.fechaSalida).getTime() - (new Date(b.fechaLlegada).getTime() - new Date(b.fechaSalida).getTime()));
-  if (criterio === 'salida') vuelosActuales.sort((a,b) => new Date(a.fechaSalida).getTime() - new Date(b.fechaSalida).getTime());
-  renderFlights(vuelosActuales);
+(window as any).toggleFavorito = async function (vueloId: number) {
+    if (!isLoggedIn()) { showToast('Iniciá sesión para guardar favoritos', 'warn'); return; }
+    if (!isPerfilCompleto()) return;
+
+    try {
+        if (favoritosIds.has(vueloId)) {
+            const favs: any[] = await apiFetch('/api/favoritos');
+            const fav = favs.find((f: any) => f.vueloId === vueloId);
+            if (fav) {
+                const personaId = localStorage.getItem('persona_id');
+                await apiFetch(`/api/favoritos/${fav.id}?personaId=${personaId}`, { method: 'DELETE' });
+                favoritosIds.delete(vueloId);
+                const btn = document.getElementById('fav-btn-' + vueloId);
+                if (btn) { btn.textContent = '♡ Favorito'; btn.classList.remove('btn-dark'); }
+                showToast('Eliminado de favoritos');
+            }
+        } else {
+            await apiFetch(`/api/favoritos/vuelos/${vueloId}`, { method: 'POST' });
+            favoritosIds.add(vueloId);
+            const btn = document.getElementById('fav-btn-' + vueloId);
+            if (btn) { btn.textContent = '♥ Guardado'; btn.classList.add('btn-dark'); }
+            showToast('Agregado a favoritos');
+        }
+    } catch (err: any) {
+        showToast(err.message || 'Error al guardar favorito', 'error');
+    }
 };
 
-(window as any).filtrarDirectos = function() {
-  renderFlights(vuelosActuales);
-};
-(window as any).filtrarManana = function() { renderFlights(vuelosActuales); };
-(window as any).filtrarBaratos = function() {
-  const filtrados = vuelosActuales.filter(v => v.precio < 800);
-  renderFlights(filtrados);
+(window as any).sortFlights = function (criterio: string) {
+    if (criterio === 'precio') vuelosActuales.sort((a, b) => (a.precioVuelo ?? a.precio) - (b.precioVuelo ?? b.precio));
+    if (criterio === 'salida') vuelosActuales.sort((a, b) => new Date(a.fechaSalida).getTime() - new Date(b.fechaSalida).getTime());
+    renderFlights(vuelosActuales);
 };
 
-(window as any).swapAirports = function() {
-  const o = document.getElementById('origen') as HTMLInputElement;
-  const d = document.getElementById('destino') as HTMLInputElement;
-  if (o && d) {
-      [o.value, d.value] = [d.value, o.value];
-  }
+(window as any).filtrarDirectos = function () {
+    renderFlights(vuelosActuales.filter(v => !v.escala));
+};
+(window as any).filtrarManana = function () { renderFlights(vuelosActuales); };
+(window as any).filtrarBaratos = function () {
+    renderFlights(vuelosActuales.filter(v => (v.precioVuelo ?? v.precio) < 800));
 };
 
-(window as any).actualizarBusqueda = function(e: Event) {
-  e.preventDefault();
-  fetchVuelos();
-  (window as any).showToast('Búsqueda actualizada');
+(window as any).swapAirports = function () {
+    const o = document.getElementById('origen') as HTMLInputElement;
+    const d = document.getElementById('destino') as HTMLInputElement;
+    if (o && d) [o.value, d.value] = [d.value, o.value];
 };
 
-(window as any).showToast = function(msg: string) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+(window as any).actualizarBusqueda = function (e: Event) {
+    e.preventDefault();
+    fetchVuelos();
 };
+
+(window as any).showToast = (msg: string) => showToast(msg);
 
 const params = new URLSearchParams(window.location.search);
 const destInput = document.getElementById('destino') as HTMLInputElement;
@@ -112,40 +151,38 @@ if (params.get('origen') && origInput) origInput.value = params.get('origen')!;
 if (params.get('fechaIda') && idaInput) idaInput.value = params.get('fechaIda')!;
 
 const hoy = new Date().toISOString().split('T')[0];
-if (idaInput) {
-    idaInput.min = hoy;
-    if (!idaInput.value) idaInput.value = hoy;
-}
+if (idaInput) { idaInput.min = hoy; if (!idaInput.value) idaInput.value = hoy; }
 
-function fetchVuelos() {
-    let url = 'api/vuelos';
-    
-    // Si queremos usar /filtrar, armamos los params
-    const origenBusqueda = origInput?.value || '';
-    const destinoBusqueda = destInput?.value || '';
-    
-    if (origenBusqueda || destinoBusqueda) {
-        // Asumimos un formato básico para extraer ciudad del string "Buenos Aires (EZE)"
-        const oCiudad = origenBusqueda.split('(')[0].trim();
-        const dCiudad = destinoBusqueda.split('(')[0].trim();
-        
-        const searchParams = new URLSearchParams();
-        if (oCiudad) searchParams.append('origen', oCiudad);
-        if (dCiudad) searchParams.append('destino', dCiudad);
-        
-        url = 'api/vuelos/filtrar?' + searchParams.toString();
+async function fetchVuelos() {
+    const container = document.getElementById('flight-list');
+    if (container) container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--gray-500)">Cargando vuelos...</div>';
+
+    const oCiudad = origInput?.value.split('(')[0].trim() || '';
+    const dCiudad = destInput?.value.split('(')[0].trim() || '';
+    const fecha = idaInput?.value || '';
+
+    const searchParams = new URLSearchParams();
+    if (oCiudad) searchParams.append('origen', oCiudad);
+    if (dCiudad) searchParams.append('destino', dCiudad);
+    if (fecha) searchParams.append('fechaSalida', fecha + 'T00:00:00');
+
+    const url = '/api/vuelos/filtrar?' + searchParams.toString();
+
+    try {
+        const data = await fetch(url).then(r => r.json());
+        vuelosActuales = Array.isArray(data) ? data : [];
+
+        if (isLoggedIn()) {
+            try {
+                const favs: any[] = await apiFetch('/api/favoritos');
+                favoritosIds = new Set(favs.map((f: any) => f.vueloId));
+            } catch { }
+        }
+
+        renderFlights(vuelosActuales);
+    } catch (err) {
+        if (container) container.innerHTML = '<div style="text-align:center;padding:40px;color:#c0392b;background:#fdf0ee;border-radius:8px">No se pudieron cargar los vuelos. Verificá que el servidor esté activo.</div>';
     }
-
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            vuelosActuales = data;
-            renderFlights(vuelosActuales);
-        })
-        .catch(err => {
-            console.error('Error fetching vuelos:', err);
-            (window as any).showToast('Error cargando vuelos del servidor');
-        });
 }
 
 fetchVuelos();

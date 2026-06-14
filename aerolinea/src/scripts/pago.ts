@@ -1,93 +1,122 @@
-import { initAuth } from './auth';
-// Fetch Navbar
+import { initAuth, apiFetch, showToast, requirePerfilCompleto } from './auth';
+
 fetch('/src/components/navbar.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('navbar-container')!.innerHTML = html; initAuth();
-    });
+    .then(html => { document.getElementById('navbar-container')!.innerHTML = html; initAuth(); });
 
-// Fetch Footer
-fetch("/src/components/footer.html")
+fetch('/src/components/footer.html')
     .then(res => res.text())
-    .then(html => {
-        document.getElementById('footer')!.innerHTML = html;
-    });
+    .then(html => { document.getElementById('footer')!.innerHTML = html; });
+
+if (!requirePerfilCompleto()) { throw new Error('not authorized'); }
 
 let extras = 0;
-const basePago = 689;
-const impuestos = 85;
 let seatExtra = 0;
+const impuestos = 85;
 
-// Cargar asiento de session
+const vuelo = JSON.parse(sessionStorage.getItem('vuelo_seleccionado') || '{}');
 const asiento = JSON.parse(sessionStorage.getItem('asiento_seleccionado') || '{}');
-if (asiento.id) {
-  document.getElementById('asiento-display')!.textContent = asiento.id;
-  document.getElementById('asiento-precio')!.textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
-  seatExtra = asiento.precio || 0;
-  calcTotal();
+
+const basePago: number = vuelo.precioVuelo ?? vuelo.precio ?? 689;
+
+const flightSummary = document.getElementById('flight-summary-info');
+if (flightSummary && vuelo.id) {
+    const origen = vuelo.aeropuertoOrigen?.ciudad || vuelo.origen || '—';
+    const destino = vuelo.aeropuertoDestino?.ciudad || vuelo.destino || '—';
+    flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
+        <div style="font-size:13px;color:var(--gray-500)">Vuelo #${vuelo.id} · ${vuelo.escala ? '1 escala' : 'Directo'}</div>`;
 }
 
-(window as any).actualizarExtras = function() {
-  extras = 0;
-  const bodega = (document.getElementById('eq-bodega') as HTMLInputElement).checked;
-  const extra = (document.getElementById('eq-extra') as HTMLInputElement).checked;
-  const seguro = (document.getElementById('seguro') as HTMLInputElement).checked;
-  if (bodega) extras += 45;
-  if (extra) extras += 75;
-  if (seguro) extras += 29;
-  document.getElementById('eq-bodega-line')!.style.display = bodega ? 'flex' : 'none';
-  document.getElementById('eq-extra-line')!.style.display = extra ? 'flex' : 'none';
-  document.getElementById('seguro-line')!.style.display = seguro ? 'flex' : 'none';
-  calcTotal();
+const tarifaBaseEl = document.getElementById('tarifa-base');
+if (tarifaBaseEl) tarifaBaseEl.textContent = '$' + basePago.toLocaleString('es-AR');
+
+if (asiento.id) {
+    const asientoDisplay = document.getElementById('asiento-display');
+    const asientoPrecio = document.getElementById('asiento-precio');
+    if (asientoDisplay) asientoDisplay.textContent = asiento.id;
+    if (asientoPrecio) asientoPrecio.textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
+    seatExtra = asiento.precio || 0;
+    calcTotal();
+}
+
+(window as any).actualizarExtras = function () {
+    extras = 0;
+    const bodega = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked;
+    const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
+    const seguro = (document.getElementById('seguro') as HTMLInputElement)?.checked;
+    if (bodega) extras += 45;
+    if (extra) extras += 75;
+    if (seguro) extras += 29;
+
+    const lines = [['eq-bodega-line', bodega], ['eq-extra-line', extra], ['seguro-line', seguro]];
+    lines.forEach(([id, show]) => {
+        const el = document.getElementById(id as string);
+        if (el) el.style.display = show ? 'flex' : 'none';
+    });
+    calcTotal();
 };
 
 function calcTotal() {
-  const total = basePago + seatExtra + extras + impuestos;
-  document.getElementById('grand-total')!.textContent = '$' + total.toLocaleString('es-AR');
+    const total = basePago + seatExtra + extras + impuestos;
+    const el = document.getElementById('grand-total');
+    if (el) el.textContent = '$' + total.toLocaleString('es-AR');
 }
 
-(window as any).formatCard = function(input: HTMLInputElement) {
-  let v = input.value.replace(/\\D/g,'').substring(0,16);
-  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+(window as any).formatCard = function (input: HTMLInputElement) {
+    let v = input.value.replace(/\D/g, '').substring(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
 };
 
-(window as any).formatExpiry = function(input: HTMLInputElement) {
-  let v = input.value.replace(/\\D/g,'').substring(0,4);
-  if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
-  input.value = v;
+(window as any).formatExpiry = function (input: HTMLInputElement) {
+    let v = input.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
+    input.value = v;
 };
 
-(window as any).confirmarPago = function() {
-  const nombre = (document.getElementById('nombre') as HTMLInputElement).value;
-  const email = (document.getElementById('email') as HTMLInputElement).value;
-  if (!nombre || !email) { (window as any).showToast('Completá nombre y email'); return; }
+(window as any).confirmarPago = async function () {
+    const nombre = (document.getElementById('nombre') as HTMLInputElement)?.value?.trim();
+    const emailEl = (document.getElementById('email') as HTMLInputElement)?.value?.trim();
+    const cuil = (document.getElementById('cuil') as HTMLInputElement)?.value?.trim() || '';
+    const situacionFiscal = (document.getElementById('situacion-fiscal') as HTMLSelectElement)?.value || 'Consumidor Final';
+    const metodoPago = (document.getElementById('metodo-pago') as HTMLSelectElement)?.value || 'TARJETA_CREDITO';
 
-  const code = 'AC-2025-' + Math.floor(1000 + Math.random() * 9000);
-  document.getElementById('booking-code')!.textContent = code;
+    if (!nombre || !emailEl) { showToast('Completá nombre y email', 'warn'); return; }
 
-  // Guardar en "base de datos" local
-  const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-  reservas.push({
-    codigo: code,
-    ruta: 'Buenos Aires → Madrid',
-    vuelo: 'AC801',
-    fecha: '14 Jul 2025',
-    asiento: asiento.id || '—',
-    clase: asiento.clase || 'Económica',
-    total: basePago + seatExtra + extras + impuestos,
-    estado: 'activo',
-    pasajero: nombre,
-  });
-  localStorage.setItem('reservas', JSON.stringify(reservas));
+    const personaId = parseInt(localStorage.getItem('persona_id') || '0');
+    if (!personaId) { showToast('No se encontró tu perfil. Volvé a iniciar sesión.', 'error'); return; }
 
-  document.getElementById('confirm-modal')!.style.display = 'flex';
+    const btn = document.getElementById('btn-pagar') as HTMLButtonElement;
+    if (btn) { btn.disabled = true; btn.textContent = '🔒 Procesando...'; }
+
+    try {
+        const equipajeId = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked
+            ? parseInt((document.getElementById('equipaje-id') as HTMLInputElement)?.value || '0') || null
+            : null;
+
+        await apiFetch('/api/compras/confirmar', {
+            method: 'POST',
+            body: JSON.stringify({
+                personaId,
+                equipajeId,
+                asistenciaId: null,
+                cuil,
+                situacionFiscal,
+                metodoPago: metodoPago.toUpperCase().replace(' ', '_'),
+            })
+        });
+
+        const codeEl = document.getElementById('booking-code');
+        if (codeEl) codeEl.textContent = 'Ver en Mis Reservas';
+        document.getElementById('confirm-modal')!.style.display = 'flex';
+
+        sessionStorage.removeItem('vuelo_seleccionado');
+        sessionStorage.removeItem('asiento_seleccionado');
+
+    } catch (err: any) {
+        showToast(err.message || 'Error al procesar el pago', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '🔒 Confirmar y pagar'; }
+    }
 };
 
-(window as any).showToast = function(msg: string) {
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-};
-
+(window as any).showToast = (msg: string) => showToast(msg);
 calcTotal();

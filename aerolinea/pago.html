@@ -10,7 +10,6 @@
 
 <!--navbar-->
 <div id="navbar-container"></div>
-<div id="navbar-container"></div>
 
 <!-- Progreso -->
 <div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0; margin-top: 88px; box-shadow: inset 0 2px 4px var(--light-blue-1);";>
@@ -37,6 +36,7 @@
 <section style="padding:40px 0 80px; box-shadow: inset 0 2px 4px var(--light-blue-1);";>
   <div class="container">
     <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:28px">Finalizá tu reserva</h1>
+    <div id="flight-summary-info" style="background:var(--navy);color:white;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:24px;font-size:14px"></div>
 
     <div class="checkout-layout">
       <!-- Formularios -->
@@ -84,6 +84,21 @@
               <input type="tel" class="form-control" placeholder="+54 11 1234 5678" />
             </div>
           </div>
+          <div class="checkout-grid-2" style="margin-top:16px">
+            <div class="form-group">
+              <label>CUIL / CUIT</label>
+              <input type="text" class="form-control" placeholder="Ej. 20-35123456-1" id="cuil" />
+            </div>
+            <div class="form-group">
+              <label>Situación fiscal</label>
+              <select class="form-control" id="situacion-fiscal">
+                <option>Consumidor Final</option>
+                <option>Responsable Inscripto</option>
+                <option>Monotributista</option>
+                <option>Exento</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <!-- Equipaje -->
@@ -124,6 +139,14 @@
           <h2 class="checkout-section-title">
             <span class="checkout-step-num">3</span> Método de pago
           </h2>
+          <div class="form-group" style="margin-bottom:16px">
+            <label>Método de pago</label>
+            <select class="form-control" id="metodo-pago">
+              <option value="TARJETA_CREDITO">Tarjeta de crédito</option>
+              <option value="TARJETA_DEBITO">Tarjeta de débito</option>
+              <option value="TRANSFERENCIA">Transferencia bancaria</option>
+            </select>
+          </div>
           <div class="card-icons">
             <span class="card-icon">VISA</span>
             <span class="card-icon">MC</span>
@@ -212,7 +235,7 @@
           <span class="summary-total-amount" id="grand-total">$774</span>
         </div>
 
-        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:20px" onclick="confirmarPago()">
+        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:20px" id="btn-pagar" onclick="confirmarPago()">
           🔒 Confirmar y pagar
         </button>
         <p style="font-size:11px;color:var(--gray-500);text-align:center;margin-top:10px">
