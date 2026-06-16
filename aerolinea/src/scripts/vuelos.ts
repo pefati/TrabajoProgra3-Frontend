@@ -69,6 +69,10 @@ function renderFlights(lista: any[]) {
                     id="fav-btn-${v.id}" onclick="event.stopPropagation();toggleFavorito(${v.id})">
                     ${isFav ? '♥ Guardado' : '♡ Favorito'}
                 </button>
+                <button class="btn" style="padding:6px 12px;font-size:12px;border:1px solid var(--navy)" 
+                        onclick="event.stopPropagation();verDetalle(${v.id})">
+                        Más info
+                </button>
             </div>
         </div>`;
     }).join('');
@@ -78,6 +82,68 @@ function renderFlights(lista: any[]) {
     document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('fc-' + id)?.classList.add('selected');
 };
+
+(window as any).verDetalle = function (id: number) {
+    const v = vuelosActuales.find(x => x.id === id);
+    if (!v) return;
+
+    const origen = v.aeropuertoOrigen?.ciudad || v.origen || '—';
+    const destino = v.aeropuertoDestino?.ciudad || v.destino || '—';
+    const fechaSalida = v.fechaSalida ? new Date(v.fechaSalida).toLocaleDateString('es-AR') : '—';
+    const fechaLlegada = v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleDateString('es-AR') : '—';
+    const horaSalida = v.horaSalida || (v.fechaSalida ? new Date(v.fechaSalida).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
+    const horaLlegada = v.horaLlegada || (v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
+    const precio = v.precioVuelo ?? v.precio ?? 0;
+
+    document.getElementById('modal-contenido')!.innerHTML = `
+        <h2 style="font-size:18px;font-weight:600;margin-bottom:1.5rem">${origen} → ${destino}</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Fecha salida</div>
+                <div style="font-weight:500">${fechaSalida}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Fecha llegada</div>
+                <div style="font-weight:500">${fechaLlegada}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Hora salida</div>
+                <div style="font-weight:500">${horaSalida}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Hora llegada</div>
+                <div style="font-weight:500">${horaLlegada}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Escala</div>
+                <div style="font-weight:500">${v.escala ? 'Sí' : 'No'}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#888;margin-bottom:2px">Estado</div>
+                <div style="font-weight:500">${v.estado || '—'}</div>
+            </div>
+        </div>
+        <div style="border-top:1px solid #eee;padding-top:1rem;display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-size:11px;color:#888">Precio por persona</div>
+                <div style="font-size:22px;font-weight:600">$${precio.toLocaleString('es-AR')}</div>
+            </div>
+            <button class="btn btn-primary" onclick="cerrarModal();elegirVuelo(${v.id})">Elegir →</button>
+        </div>
+    `;
+
+    const modal = document.getElementById('modal-detalle')!;
+    modal.style.display = 'flex';
+};
+
+(window as any).cerrarModal = function () {
+    document.getElementById('modal-detalle')!.style.display = 'none';
+};
+
+document.getElementById('modal-detalle')?.addEventListener('click', function (e) {
+    if (e.target === this) (window as any).cerrarModal();
+});
+
 
 (window as any).elegirVuelo = function (id: number) {
     if (!isLoggedIn()) { showToast('Iniciá sesión para comprar', 'warn'); return; }
