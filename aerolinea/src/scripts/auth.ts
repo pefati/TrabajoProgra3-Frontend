@@ -86,7 +86,7 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 }
 
 
-export function showToast(msg: string, type: 'info' | 'warn' | 'error' = 'info') {
+export function showToast(msg: string, type: 'info' | 'success' |'warn' | 'error' = 'info') {
     const t = document.createElement('div');
     t.className = 'toast';
     if (type === 'warn') t.style.background = '#854F0B';

@@ -36,11 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(err.message || 'Error en registro');
             }
 
-            const data = await res.json();
-            setSession(data.token, data.email, data.userId, false, 'ROLE_INCOMPLETO');
-
-            showToast('Cuenta creada. Completá tu perfil para continuar.', 'warn');
-            setTimeout(() => window.location.href = 'perfil.html', 1200);
+            showToast('Cuenta creada. Revisá tu email para verificar tu cuenta.', 'success');
+            setTimeout(() => window.location.href = 'index.html', 3000);
 
         } catch (err: any) {
             showToast(err.message || 'Error al registrarse', 'error');
