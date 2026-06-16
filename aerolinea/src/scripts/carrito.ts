@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requireAuth, isPerfilCompleto } from './auth';
+import { initAuth, apiFetch, showToast, isPerfilCompleto } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -7,8 +7,6 @@ fetch('/src/components/navbar.html')
 fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
-
-if (!requireAuth()) { throw new Error('not authenticated'); }
 
 let carritoData: any = null;
 
@@ -112,4 +110,7 @@ async function renderCarrito(data: any) {
     window.location.href = 'pago.html';
 };
 
-cargarCarrito();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  cargarCarrito();
+});

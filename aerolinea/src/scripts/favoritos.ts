@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requireAuth } from './auth';
+import { initAuth, apiFetch, showToast } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -7,8 +7,6 @@ fetch('/src/components/navbar.html')
 fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
-
-if (!requireAuth()) { throw new Error('not authenticated'); }
 
 async function cargarFavoritos() {
     const container = document.getElementById('favoritos-list');
@@ -75,7 +73,10 @@ async function cargarFavoritos() {
     try {
         await apiFetch(`/api/favoritos/${favId}`, { method: 'DELETE' });
         showToast('Eliminado de favoritos');
-        cargarFavoritos();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  cargarFavoritos();
+});
     } catch (err: any) {
         showToast(err.message || 'Error al eliminar', 'error');
     }

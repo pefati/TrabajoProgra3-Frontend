@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const response = await fetch(`/api/auth/verify?token=${token}`, {
-            method: 'GET'
+            method: 'GET',
+            credentials: 'include'
         });
 
         loadingState!.style.display = 'none';

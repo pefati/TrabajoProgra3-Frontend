@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requireAuth } from './auth';
+import { initAuth, apiFetch, showToast } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -7,8 +7,6 @@ fetch('/src/components/navbar.html')
 fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
-
-if (!requireAuth()) { throw new Error('not authenticated'); }
 
 async function cargarFacturas() {
     const container = document.getElementById('facturas-list');
@@ -60,4 +58,7 @@ async function cargarFacturas() {
 
 (window as any).showToastGlobal = (msg: string) => showToast(msg);
 
-cargarFacturas();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  cargarFacturas();
+});

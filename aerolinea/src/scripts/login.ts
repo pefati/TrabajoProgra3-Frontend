@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('/api/auth/verify-2fa', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ email: reqEmail, code })
                 });
 
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
 
@@ -86,16 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch { }
 
         setSession(data.token, data.email, data.userId, data.perfilCompleto ?? false, role);
-
-        try {
-            const perfil = await apiFetch('/api/auth/perfil');
-            if (perfil.nombre) {
-                localStorage.setItem('user_nombre', perfil.nombre + ' ' + (perfil.apellido || ''));
-            }
-            if (perfil.personaId) {
-                localStorage.setItem('persona_id', String(perfil.personaId));
-            }
-        } catch { }
 
         if (!data.perfilCompleto) {
             showToast('Completá tu perfil para continuar.', 'warn');

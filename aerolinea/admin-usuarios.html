@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroGest — Admin Usuarios</title>
+  <link rel="stylesheet" href="/src/styles/styles.css" />
+  <link rel="stylesheet" href="/src/styles/admin.css" />
+</head>
+<body>
+<div id="navbar-container"></div>
+
+<main class="container admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-title">Administración</div>
+    <a href="admin.html"><span class="icon">📊</span> Panel</a>
+    <a href="admin-vuelos.html"><span class="icon">✈</span> Vuelos</a>
+    <a href="admin-aeropuertos.html"><span class="icon">📍</span> Aeropuertos</a>
+    <a href="admin-aviones.html"><span class="icon">🛩</span> Aviones</a>
+    <a href="admin-usuarios.html" class="active"><span class="icon">👥</span> Usuarios</a>
+  </aside>
+  <section class="admin-content">
+    <div class="admin-toolbar">
+      <div class="admin-header" style="margin-bottom:0">
+        <h1>Usuarios</h1>
+        <p>Listar y cambiar roles de usuarios registrados.</p>
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-usuarios"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+<script type="module" src="/src/scripts/admin-usuarios.ts"></script>
+</body>
+</html>

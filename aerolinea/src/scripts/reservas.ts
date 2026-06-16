@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requireAuth } from './auth';
+import { initAuth, apiFetch, showToast } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -7,8 +7,6 @@ fetch('/src/components/navbar.html')
 fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
-
-if (!requireAuth()) { throw new Error('not authenticated'); }
 
 let todasLasReservas: any[] = [];
 let reservaSeleccionada: number | null = null;
@@ -179,4 +177,7 @@ function renderHistorial(lista: any[]) {
 
 (window as any).showToastGlobal = (msg: string) => showToast(msg);
 
-cargarReservas();
+document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  cargarReservas();
+});

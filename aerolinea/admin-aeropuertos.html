@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroGest — Admin Aeropuertos</title>
+  <link rel="stylesheet" href="/src/styles/styles.css" />
+  <link rel="stylesheet" href="/src/styles/admin.css" />
+</head>
+<body>
+<div id="navbar-container"></div>
+
+<main class="container admin-layout">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-title">Administración</div>
+    <a href="admin.html"><span class="icon">📊</span> Panel</a>
+    <a href="admin-vuelos.html"><span class="icon">✈</span> Vuelos</a>
+    <a href="admin-aeropuertos.html" class="active"><span class="icon">📍</span> Aeropuertos</a>
+    <a href="admin-aviones.html"><span class="icon">🛩</span> Aviones</a>
+    <a href="admin-usuarios.html"><span class="icon">👥</span> Usuarios</a>
+  </aside>
+  <section class="admin-content">
+    <div class="admin-toolbar">
+      <div class="admin-header" style="margin-bottom:0">
+        <h1>Aeropuertos</h1>
+        <p>Registrar y gestionar aeropuertos.</p>
+      </div>
+      <button class="btn btn-dark" id="btn-nuevo-aeropuerto">+ Nuevo aeropuerto</button>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Código IATA</th>
+            <th>Ciudad</th>
+            <th>País</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-aeropuertos"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+<div id="modal-container"></div>
+<script type="module" src="/src/scripts/admin-aeropuertos.ts"></script>
+</body>
+</html>

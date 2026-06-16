@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requirePerfilCompleto } from './auth';
+import { initAuth, apiFetch, showToast, isPerfilCompleto } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -7,8 +7,6 @@ fetch('/src/components/navbar.html')
 fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
-
-if (!requirePerfilCompleto()) { throw new Error('not authorized'); }
 
 let extras = 0;
 let seatExtra = 0;
@@ -19,25 +17,36 @@ const asiento = JSON.parse(sessionStorage.getItem('asiento_seleccionado') || '{}
 
 const basePago: number = vuelo.precioVuelo ?? vuelo.precio ?? 689;
 
-const flightSummary = document.getElementById('flight-summary-info');
-if (flightSummary && vuelo.id) {
-    const origen = vuelo.aeropuertoOrigen?.ciudad || vuelo.origen || '—';
-    const destino = vuelo.aeropuertoDestino?.ciudad || vuelo.destino || '—';
-    flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
-        <div style="font-size:13px;color:var(--gray-500)">Vuelo #${vuelo.id} · ${vuelo.escala ? '1 escala' : 'Directo'}</div>`;
-}
+document.addEventListener('DOMContentLoaded', async () => {
+  await initAuth();
+  if (!isPerfilCompleto()) {
+    showToast('Completá tu perfil antes de continuar', 'warn');
+    setTimeout(() => window.location.href = 'perfil.html', 1500);
+    return;
+  }
 
-const tarifaBaseEl = document.getElementById('tarifa-base');
-if (tarifaBaseEl) tarifaBaseEl.textContent = '$' + basePago.toLocaleString('es-AR');
+  const flightSummary = document.getElementById('flight-summary-info');
+  if (flightSummary && vuelo.id) {
+      const origen = vuelo.aeropuertoOrigen?.ciudad || vuelo.origen || '—';
+      const destino = vuelo.aeropuertoDestino?.ciudad || vuelo.destino || '—';
+      flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
+          <div style="font-size:13px;color:var(--gray-500)">Vuelo #${vuelo.id} · ${vuelo.escala ? '1 escala' : 'Directo'}</div>`;
+  }
 
-if (asiento.id) {
-    const asientoDisplay = document.getElementById('asiento-display');
-    const asientoPrecio = document.getElementById('asiento-precio');
-    if (asientoDisplay) asientoDisplay.textContent = asiento.id;
-    if (asientoPrecio) asientoPrecio.textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
-    seatExtra = asiento.precio || 0;
-    calcTotal();
-}
+  const tarifaBaseEl = document.getElementById('tarifa-base');
+  if (tarifaBaseEl) tarifaBaseEl.textContent = '$' + basePago.toLocaleString('es-AR');
+
+  if (asiento.id) {
+      const asientoDisplay = document.getElementById('asiento-display');
+      const asientoPrecio = document.getElementById('asiento-precio');
+      if (asientoDisplay) asientoDisplay.textContent = asiento.id;
+      if (asientoPrecio) asientoPrecio.textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
+      seatExtra = asiento.precio || 0;
+      calcTotal();
+  }
+
+  calcTotal();
+});
 
 (window as any).actualizarExtras = function () {
     extras = 0;
@@ -115,4 +124,3 @@ function calcTotal() {
 };
 
 (window as any).showToast = (msg: string) => showToast(msg);
-calcTotal();
