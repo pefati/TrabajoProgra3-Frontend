@@ -77,7 +77,12 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
         throw new Error(msg);
     }
     if (res.status === 204) return null;
-    return res.json();
+
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) return res.json();
+
+    const text = await res.text();
+    return text || null;
 }
 
 
@@ -159,6 +164,7 @@ export function initAuth() {
         apiFetch('/api/auth/perfil').then((data: any) => {
             const fullName = [data.nombre, data.apellido].filter(Boolean).join(' ') || email.split('@')[0];
             localStorage.setItem('user_nombre', fullName);
+            if (data.personaId) localStorage.setItem('persona_id', String(data.personaId));
             if (avatar) avatar.textContent = (fullName[0] || '?').toUpperCase();
             if (userName) userName.textContent = fullName;
             if (ddName) ddName.textContent = fullName;

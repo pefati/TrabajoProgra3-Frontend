@@ -551,6 +551,12 @@ select.form-control { cursor: pointer; }
 .booking-date-month { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em; }
 .booking-actions { display: flex; gap: 8px; }
 
+.quick-filter.active {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .hero-content { grid-template-columns: 1fr; }
@@ -708,10 +714,171 @@ select.form-control { cursor: pointer; }
     color: var(--white);
 }
 
+/* Perfil */
+.profile-layout {
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.profile-main-card {
+    min-width: 0;
+}
+
+.profile-side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-panel {
+    background: var(--white);
+    border: 1px solid var(--light-blue-1);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+}
+
+.profile-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.profile-panel h3 {
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--navy);
+    margin-bottom: 4px;
+}
+
+.profile-panel p {
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.5;
+}
+
+.profile-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--blue);
+    background: var(--navy);
+    color: var(--white);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.payment-method {
+    display: grid;
+    grid-template-columns: 52px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid var(--light-blue-1);
+    border-radius: var(--radius);
+    margin-top: 10px;
+    background: rgba(255,255,255,0.55);
+}
+
+.payment-method.selected {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(60,165,227,0.14);
+}
+
+.payment-brand {
+    width: 44px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    background: var(--navy);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.payment-method strong {
+    display: block;
+    font-size: 14px;
+    color: var(--navy);
+}
+
+.payment-method span {
+    display: block;
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+.payment-action {
+    border: none;
+    background: transparent;
+    color: var(--pink);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.security-option {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--blue-pale);
+    cursor: pointer;
+}
+
+.security-option input {
+    margin-top: 4px;
+}
+
+.security-option strong {
+    display: block;
+    color: var(--navy);
+    font-size: 14px;
+}
+
+.security-option small {
+    display: block;
+    color: var(--gray-500);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 /* ── Responsive para Autenticación ── */
 @media (max-width: 900px) {
     .auth-container {
         grid-template-columns: 1fr;
         gap: 32px;
+    }
+
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-page {
+        padding-top: 52px;
+    }
+
+    .auth-card,
+    .profile-panel {
+        padding: 24px;
+    }
+
+    .payment-method {
+        grid-template-columns: 44px 1fr;
+    }
+
+    .payment-action {
+        grid-column: 2;
+        justify-self: start;
     }
 }

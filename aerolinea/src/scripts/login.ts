@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (perfil.nombre) {
                     localStorage.setItem('user_nombre', perfil.nombre + ' ' + (perfil.apellido || ''));
                 }
+                if (perfil.personaId) {
+                    localStorage.setItem('persona_id', String(perfil.personaId));
+                }
             } catch { }
 
             if (!data.perfilCompleto) {

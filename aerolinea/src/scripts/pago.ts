@@ -82,9 +82,6 @@ function calcTotal() {
 
     if (!nombre || !emailEl) { showToast('Completá nombre y email', 'warn'); return; }
 
-    const personaId = parseInt(localStorage.getItem('persona_id') || '0');
-    if (!personaId) { showToast('No se encontró tu perfil. Volvé a iniciar sesión.', 'error'); return; }
-
     const btn = document.getElementById('btn-pagar') as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = '🔒 Procesando...'; }
 
@@ -96,7 +93,6 @@ function calcTotal() {
         await apiFetch('/api/compras/confirmar', {
             method: 'POST',
             body: JSON.stringify({
-                personaId,
                 equipajeId,
                 asistenciaId: null,
                 cuil,

@@ -72,9 +72,8 @@ async function cargarFavoritos() {
 }
 
 (window as any).eliminarFavorito = async function (favId: number) {
-    const personaId = localStorage.getItem('persona_id');
     try {
-        await apiFetch(`/api/favoritos/${favId}?personaId=${personaId}`, { method: 'DELETE' });
+        await apiFetch(`/api/favoritos/${favId}`, { method: 'DELETE' });
         showToast('Eliminado de favoritos');
         cargarFavoritos();
     } catch (err: any) {

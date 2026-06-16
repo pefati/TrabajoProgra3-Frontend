@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, requireAuth, isPerfilCompleto, setSession, getToken } from './auth';
+git import { initAuth, apiFetch, showToast, requireAuth, isPerfilCompleto, setSession, getToken } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -15,6 +15,7 @@ const perfilCompleto = isPerfilCompleto();
 async function cargarPerfil() {
     try {
         const data = await apiFetch('/api/auth/perfil');
+        if (data.personaId) localStorage.setItem('persona_id', String(data.personaId));
         (document.getElementById('p-nombre') as HTMLInputElement).value = data.nombre || '';
         (document.getElementById('p-apellido') as HTMLInputElement).value = data.apellido || '';
         (document.getElementById('p-email') as HTMLInputElement).value = data.email || '';

@@ -13,17 +13,11 @@ if (!requireAuth()) { throw new Error('not authenticated'); }
 let carritoData: any = null;
 
 async function cargarCarrito() {
-    const personaId = localStorage.getItem('persona_id');
-    if (!personaId) {
-        showToast('No se encontró tu perfil. Iniciá sesión nuevamente.', 'error');
-        return;
-    }
-
     const container = document.getElementById('carrito-list');
     if (container) container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--gray-500)">Cargando carrito...</div>';
 
     try {
-        const data = await apiFetch('/api/carrito/' + personaId);
+        const data = await apiFetch('/api/carrito');
         carritoData = data;
         renderCarrito(data);
     } catch (err: any) {
@@ -91,9 +85,8 @@ async function renderCarrito(data: any) {
 }
 
 (window as any).eliminarItem = async function (itemId: number) {
-    const personaId = localStorage.getItem('persona_id');
     try {
-        await apiFetch(`/api/carrito/items/${itemId}?personaId=${personaId}`, { method: 'DELETE' });
+        await apiFetch(`/api/carrito/items/${itemId}`, { method: 'DELETE' });
         showToast('Item eliminado');
         cargarCarrito();
     } catch (err: any) {
@@ -103,10 +96,9 @@ async function renderCarrito(data: any) {
 
 (window as any).vaciarCarrito = async function () {
     if (!carritoData?.id) return;
-    const personaId = localStorage.getItem('persona_id');
     if (!confirm('¿Vaciar todo el carrito?')) return;
     try {
-        await apiFetch(`/api/carrito/${carritoData.id}/clear?personaId=${personaId}`, { method: 'DELETE' });
+        await apiFetch(`/api/carrito/${carritoData.id}/clear`, { method: 'DELETE' });
         showToast('Carrito vaciado');
         cargarCarrito();
     } catch (err: any) {

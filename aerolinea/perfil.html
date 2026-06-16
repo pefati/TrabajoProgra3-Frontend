@@ -9,8 +9,8 @@
 <body>
 <div id="navbar-container"></div>
 
-<main class="section" style="margin-top:72px">
-  <div class="container" style="max-width:640px">
+<main class="section profile-page" style="margin-top:72px">
+  <div class="container profile-layout">
 
     <!-- Banner perfil incompleto -->
     <div id="perfil-banner" style="display:none;align-items:center;gap:12px;background:#FAEEDA;border:1px solid #e8c99a;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:28px">
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div class="auth-card animate" style="max-width:100%">
+    <div class="auth-card animate profile-main-card" style="max-width:100%">
       <div class="auth-header">
         <h2 class="auth-title">Mi <em>Perfil</em></h2>
         <p class="auth-subtitle">Actualizá tus datos personales para usar todos los servicios.</p>
@@ -82,6 +82,61 @@
         <button type="submit" class="btn btn-primary btn-lg btn-block auth-btn-accent">Guardar cambios</button>
       </form>
     </div>
+
+    <aside class="profile-side-panel animate delay-1">
+      <section class="profile-panel">
+        <div class="profile-panel-header">
+          <div>
+            <h3>Metodos de pago</h3>
+            <p>Administra las tarjetas guardadas para compras futuras.</p>
+          </div>
+          <button type="button" class="profile-icon-btn" aria-label="Agregar metodo de pago">+</button>
+        </div>
+
+        <div class="payment-method selected">
+          <div class="payment-brand">VISA</div>
+          <div>
+            <strong>Terminada en 4242</strong>
+            <span>Vence 08/28</span>
+          </div>
+          <button type="button" class="payment-action">Editar</button>
+        </div>
+
+        <div class="payment-method">
+          <div class="payment-brand">MC</div>
+          <div>
+            <strong>Terminada en 1098</strong>
+            <span>Vence 03/27</span>
+          </div>
+          <button type="button" class="payment-action">Quitar</button>
+        </div>
+      </section>
+
+      <section class="profile-panel">
+        <div class="profile-panel-header">
+          <div>
+            <h3>Seguridad</h3>
+            <p>Opciones preparadas para doble factor.</p>
+          </div>
+        </div>
+
+        <label class="security-option">
+          <input type="checkbox" id="twofa-email" />
+          <span>
+            <strong>2FA por correo</strong>
+            <small>Enviar codigo de verificacion al iniciar sesion.</small>
+          </span>
+        </label>
+
+        <label class="security-option">
+          <input type="checkbox" id="twofa-authenticator" />
+          <span>
+            <strong>App autenticadora</strong>
+            <small>Usar codigos temporales de una app compatible.</small>
+          </span>
+        </label>
+      </section>
+    </aside>
   </div>
 </main>
 

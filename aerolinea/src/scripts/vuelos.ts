@@ -9,11 +9,14 @@ fetch('/src/components/footer.html')
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
 
 let vuelosActuales: any[] = [];
+let vuelosFiltrados: any[] = [];
 let favoritosIds = new Set<number>();
+const filtrosActivos = new Set<string>();
 
 function renderFlights(lista: any[]) {
     const container = document.getElementById('flight-list');
     const countEl = document.getElementById('count');
+    vuelosFiltrados = lista;
     if (countEl) countEl.textContent = lista.length.toString();
 
     if (!container) return;
@@ -95,8 +98,7 @@ function renderFlights(lista: any[]) {
             const favs: any[] = await apiFetch('/api/favoritos');
             const fav = favs.find((f: any) => f.vueloId === vueloId);
             if (fav) {
-                const personaId = localStorage.getItem('persona_id');
-                await apiFetch(`/api/favoritos/${fav.id}?personaId=${personaId}`, { method: 'DELETE' });
+                await apiFetch(`/api/favoritos/${fav.id}`, { method: 'DELETE' });
                 favoritosIds.delete(vueloId);
                 const btn = document.getElementById('fav-btn-' + vueloId);
                 if (btn) { btn.textContent = '♡ Favorito'; btn.classList.remove('btn-dark'); }
@@ -115,17 +117,25 @@ function renderFlights(lista: any[]) {
 };
 
 (window as any).sortFlights = function (criterio: string) {
-    if (criterio === 'precio') vuelosActuales.sort((a, b) => (a.precioVuelo ?? a.precio) - (b.precioVuelo ?? b.precio));
-    if (criterio === 'salida') vuelosActuales.sort((a, b) => new Date(a.fechaSalida).getTime() - new Date(b.fechaSalida).getTime());
-    renderFlights(vuelosActuales);
+    const lista = [...vuelosFiltrados];
+    ordenarVuelos(lista, criterio);
+    renderFlights(lista);
 };
 
 (window as any).filtrarDirectos = function () {
-    renderFlights(vuelosActuales.filter(v => !v.escala));
+    toggleFiltro('directos');
 };
-(window as any).filtrarManana = function () { renderFlights(vuelosActuales); };
+(window as any).filtrarManana = function () { toggleFiltro('manana'); };
 (window as any).filtrarBaratos = function () {
-    renderFlights(vuelosActuales.filter(v => (v.precioVuelo ?? v.precio) < 800));
+    toggleFiltro('baratos');
+};
+(window as any).filtrarTemprano = function () {
+    toggleFiltro('temprano');
+};
+(window as any).limpiarFiltrosVuelos = function () {
+    filtrosActivos.clear();
+    document.querySelectorAll('.quick-filter.active').forEach(el => el.classList.remove('active'));
+    aplicarFiltros();
 };
 
 (window as any).swapAirports = function () {
@@ -179,10 +189,66 @@ async function fetchVuelos() {
             } catch { }
         }
 
-        renderFlights(vuelosActuales);
+        aplicarFiltros();
     } catch (err) {
         if (container) container.innerHTML = '<div style="text-align:center;padding:40px;color:#c0392b;background:#fdf0ee;border-radius:8px">No se pudieron cargar los vuelos. Verificá que el servidor esté activo.</div>';
     }
+}
+
+function toggleFiltro(filtro: string) {
+    const btn = document.querySelector(`[data-flight-filter="${filtro}"]`);
+    if (filtrosActivos.has(filtro)) {
+        filtrosActivos.delete(filtro);
+        btn?.classList.remove('active');
+    } else {
+        filtrosActivos.add(filtro);
+        btn?.classList.add('active');
+    }
+    aplicarFiltros();
+}
+
+function aplicarFiltros() {
+    let lista = [...vuelosActuales];
+
+    if (filtrosActivos.has('directos')) {
+        lista = lista.filter(v => !v.escala);
+    }
+    if (filtrosActivos.has('manana')) {
+        lista = lista.filter(v => {
+            const hora = obtenerHora(v.fechaSalida, v.horaSalida);
+            return hora >= 6 && hora < 12;
+        });
+    }
+    if (filtrosActivos.has('baratos')) {
+        lista = lista.filter(v => (v.precioVuelo ?? v.precio ?? 0) < 800);
+    }
+    if (filtrosActivos.has('temprano')) {
+        lista = lista.filter(v => {
+            const hora = obtenerHora(v.fechaSalida, v.horaSalida);
+            return hora >= 0 && hora < 8;
+        });
+    }
+
+    const sort = document.getElementById('sort-vuelos') as HTMLSelectElement | null;
+    if (sort?.value) ordenarVuelos(lista, sort.value);
+    renderFlights(lista);
+}
+
+function ordenarVuelos(lista: any[], criterio: string) {
+    if (criterio === 'precio') lista.sort((a, b) => (a.precioVuelo ?? a.precio ?? 0) - (b.precioVuelo ?? b.precio ?? 0));
+    if (criterio === 'salida') lista.sort((a, b) => new Date(a.fechaSalida || 0).getTime() - new Date(b.fechaSalida || 0).getTime());
+    if (criterio === 'duracion') lista.sort((a, b) => calcularDuracion(a) - calcularDuracion(b));
+}
+
+function obtenerHora(fechaSalida?: string, horaSalida?: string) {
+    if (fechaSalida) return new Date(fechaSalida).getHours();
+    if (horaSalida) return parseInt(horaSalida.slice(0, 2), 10);
+    return 99;
+}
+
+function calcularDuracion(v: any) {
+    if (!v.fechaSalida || !v.fechaLlegada) return Number.MAX_SAFE_INTEGER;
+    return new Date(v.fechaLlegada).getTime() - new Date(v.fechaSalida).getTime();
 }
 
 fetchVuelos();
