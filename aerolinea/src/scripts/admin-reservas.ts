@@ -75,7 +75,7 @@ function renderTabla(lista: any[]) {
         const id = (btn as HTMLElement).dataset.cancelar!;
         if (!confirm(`¿Cancelar la reserva #${id}?`)) return;
         try {
-            await apiFetch(`/api/reservas/${id}/cancelar`, { method: 'PATCH' });
+            await apiFetch(`/api/reservas/cancelar/${id}`, { method: 'PATCH' });
             showToast('Reserva cancelada', 'success');
             cargarReservas();
         } catch (err: any) { showToast(err.message, 'error'); }
