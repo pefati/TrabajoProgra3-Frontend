@@ -64,15 +64,21 @@ function renderFlights(lista: any[]) {
                 <div class="flight-price-label">por persona</div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+            <button class="btn" style="padding:6px 14px;font-size:16px;" 
+                            title="Agregar al carrito"
+                            onclick="event.stopPropagation();agregarAlCarrito(${v.id})">
+                            <img src="/images/carrito.png" alt="Agregar al carrito" style="width:20px;height:20px;"></button>
                 <button class="btn btn-primary" onclick="event.stopPropagation();elegirVuelo(${v.id})">Elegir →</button>
                 <button class="btn ${isFav ? 'btn-dark' : ''}" style="padding:6px 12px;font-size:12px;border:1px solid var(--navy)" 
                     id="fav-btn-${v.id}" onclick="event.stopPropagation();toggleFavorito(${v.id})">
                     ${isFav ? '♥ Guardado' : '♡ Favorito'}
                 </button>
+               
                 <button class="btn" style="padding:6px 12px;font-size:12px;border:1px solid var(--navy)" 
                         onclick="event.stopPropagation();verDetalle(${v.id})">
                         Más info
                 </button>
+                
             </div>
         </div>`;
     }).join('');
@@ -82,6 +88,33 @@ function renderFlights(lista: any[]) {
     document.querySelectorAll('.flight-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('fc-' + id)?.classList.add('selected');
 };
+
+(window as any).agregarAlCarrito = async function (vueloId: number) {
+    if (!isLoggedIn()) { showToast('Iniciá sesión para agregar al carrito', 'warn'); return; }
+    if (!isPerfilCompleto()) return;
+
+    try {
+        await apiFetch(`/api/carrito/items?vueloId=${vueloId}&cantidad=1&clase=ECONOMICA`, { method: 'POST' });
+        showToast('Vuelo agregado al carrito ✓');
+        await actualizarContadorCarrito();
+    } catch (err: any) {
+        showToast(err.message || 'Error al agregar al carrito', 'error');
+    }
+};
+
+async function actualizarContadorCarrito() {
+    try {
+        const carrito = await apiFetch('/api/carrito');
+        const count = carrito?.items?.length ?? 0;
+        const badge = document.getElementById('nav-carrito-count');
+        if (badge) {
+            badge.textContent = count.toString();
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    } catch { }
+}
+if (isLoggedIn()) actualizarContadorCarrito();
+
 
 (window as any).verDetalle = function (id: number) {
     const v = vuelosActuales.find(x => x.id === id);

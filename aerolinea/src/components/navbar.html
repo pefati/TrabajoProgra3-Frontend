@@ -1,4 +1,4 @@
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" xmlns:border-radius="http://www.w3.org/1999/xhtml">
     <div class="container">
         <a href="index.html" class="nav-logo">
             <div class="nav-logo-icon">
@@ -19,7 +19,9 @@
 
         <div class="nav-actions" id="user-actions" style="display:none;position:relative">
             <div id="user-menu-trigger" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border-radius:var(--radius);border:1px solid var(--navy-mid)">
-                <div style="width:32px;height:32px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px" id="user-avatar">?</div>
+
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px" id="user-avatar">?</div>
+
                 <span id="user-name" style="font-size:14px;font-weight:600;color:var(--white);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap "></span>
                 <span style="font-size:10px;color:var(--gray-500)">▼</span>
             </div>
@@ -34,7 +36,7 @@
                     <a href="../../perfil.html" class="dd-item">✦ Mi Perfil</a>
                     <a href="../../reservas.html" class="dd-item">✈ Mis Reservas</a>
                     <a href="../../favoritos.html" class="dd-item">♥ Mis Favoritos</a>
-                    <a href="../../carrito.html" class="dd-item">🛒 Carrito</a>
+
                     <a href="../../facturas.html" class="dd-item">🧾 Mis Facturas</a>
                     <div id="dd-admin-section" style="display:none;border-top:1px solid var(--gray-500);margin-top:8px;padding-top:8px">
                         <div style="padding:4px 16px;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--gray-500);text-transform:uppercase">Administración</div>
@@ -49,6 +51,7 @@
                     <a href="#" id="logout-btn" class="dd-item" style="color:#c0392b">Cerrar sesión</a>
                 </div>
             </div>
+            <a href="../../carrito.html"  id="nav-carrito-btn" style="position:relative;display:flex;align-items:center;padding:6px 10px;" class="dd-item"; border-radius:8px;>🛒 Carrito</a>
         </div>
     </div>
 </nav>
