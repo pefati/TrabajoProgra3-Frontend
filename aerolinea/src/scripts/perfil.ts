@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const res = await apiFetch(endpoint, { method: 'PUT', body: JSON.stringify(body) });
 
         if (res?.token) {
-          setSession(res.token, res.email || '', res.userId || 0, true, 'ROLE_USUARIO');
+          setSession(res.token, res.email || '', res.userId || 0, true, res.role || 'ROLE_USUARIO');
         }
         showToast('Perfil actualizado correctamente ✓');
         setTimeout(() => window.location.href = 'index.html', 1200);
