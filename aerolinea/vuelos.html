@@ -20,15 +20,15 @@
         style="display:grid;grid-template-columns:1fr 30px 1fr 1fr 1fr auto;gap:12px;align-items:end">
         <div class="form-group">
           <label style="color:rgba(255,255,255,0.5)">Origen</label>
-          <input type="text" id="origen" class="form-control" value="Buenos Aires (EZE)" />
+          <input type="text" id="origen" class="form-control"/>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;padding-bottom:2px">
           <button type="button" onclick="swapAirports()"
-            style="background:transparent;border:none;color:var(--navy);font-size:20px;cursor:pointer">⇄</button>
+            style="background:transparent;border:none;color:var(--white);font-size:20px;cursor:pointer">⇄</button>
         </div>
         <div class="form-group">
           <label style="color:rgba(255,255,255,0.5)">Destino</label>
-          <input type="text" id="destino" class="form-control" value="Madrid (MAD)" />
+          <input type="text" id="destino" class="form-control"/>
         </div>
         <div class="form-group">
           <label style="color:rgba(255,255,255,0.5)">Ida</label>
@@ -52,9 +52,7 @@
     <div class="container">
       <div class="results-header">
         <div>
-          <h1 style="font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:4px">Buenos Aires →
-            Madrid</h1>
-          <div class="results-count">Mostrando <span id="count">8</span> vuelos disponibles · Lun 14 jul 2025</div>
+            <div class="results-count">Mostrando <span id="count">0</span> vuelos disponibles · <span id="fecha-resultados"></span></div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
           <span style="font-size:13px;color:var(--gray-500)">Ordenar por:</span>

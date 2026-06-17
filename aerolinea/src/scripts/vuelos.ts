@@ -269,6 +269,15 @@ async function fetchVuelos() {
 
     const url = '/api/vuelos/filtrar?' + searchParams.toString();
 
+    const h1 = document.querySelector('.results-header h1');
+    if (h1) h1.textContent = `${oCiudad} → ${dCiudad}`;
+
+    const fechaEl = document.getElementById('fecha-resultados');
+    if (fechaEl) {
+        const ahora = new Date();
+        fechaEl.textContent = ahora.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
     try {
         const data = await fetch(url).then(r => r.json());
         vuelosActuales = Array.isArray(data) ? data : [];

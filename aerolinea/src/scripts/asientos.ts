@@ -140,7 +140,9 @@ function actualizarResumen() {
 }
 
 (window as any).continuarPago = function () {
-    if (selectedSeats.length !== seatsNeeded) return;
+    if (!selectedSeats) {
+        sessionStorage.removeItem('asiento_seleccionado');
+    }
     window.location.href = 'pago.html';
 };
 
