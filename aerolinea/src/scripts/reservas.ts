@@ -148,7 +148,7 @@ function renderHistorial(lista: any[]) {
 };
 
 (window as any).showTab = function (tab: string, el: HTMLElement) {
-    ['activas', 'pasadas', 'checkin'].forEach(t => {
+    ['activas', 'pasadas'].forEach(t => {
         const tabEl = document.getElementById('tab-' + t);
         if (tabEl) tabEl.style.display = t === tab ? 'block' : 'none';
     });
@@ -164,15 +164,6 @@ function renderHistorial(lista: any[]) {
         ? todasLasReservas.filter(r => String(r.id).includes(q) || r.estadoReserva?.toLowerCase().includes(q))
         : todasLasReservas;
     renderActivas(filtradas);
-};
-
-(window as any).hacerCheckin = function () {
-    const input = document.getElementById('checkin-code') as HTMLInputElement;
-    const id = parseInt(input.value);
-    const r = todasLasReservas.find(x => x.id === id);
-    if (!r) { showToast('Código no encontrado. Verificá los datos.', 'warn'); return; }
-    if (r.estadoReserva === 'CANCELADA') { showToast('Esta reserva está cancelada.', 'error'); return; }
-    showToast('✓ Check-in exitoso para reserva #' + r.id);
 };
 
 (window as any).showToastGlobal = (msg: string) => showToast(msg);

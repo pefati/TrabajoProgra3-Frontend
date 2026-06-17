@@ -46,7 +46,7 @@ async function cargarFacturas() {
                 </div>
                 <div>
                     <button class="btn btn-dark" style="padding:8px 16px;font-size:12px"
-                        onclick="showToastGlobal('Descargando factura #${f.id}...')">Descargar</button>
+                        onclick="window.open('/api/facturas/${f.id}/download','_blank')">Descargar</button>
                 </div>
             </div>`;
         }).join('');

@@ -50,7 +50,6 @@
     <div class="booking-tabs">
       <div class="booking-tab active" onclick="showTab('activas',this)">Próximos vuelos</div>
       <div class="booking-tab" onclick="showTab('pasadas',this)">Historial</div>
-      <div class="booking-tab" onclick="showTab('checkin',this)">Check-in online</div>
     </div>
 
     <!-- Buscar reserva -->
@@ -70,23 +69,7 @@
       <div class="booking-list" id="booking-list-historial"></div>
     </div>
 
-    <!-- Check-in -->
-    <div id="tab-checkin" style="display:none">
-      <div style="background:var(--white);border:1px solid var(--cream);border-radius:var(--radius-md);padding:40px;text-align:center;max-width:480px;margin:0 auto">
-        <div style="font-size:48px;margin-bottom:16px">🎫</div>
-        <h3 style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px">Check-in online</h3>
-        <p style="color:var(--gray-500);margin-bottom:24px">El check-in abre 48 hs antes del vuelo. Ingresá tu código de reserva para continuar.</p>
-        <div class="form-group" style="margin-bottom:16px;text-align:left">
-          <label>Código de reserva</label>
-          <input type="text" class="form-control" placeholder="Ej. AC-2025-1234" id="checkin-code" />
-        </div>
-        <div class="form-group" style="margin-bottom:20px;text-align:left">
-          <label>Apellido del pasajero</label>
-          <input type="text" class="form-control" placeholder="González" />
-        </div>
-        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" onclick="hacerCheckin()">Iniciar check-in</button>
-      </div>
-    </div>
+
   </div>
 </section>
 

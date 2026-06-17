@@ -6,7 +6,7 @@ const htmlFiles = [
     'asientos.html', 'carrito.html', 'pago.html', 'reservas.html',
     'facturas.html', 'favoritos.html', 'perfil.html', 'verify.html',
     'admin.html', 'admin-vuelos.html', 'admin-aeropuertos.html',
-    'admin-aviones.html', 'admin-usuarios.html'
+    'admin-aviones.html', 'admin-usuarios.html', 'admin-reservas.html'
 ].map(f => resolve(__dirname, f))
 
 export default defineConfig({
