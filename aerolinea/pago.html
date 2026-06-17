@@ -91,49 +91,58 @@
             </div>
           </div>
 
-          <div class="checkout-section">
+          <!--<div class="checkout-section">
             <h2 class="checkout-section-title">
               <span class="checkout-step-num">2</span> Equipaje y extras
             </h2>
             <div style="display:grid;gap:12px">
               <label
-                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
-                onmouseover="this.style.borderColor='var(--blue)'"
-                onmouseout="this.style.borderColor='var(--navy-light)'">
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(&#45;&#45;navy-light);border-radius:var(&#45;&#45;radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(&#45;&#45;blue)'"
+                onmouseout="this.style.borderColor='var(&#45;&#45;navy-light)'">
                 <input type="checkbox" id="eq-bodega" onchange="actualizarExtras()"
-                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                  style="width:18px;height:18px;accent-color:var(&#45;&#45;navy-light)" />
                 <div style="flex:1">
                   <div style="font-weight:600;margin-bottom:2px">Equipaje de bodega (23 kg)</div>
-                  <div style="font-size:13px;color:var(--gray-500)">Una valija adicional en bodega</div>
+                  <div style="font-size:13px;color:var(&#45;&#45;gray-500)">Una valija adicional en bodega</div>
                 </div>
-                <span style="font-weight:600;color:var(--navy)">+$45</span>
+                <span style="font-weight:600;color:var(&#45;&#45;navy)">+$45</span>
               </label>
               <label
-                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
-                onmouseover="this.style.borderColor='var(--blue)'"
-                onmouseout="this.style.borderColor='var(--navy-light)'">
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(&#45;&#45;navy-light);border-radius:var(&#45;&#45;radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(&#45;&#45;blue)'"
+                onmouseout="this.style.borderColor='var(&#45;&#45;navy-light)'">
                 <input type="checkbox" id="eq-extra" onchange="actualizarExtras()"
-                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                  style="width:18px;height:18px;accent-color:var(&#45;&#45;navy-light)" />
                 <div style="flex:1">
                   <div style="font-weight:600;margin-bottom:2px">Equipaje extra (32 kg)</div>
-                  <div style="font-size:13px;color:var(--gray-500)">Una valija adicional de gran capacidad</div>
+                  <div style="font-size:13px;color:var(&#45;&#45;gray-500)">Una valija adicional de gran capacidad</div>
                 </div>
-                <span style="font-weight:600;color:var(--navy)">+$75</span>
+                <span style="font-weight:600;color:var(&#45;&#45;navy)">+$75</span>
               </label>
               <label
-                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
-                onmouseover="this.style.borderColor='var(--blue)'"
-                onmouseout="this.style.borderColor='var(--navy-light)'">
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(&#45;&#45;navy-light);border-radius:var(&#45;&#45;radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(&#45;&#45;blue)'"
+                onmouseout="this.style.borderColor='var(&#45;&#45;navy-light)'">
                 <input type="checkbox" id="seguro" onchange="actualizarExtras()"
-                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                  style="width:18px;height:18px;accent-color:var(&#45;&#45;navy-light)" />
                 <div style="flex:1">
                   <div style="font-weight:600;margin-bottom:2px">Seguro de viaje</div>
-                  <div style="font-size:13px;color:var(--gray-500)">Cancelación, asistencia médica y equipaje</div>
+                  <div style="font-size:13px;color:var(&#45;&#45;gray-500)">Cancelación, asistencia médica y equipaje</div>
                 </div>
-                <span style="font-weight:600;color:var(--navy)">+$29</span>
+                <span style="font-weight:600;color:var(&#45;&#45;navy)">+$29</span>
               </label>
             </div>
-          </div>
+          </div>-->
+
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">
+                    <span class="checkout-step-num">2</span> Equipaje y extras
+                </h2>
+                <div id="extras-container" style="display:grid;gap:12px">
+                    <div style="color:var(--gray-500);font-size:14px">Cargando opciones...</div>
+                </div>
+            </div>
 
           <div class="checkout-section">
             <h2 class="checkout-section-title">

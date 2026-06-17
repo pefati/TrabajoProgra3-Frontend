@@ -18,6 +18,9 @@ let cartItems: any[] = [];
 let mpPublicKey: string = '';
 let cardFormInstance: any = null;
 
+const equipajesSeleccionados = new Map<number, number>(); // id -> precio
+const asistenciasSeleccionadas = new Map<number, number>();
+
 document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();
   if (!isPerfilCompleto()) {
@@ -27,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   await cargarDatosCarrito();
+  await cargarExtras();
   restaurarFormulario();
   calcTotal();
   await fetchPublicKey();
@@ -190,11 +194,13 @@ async function procesarPago() {
     const cuil = (document.getElementById('cuil') as HTMLInputElement)?.value?.trim() || '';
     const situacionFiscal = (document.getElementById('situacion-fiscal') as HTMLSelectElement)?.value || 'Consumidor Final';
 
-    let equipajeId: number | null = null;
+    /*let equipajeId: number | null = null;
     const bodega = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked;
     const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
     if (bodega) equipajeId = 1;
-    else if (extra) equipajeId = 2;
+    else if (extra) equipajeId = 2;*/
+      const equipajeId = equipajeIdSeleccionado;
+      const asistenciaId = asistenciaIdSeleccionada;
 
     const result = await apiFetch('/api/mercadopago/procesar-pago', {
       method: 'POST',
@@ -270,7 +276,7 @@ document.addEventListener('input', (e) => {
   }
 });
 
-(window as any).actualizarExtras = function () {
+/*(window as any).actualizarExtras = function () {
     extras = 0;
     const bodega = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked;
     const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
@@ -285,7 +291,78 @@ document.addEventListener('input', (e) => {
         if (el) el.style.display = show ? 'flex' : 'none';
     });
     calcTotal();
+};*/
+
+// Variables para guardar los datos reales
+let equipajes: any[] = [];
+let asistencias: any[] = [];
+let equipajeIdSeleccionado: number | null = null;
+let asistenciaIdSeleccionada: number | null = null;
+
+async function cargarExtras() {
+    try {
+        equipajes = await fetch('/api/equipajes').then(r => r.json());
+        asistencias = await fetch('/api/asistenciasAlViajero').then(r => r.json());
+        renderExtras();
+    } catch {
+        showToast('Error al cargar extras', 'error');
+    }
+}
+
+function renderExtras() {
+    const container = document.getElementById('extras-container');
+    if (!container) return;
+
+    let html = '';
+
+    equipajes.forEach((eq: any) => {
+        html += `
+    <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
+      onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
+      <input type="checkbox" onchange="seleccionarEquipaje(${eq.id}, ${eq.precio}, this.checked)"
+        style="width:18px;height:18px;accent-color:var(--navy-light)" />
+      <div style="flex:1">
+        <div style="font-weight:600;margin-bottom:2px">${eq.tipo} (${eq.peso} kg)</div>
+        <div style="font-size:13px;color:var(--gray-500)">Equipaje adicional</div>
+      </div>
+      <span style="font-weight:600;color:var(--navy)">+$${eq.precio.toLocaleString('es-AR')}</span>
+    </label>`;
+    });
+
+    asistencias.forEach((as: any) => {
+        html += `
+    <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
+      onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
+      <input type="checkbox" onchange="seleccionarAsistencia(${as.id}, ${as.precio}, this.checked)"
+        style="width:18px;height:18px;accent-color:var(--navy-light)" />
+      <div style="flex:1">
+        <div style="font-weight:600;margin-bottom:2px">${as.nombrePlan}</div>
+        <div style="font-size:13px;color:var(--gray-500)">${as.descripcion}</div>
+      </div>
+      <span style="font-weight:600;color:var(--navy)">+$${as.precio.toLocaleString('es-AR')}</span>
+    </label>`;
+    });
+
+    container.innerHTML = html;
+}
+
+(window as any).seleccionarEquipaje = function (id: number, precio: number, checked: boolean) {
+    if (checked) equipajesSeleccionados.set(id, precio);
+    else equipajesSeleccionados.delete(id);
+    recalcularExtras();
 };
+
+(window as any).seleccionarAsistencia = function (id: number, precio: number, checked: boolean) {
+    if (checked) asistenciasSeleccionadas.set(id, precio);
+    else asistenciasSeleccionadas.delete(id);
+    recalcularExtras();
+};
+
+function recalcularExtras() {
+    extras = [...equipajesSeleccionados.values(), ...asistenciasSeleccionadas.values()]
+        .reduce((sum, p) => sum + p, 0);
+    calcTotal();
+}
 
 function calcTotal() {
     const total = basePago + seatExtra + extras + impuestos;
