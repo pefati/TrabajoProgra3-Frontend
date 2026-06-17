@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, isPerfilCompleto } from './auth';
+import { initAuth, apiFetch, showToast, isPerfilCompleto, actualizarContadorCarrito } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -17,7 +17,8 @@ async function cargarCarrito() {
     try {
         const data = await apiFetch('/api/carrito');
         carritoData = data;
-        renderCarrito(data);
+        await renderCarrito(data);
+        await actualizarContadorCarrito();
     } catch (err: any) {
         if (container) container.innerHTML = `<div style="padding:20px;color:#c0392b;background:#fdf0ee;border-radius:8px">${err.message}</div>`;
     }
@@ -43,6 +44,7 @@ async function renderCarrito(data: any) {
             <a href="vuelos.html" class="btn btn-primary">Buscar vuelos</a>
         </div>`;
         if (totalEl) totalEl.textContent = '$0';
+        if (subtotalEl) subtotalEl.textContent = '$0';
         return;
     }
 
@@ -63,12 +65,15 @@ async function renderCarrito(data: any) {
         <div class="booking-card" id="item-${item.id}">
             <div style="flex:1">
                 <div class="booking-route">${origen} → ${destino}</div>
-                <div class="booking-details">
-                    ${item.cantidad} pasaje(s) · Clase: ${item.claseVuelo}
-                </div>
+                <div class="booking-details">Clase: ${item.claseVuelo}</div>
                 <div style="font-size:12px;color:var(--gray-500);margin-top:4px">Vuelo #${item.vueloId}</div>
             </div>
-            <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy)">
+            <div style="display:flex;align-items:center;gap:8px">
+                <button class="btn btn-sm" style="padding:4px 10px;font-size:14px" onclick="cambiarCantidad(${item.id}, -1)">−</button>
+                <span style="font-weight:600;min-width:24px;text-align:center" id="qty-${item.id}">${item.cantidad}</span>
+                <button class="btn btn-sm" style="padding:4px 10px;font-size:14px" onclick="cambiarCantidad(${item.id}, 1)">+</button>
+            </div>
+            <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);min-width:100px;text-align:right">
                 $${precio.toLocaleString('es-AR')}
             </div>
             <div>
@@ -81,6 +86,19 @@ async function renderCarrito(data: any) {
     if (subtotalEl) subtotalEl.textContent = '$' + total.toLocaleString('es-AR');
     if (totalEl) totalEl.textContent = '$' + total.toLocaleString('es-AR');
 }
+
+(window as any).cambiarCantidad = async function (itemId: number, delta: number) {
+    const item = carritoData?.items?.find((i: any) => i.id === itemId);
+    if (!item) return;
+    const nueva = item.cantidad + delta;
+    if (nueva < 1) return;
+    try {
+        await apiFetch(`/api/carrito/items/${itemId}?cantidad=${nueva}`, { method: 'PATCH' });
+        cargarCarrito();
+    } catch (err: any) {
+        showToast(err.message || 'Error al actualizar cantidad', 'error');
+    }
+};
 
 (window as any).eliminarItem = async function (itemId: number) {
     try {
@@ -107,7 +125,7 @@ async function renderCarrito(data: any) {
 (window as any).irAPagar = function () {
     if (!isPerfilCompleto()) return;
     if (!carritoData?.items?.length) { showToast('El carrito está vacío', 'warn'); return; }
-    window.location.href = 'pago.html';
+    window.location.href = 'asientos.html';
 };
 
 document.addEventListener('DOMContentLoaded', async () => {

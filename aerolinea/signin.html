@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AeroCielo — Selección de asientos</title>
+  <title>AeroGest — Selección de asientos</title>
   <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<div id="navbar-container"></div>
+  <!-- NAVBAR -->
+  <div id="navbar-container"></div>
 
-<div class="auth-container-sign">
+  <div class="auth-container-sign">
     <div class="auth-card animate delay-1">
       <div class="auth-header">
         <h2 class="auth-title">Crear <em>Cuenta</em></h2>
         <p class="auth-subtitle">Regístrate en segundos y empieza a acumular millas.</p>
       </div>
-      
+
       <form class="auth-form">
         <div class="checkout-grid-2">
           <div class="form-group">
@@ -29,27 +31,27 @@
             <input type="text" id="reg-lastname" class="form-control" placeholder="Pérez" required>
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="reg-email">Correo Electrónico</label>
           <input type="email" id="reg-email" class="form-control" placeholder="tu@email.com" required>
         </div>
-        
+
         <div class="form-group">
           <label for="reg-password">Contraseña</label>
           <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 8 caracteres" required>
         </div>
-        
+
         <div class="auth-checkbox">
           <input type="checkbox" id="terms" required>
           <label for="terms">Acepto los términos, condiciones y políticas de privacidad.</label>
         </div>
-        
+
         <button type="submit" class="btn btn-primary btn-lg btn-block auth-btn-accent">Registrarme</button>
       </form>
     </div>
-</div>
+  </div>
 
-<!-- FOOTER -->
-<div id="footer"></div>
-<script type="module" src="/src/scripts/signin.ts"></script>
+  <!-- FOOTER -->
+  <div id="footer"></div>
+  <script type="module" src="/src/scripts/signin.ts"></script>

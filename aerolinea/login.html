@@ -1,51 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AeroCielo — Selección de asientos</title>
+  <title>AeroGest — Selección de asientos</title>
   <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<div id="navbar-container"></div>
+  <!-- NAVBAR -->
+  <div id="navbar-container"></div>
 
-<!-- MAIN -->
-<main class="section">
-  <div class="auth-container-log">
-    <div class="auth-card animate">
-      <div class="auth-header">
-        <h2 class="auth-title">Iniciar <em>Sesión</em></h2>
-        <p class="auth-subtitle">Qué bueno verte de nuevo. ¡Prepara tu próximo viaje!</p>
+  <!-- MAIN -->
+  <main class="section">
+    <div class="auth-container-log">
+      <div class="auth-card animate">
+        <div class="auth-header">
+          <h2 class="auth-title">Iniciar <em>Sesión</em></h2>
+          <p class="auth-subtitle">Qué bueno verte de nuevo. ¡Prepara tu próximo viaje!</p>
+        </div>
+
+        <form class="auth-form">
+          <div class="form-group">
+            <label for="login-email">Correo Electrónico</label>
+            <input type="email" id="login-email" class="form-control" placeholder="ejemplo@correo.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Contraseña</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-group" id="group-2fa" style="display: none;">
+            <label for="login-2fa">Código 2FA</label>
+            <input type="text" id="login-2fa" class="form-control" placeholder="123456">
+          </div>
+
+          <div class="auth-actions">
+            <a href="#" class="auth-forgot">¿Olvidaste tu contraseña?</a>
+            <button type="submit" class="btn btn-primary btn-lg btn-block auth-btn-accent">Ingresar</button>
+          </div>
+        </form>
       </div>
-      
-      <form class="auth-form">
-        <div class="form-group">
-          <label for="login-email">Correo Electrónico</label>
-          <input type="email" id="login-email" class="form-control" placeholder="ejemplo@correo.com" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="login-password">Contraseña</label>
-          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
-        </div>
-        
-        <div class="form-group" id="group-2fa" style="display: none;">
-          <label for="login-2fa">Código 2FA</label>
-          <input type="text" id="login-2fa" class="form-control" placeholder="123456">
-        </div>
-        
-        <div class="auth-actions">
-          <a href="#" class="auth-forgot">¿Olvidaste tu contraseña?</a>
-          <button type="submit" class="btn btn-primary btn-lg btn-block auth-btn-accent">Ingresar</button>
-        </div>
-      </form>
+
     </div>
+  </main>
 
-  </div>
-</main>
-
-<!-- FOOTER -->
-<div id="footer"></div>
-<script type="module" src="/src/scripts/login.ts"></script>
+  <!-- FOOTER -->
+  <div id="footer"></div>
+  <script type="module" src="/src/scripts/login.ts"></script>

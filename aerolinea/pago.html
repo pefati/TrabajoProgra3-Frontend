@@ -1,245 +1,283 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AeroCielo — Pago seguro</title>
+  <title>AeroGest — Pago seguro</title>
   <link rel="stylesheet" href="/src/styles/styles.css" />
   <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
-<body>
-<div id="navbar-container"></div>
 
-<div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0;margin-top:88px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:0;max-width:500px;margin:0 auto">
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
-        <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Vuelo</span>
-      </div>
-      <div style="flex:1;height:2px;background:var(--success)"></div>
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">✓</div>
-        <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Asiento</span>
-      </div>
-      <div style="flex:1;height:2px;background:var(--success)"></div>
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">3</div>
-        <span style="font-size:11px;margin-top:4px;font-weight:600;color:var(--navy)">Pago</span>
+<body>
+  <div id="navbar-container"></div>
+
+  <div
+    style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0;margin-top:88px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
+    <div class="container">
+      <div style="display:flex;align-items:center;gap:0;max-width:500px;margin:0 auto">
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div
+            style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">
+            ✓</div>
+          <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Vuelo</span>
+        </div>
+        <div style="flex:1;height:2px;background:var(--success)"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div
+            style="width:28px;height:28px;border-radius:50%;background:var(--success);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">
+            ✓</div>
+          <span style="font-size:11px;margin-top:4px;color:var(--gray-500)">Asiento</span>
+        </div>
+        <div style="flex:1;height:2px;background:var(--success)"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div
+            style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">
+            3</div>
+          <span style="font-size:11px;margin-top:4px;font-weight:600;color:var(--navy)">Pago</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<section style="padding:40px 0 80px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
-  <div class="container">
-    <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:28px">Finalizá tu reserva</h1>
-    <div id="flight-summary-info" style="background:var(--navy);color:white;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:24px;font-size:14px"></div>
+  <section style="padding:40px 0 80px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
+    <div class="container">
+      <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:28px">Finalizá tu reserva
+      </h1>
+      <div id="flight-summary-info"
+        style="background:var(--navy);color:white;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:24px;font-size:14px">
+      </div>
 
-    <div class="checkout-layout">
-      <div>
-        <div class="checkout-section">
-          <h2 class="checkout-section-title">
-            <span class="checkout-step-num">1</span> Datos del pasajero
-          </h2>
-          <div class="checkout-grid-2" style="margin-bottom:16px">
-            <div class="form-group">
-              <label>Nombre</label>
-              <input type="text" class="form-control" placeholder="Ej. María" id="nombre" />
-            </div>
-            <div class="form-group">
-              <label>Apellido</label>
-              <input type="text" class="form-control" placeholder="Ej. González" id="apellido" />
-            </div>
-          </div>
-          <div class="checkout-grid-2">
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" class="form-control" placeholder="correo@ejemplo.com" id="email" />
-            </div>
-            <div class="form-group">
-              <label>Teléfono</label>
-              <input type="tel" class="form-control" placeholder="+54 11 1234 5678" id="telefono" />
-            </div>
-          </div>
-          <div class="checkout-grid-2" style="margin-top:16px">
-            <div class="form-group">
-              <label>CUIL / CUIT</label>
-              <input type="text" class="form-control" placeholder="Ej. 20-35123456-1" id="cuil" />
-            </div>
-            <div class="form-group">
-              <label>Situación fiscal</label>
-              <select class="form-control" id="situacion-fiscal">
-                <option>Consumidor Final</option>
-                <option>Responsable Inscripto</option>
-                <option>Monotributista</option>
-                <option>Exento</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="checkout-section">
-          <h2 class="checkout-section-title">
-            <span class="checkout-step-num">2</span> Equipaje y extras
-          </h2>
-          <div style="display:grid;gap:12px">
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
-              <input type="checkbox" id="eq-bodega" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
-              <div style="flex:1">
-                <div style="font-weight:600;margin-bottom:2px">Equipaje de bodega (23 kg)</div>
-                <div style="font-size:13px;color:var(--gray-500)">Una valija adicional en bodega</div>
+      <div class="checkout-layout">
+        <div>
+          <div class="checkout-section">
+            <h2 class="checkout-section-title">
+              <span class="checkout-step-num">1</span> Datos del pasajero
+            </h2>
+            <div class="checkout-grid-2" style="margin-bottom:16px">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" class="form-control" placeholder="Ej. María" id="nombre" />
               </div>
-              <span style="font-weight:600;color:var(--navy)">+$45</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
-              <input type="checkbox" id="eq-extra" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
-              <div style="flex:1">
-                <div style="font-weight:600;margin-bottom:2px">Equipaje extra (32 kg)</div>
-                <div style="font-size:13px;color:var(--gray-500)">Una valija adicional de gran capacidad</div>
+              <div class="form-group">
+                <label>Apellido</label>
+                <input type="text" class="form-control" placeholder="Ej. González" id="apellido" />
               </div>
-              <span style="font-weight:600;color:var(--navy)">+$75</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--navy-light)'">
-              <input type="checkbox" id="seguro" onchange="actualizarExtras()" style="width:18px;height:18px;accent-color:var(--navy-light)" />
-              <div style="flex:1">
-                <div style="font-weight:600;margin-bottom:2px">Seguro de viaje</div>
-                <div style="font-size:13px;color:var(--gray-500)">Cancelación, asistencia médica y equipaje</div>
-              </div>
-              <span style="font-weight:600;color:var(--navy)">+$29</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="checkout-section">
-          <h2 class="checkout-section-title">
-            <span class="checkout-step-num">3</span> Datos de la tarjeta
-          </h2>
-
-          <form id="mp-card-form">
+            </div>
             <div class="checkout-grid-2">
               <div class="form-group">
-                <label>Número de tarjeta</label>
-                <input type="text" class="form-control" id="cardNumber" placeholder="Ej. 4509 9535 6623 3704" inputmode="numeric" />
+                <label>Email</label>
+                <input type="email" class="form-control" placeholder="correo@ejemplo.com" id="email" />
               </div>
               <div class="form-group">
-                <label>Nombre del titular</label>
-                <input type="text" class="form-control" id="cardholderName" placeholder="Como figura en la tarjeta" />
-              </div>
-            </div>
-            <div class="checkout-grid-2" style="margin-top:16px">
-              <div class="form-group">
-                <label>Vencimiento</label>
-                <input type="text" class="form-control" id="expirationDate" placeholder="MM / AA" inputmode="numeric" />
-              </div>
-              <div class="form-group">
-                <label>CVV</label>
-                <input type="text" class="form-control" id="securityCode" placeholder="123" inputmode="numeric" />
+                <label>Teléfono</label>
+                <input type="tel" class="form-control" placeholder="+54 11 1234 5678" id="telefono" />
               </div>
             </div>
             <div class="checkout-grid-2" style="margin-top:16px">
               <div class="form-group">
-                <label>Tipo de documento</label>
-                <select class="form-control" id="docType">
-                  <option value="DNI">DNI</option>
-                  <option value="CI">Cédula</option>
-                  <option value="PASS">Pasaporte</option>
+                <label>CUIL / CUIT</label>
+                <input type="text" class="form-control" placeholder="Ej. 20-35123456-1" id="cuil" />
+              </div>
+              <div class="form-group">
+                <label>Situación fiscal</label>
+                <select class="form-control" id="situacion-fiscal">
+                  <option>Consumidor Final</option>
+                  <option>Responsable Inscripto</option>
+                  <option>Monotributista</option>
+                  <option>Exento</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label>Número de documento</label>
-                <input type="text" class="form-control" id="docNumber" placeholder="Ej. 35123456" inputmode="numeric" />
+            </div>
+          </div>
+
+          <div class="checkout-section">
+            <h2 class="checkout-section-title">
+              <span class="checkout-step-num">2</span> Equipaje y extras
+            </h2>
+            <div style="display:grid;gap:12px">
+              <label
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(--blue)'"
+                onmouseout="this.style.borderColor='var(--navy-light)'">
+                <input type="checkbox" id="eq-bodega" onchange="actualizarExtras()"
+                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                <div style="flex:1">
+                  <div style="font-weight:600;margin-bottom:2px">Equipaje de bodega (23 kg)</div>
+                  <div style="font-size:13px;color:var(--gray-500)">Una valija adicional en bodega</div>
+                </div>
+                <span style="font-weight:600;color:var(--navy)">+$45</span>
+              </label>
+              <label
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(--blue)'"
+                onmouseout="this.style.borderColor='var(--navy-light)'">
+                <input type="checkbox" id="eq-extra" onchange="actualizarExtras()"
+                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                <div style="flex:1">
+                  <div style="font-weight:600;margin-bottom:2px">Equipaje extra (32 kg)</div>
+                  <div style="font-size:13px;color:var(--gray-500)">Una valija adicional de gran capacidad</div>
+                </div>
+                <span style="font-weight:600;color:var(--navy)">+$75</span>
+              </label>
+              <label
+                style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--navy-light);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s"
+                onmouseover="this.style.borderColor='var(--blue)'"
+                onmouseout="this.style.borderColor='var(--navy-light)'">
+                <input type="checkbox" id="seguro" onchange="actualizarExtras()"
+                  style="width:18px;height:18px;accent-color:var(--navy-light)" />
+                <div style="flex:1">
+                  <div style="font-weight:600;margin-bottom:2px">Seguro de viaje</div>
+                  <div style="font-size:13px;color:var(--gray-500)">Cancelación, asistencia médica y equipaje</div>
+                </div>
+                <span style="font-weight:600;color:var(--navy)">+$29</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="checkout-section">
+            <h2 class="checkout-section-title">
+              <span class="checkout-step-num">3</span> Datos de la tarjeta
+            </h2>
+
+            <form id="mp-card-form">
+              <div class="checkout-grid-2">
+                <div class="form-group">
+                  <label>Número de tarjeta</label>
+                  <input type="text" class="form-control" id="cardNumber" placeholder="Ej. 4509 9535 6623 3704"
+                    inputmode="numeric" />
+                </div>
+                <div class="form-group">
+                  <label>Nombre del titular</label>
+                  <input type="text" class="form-control" id="cardholderName" placeholder="Como figura en la tarjeta" />
+                </div>
               </div>
-            </div>
-            <div class="form-group" style="margin-top:16px">
-              <label>Banco emisor</label>
-              <select class="form-control" id="issuer">
-                <option value="">Seleccioná tu banco</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-top:16px">
-              <label>Cuotas</label>
-              <select class="form-control" id="installments">
-                <option value="1">1 cuota</option>
-              </select>
-            </div>
+              <div class="checkout-grid-2" style="margin-top:16px">
+                <div class="form-group">
+                  <label>Vencimiento</label>
+                  <input type="text" class="form-control" id="expirationDate" placeholder="MM / AA"
+                    inputmode="numeric" />
+                </div>
+                <div class="form-group">
+                  <label>CVV</label>
+                  <input type="text" class="form-control" id="securityCode" placeholder="123" inputmode="numeric" />
+                </div>
+              </div>
+              <div class="checkout-grid-2" style="margin-top:16px">
+                <div class="form-group">
+                  <label>Tipo de documento</label>
+                  <select class="form-control" id="docType">
+                    <option value="DNI">DNI</option>
+                    <option value="CI">Cédula</option>
+                    <option value="PASS">Pasaporte</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Número de documento</label>
+                  <input type="text" class="form-control" id="docNumber" placeholder="Ej. 35123456"
+                    inputmode="numeric" />
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:16px">
+                <label>Banco emisor</label>
+                <select class="form-control" id="issuer">
+                  <option value="">Seleccioná tu banco</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-top:16px">
+                <label>Cuotas</label>
+                <select class="form-control" id="installments">
+                  <option value="1">1 cuota</option>
+                </select>
+              </div>
 
-            <div id="mp-card-error" style="display:none;padding:12px;background:#fdf0ee;color:#c0392b;border-radius:var(--radius);margin-top:16px;font-size:14px"></div>
+              <div id="mp-card-error"
+                style="display:none;padding:12px;background:#fdf0ee;color:#c0392b;border-radius:var(--radius);margin-top:16px;font-size:14px">
+              </div>
 
-            <button type="submit" id="btn-pagar" class="btn btn-dark" style="width:100%;margin-top:20px;padding:14px;font-size:16px;justify-content:center">
-              Pagar $<span id="total-pagar">0</span>
-            </button>
+              <button type="submit" id="btn-pagar" class="btn btn-dark"
+                style="width:100%;margin-top:20px;padding:14px;font-size:16px;justify-content:center">
+                Pagar $<span id="total-pagar">0</span>
+              </button>
 
-            <div id="mp-loading" style="display:none;text-align:center;padding:24px;color:var(--gray-500);font-size:14px">
-              Procesando pago...
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="order-summary">
-        <h2 style="font-size:16px;font-weight:600;margin-bottom:16px">Resumen de tu reserva</h2>
-        <div class="summary-flight-info">
-          <div class="summary-route">
-            <span>EZE</span>
-            <span style="color:var(--white);font-size:14px">→</span>
-            <span>MAD</span>
-          </div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.6)">Vuelo AC801 · Lun 14 jul 2025</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">08:15 → 22:30 · Directo · 14h 15m</div>
-        </div>
-
-        <div class="summary-line-list">
-          <div class="summary-line">
-            <span class="summary-line-label">Tarifa base</span>
-            <span id="tarifa-base">$0</span>
-          </div>
-          <div class="summary-line">
-            <span class="summary-line-label">Asiento <span id="asiento-display">—</span></span>
-            <span id="asiento-precio">$0</span>
-          </div>
-          <div class="summary-line" id="eq-bodega-line" style="display:none">
-            <span class="summary-line-label">Equipaje 23kg</span>
-            <span>$45</span>
-          </div>
-          <div class="summary-line" id="eq-extra-line" style="display:none">
-            <span class="summary-line-label">Equipaje extra</span>
-            <span>$75</span>
-          </div>
-          <div class="summary-line" id="seguro-line" style="display:none">
-            <span class="summary-line-label">Seguro de viaje</span>
-            <span>$29</span>
-          </div>
-          <div class="summary-line">
-            <span class="summary-line-label">Impuestos y tasas</span>
-            <span>$85</span>
+              <div id="mp-loading"
+                style="display:none;text-align:center;padding:24px;color:var(--gray-500);font-size:14px">
+                Procesando pago...
+              </div>
+            </form>
           </div>
         </div>
 
-        <div class="summary-total">
-          <span class="summary-total-label">Total a pagar</span>
-          <span class="summary-total-amount" id="grand-total">$0</span>
+        <div class="order-summary">
+          <h2 style="font-size:16px;font-weight:600;margin-bottom:16px">Resumen de tu reserva</h2>
+          <div class="summary-flight-info">
+            <div class="summary-route">
+              <span>EZE</span>
+              <span style="color:var(--white);font-size:14px">→</span>
+              <span>MAD</span>
+            </div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.6)">Vuelo AC801 · Lun 14 jul 2025</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">08:15 → 22:30 · Directo · 14h 15m
+            </div>
+          </div>
+
+          <div class="summary-line-list">
+            <div class="summary-line">
+              <span class="summary-line-label">Tarifa base</span>
+              <span id="tarifa-base">$0</span>
+            </div>
+            <div class="summary-line">
+              <span class="summary-line-label">Asiento <span id="asiento-display">—</span></span>
+              <span id="asiento-precio">$0</span>
+            </div>
+            <div class="summary-line" id="eq-bodega-line" style="display:none">
+              <span class="summary-line-label">Equipaje 23kg</span>
+              <span>$45</span>
+            </div>
+            <div class="summary-line" id="eq-extra-line" style="display:none">
+              <span class="summary-line-label">Equipaje extra</span>
+              <span>$75</span>
+            </div>
+            <div class="summary-line" id="seguro-line" style="display:none">
+              <span class="summary-line-label">Seguro de viaje</span>
+              <span>$29</span>
+            </div>
+            <div class="summary-line">
+              <span class="summary-line-label">Impuestos y tasas</span>
+              <span>$85</span>
+            </div>
+          </div>
+
+          <div class="summary-total">
+            <span class="summary-total-label">Total a pagar</span>
+            <span class="summary-total-amount" id="grand-total">$0</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div id="confirm-modal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:999;align-items:center;justify-content:center">
-  <div style="background:var(--white);border-radius:var(--radius-lg);padding:48px;text-align:center;max-width:440px;animation:fadeInUp 0.4s ease">
-    <div style="font-size:56px;margin-bottom:16px">🎉</div>
-    <h2 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:8px">¡Reserva confirmada!</h2>
-    <p style="color:var(--gray-500);margin-bottom:6px">Tu número de reserva es:</p>
-    <p style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--pink);margin-bottom:20px" id="booking-code">AC-2025-XXXX</p>
-    <p style="font-size:14px;color:var(--gray-500);margin-bottom:28px">Te enviamos la confirmación a tu email. ¡Buen viaje!</p>
-    <div style="display:flex;gap:12px;justify-content:center">
-      <a href="reservas.html" class="btn btn-dark">Ver mis reservas</a>
-      <a href="index.html" class="btn btn-outline" style="border-color:var(--navy);color:var(--navy)">Inicio</a>
+  <div id="confirm-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:999;align-items:center;justify-content:center">
+    <div
+      style="background:var(--white);border-radius:var(--radius-lg);padding:48px;text-align:center;max-width:440px;animation:fadeInUp 0.4s ease">
+      <div style="font-size:56px;margin-bottom:16px">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:8px">¡Reserva confirmada!
+      </h2>
+      <p style="color:var(--gray-500);margin-bottom:6px">Tu número de reserva es:</p>
+      <p style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--pink);margin-bottom:20px"
+        id="booking-code">AC-2025-XXXX</p>
+      <p style="font-size:14px;color:var(--gray-500);margin-bottom:28px">Te enviamos la confirmación a tu email. ¡Buen
+        viaje!</p>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <a href="reservas.html" class="btn btn-dark">Ver mis reservas</a>
+        <a href="index.html" class="btn btn-outline" style="border-color:var(--navy);color:var(--navy)">Inicio</a>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="footer"></div>
-<script type="module" src="/src/scripts/pago.ts"></script>
+  <div id="footer"></div>
+  <script type="module" src="/src/scripts/pago.ts"></script>
 </body>
+
 </html>

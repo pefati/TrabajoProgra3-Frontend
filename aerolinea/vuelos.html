@@ -1,89 +1,106 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:src="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AeroCielo — Resultados de vuelos</title>
+  <title>AeroGest — Resultados de vuelos</title>
   <link rel="stylesheet" href="/src/styles/styles.css" />
 </head>
+
 <body>
 
-<!--NAVBAR-->
-<div id="navbar-container"></div>
+  <!--NAVBAR-->
+  <div id="navbar-container"></div>
 
-<!-- SEARCH BAR -->
-<div class="flight-search-bar" style="margin-top:72px">
-  <div class="container">
-    <form onsubmit="actualizarBusqueda(event)" style="display:grid;grid-template-columns:1fr 30px 1fr 1fr 1fr auto;gap:12px;align-items:end">
-      <div class="form-group">
-        <label style="color:rgba(255,255,255,0.5)">Origen</label>
-        <input type="text" id="origen" class="form-control" value="Buenos Aires (EZE)" />
-      </div>
-      <div style="display:flex;align-items:center;justify-content:center;padding-bottom:2px">
-        <button type="button" onclick="swapAirports()" style="background:transparent;border:none;color:var(--navy);font-size:20px;cursor:pointer">⇄</button>
-      </div>
-      <div class="form-group">
-        <label style="color:rgba(255,255,255,0.5)">Destino</label>
-        <input type="text" id="destino" class="form-control" value="Madrid (MAD)" />
-      </div>
-      <div class="form-group">
-        <label style="color:rgba(255,255,255,0.5)">Ida</label>
-        <input type="date" id="fecha-ida" class="form-control" />
-      </div>
-      <div class="form-group">
-        <label style="color:rgba(255,255,255,0.5)">Pasajeros / Clase</label>
-        <select id="clase" class="form-control">
-          <option>1 pas. · Económica</option>
-          <option>1 pas. · Ejecutiva</option>
-          <option>2 pas. · Económica</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary" style="white-space:nowrap">Buscar</button>
-    </form>
-  </div>
-</div>
-
-<!-- RESULTADOS -->
-<section class="flight-results">
-  <div class="container">
-    <div class="results-header">
-      <div>
-        <h1 style="font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:4px">Buenos Aires → Madrid</h1>
-        <div class="results-count">Mostrando <span id="count">8</span> vuelos disponibles · Lun 14 jul 2025</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:13px;color:var(--gray-500)">Ordenar por:</span>
-        <select id="sort-vuelos" class="sort-select" onchange="sortFlights(this.value)">
-          <option value="precio">Precio</option>
-          <option value="duracion">Duración</option>
-          <option value="salida">Hora de salida</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Filtros rápidos -->
-    <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
-      <button class="btn quick-filter" data-flight-filter="directos" style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarDirectos()">Solo directos</button>
-      <button class="btn quick-filter" data-flight-filter="manana" style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarManana()">Salida mañana</button>
-      <button class="btn quick-filter" data-flight-filter="baratos" style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarBaratos()">Menos de $800</button>
-      <button class="btn quick-filter" data-flight-filter="temprano" style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarTemprano()">Mañana temprano</button>
-      <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--gray-500)" onclick="limpiarFiltrosVuelos()">Limpiar</button>
-    </div>
-
-    <div class="flight-list" id="flight-list">
-      <!-- Vuelos generados por JS -->
-    </div>
-  </div>
-    <div id="modal-detalle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:12px;padding:2rem;width:90%;max-width:480px;position:relative;">
-            <button onclick="cerrarModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
-            <div id="modal-contenido"></div>
+  <!-- SEARCH BAR -->
+  <div class="flight-search-bar" style="margin-top:72px">
+    <div class="container">
+      <form onsubmit="actualizarBusqueda(event)"
+        style="display:grid;grid-template-columns:1fr 30px 1fr 1fr 1fr auto;gap:12px;align-items:end">
+        <div class="form-group">
+          <label style="color:rgba(255,255,255,0.5)">Origen</label>
+          <input type="text" id="origen" class="form-control" value="Buenos Aires (EZE)" />
         </div>
+        <div style="display:flex;align-items:center;justify-content:center;padding-bottom:2px">
+          <button type="button" onclick="swapAirports()"
+            style="background:transparent;border:none;color:var(--navy);font-size:20px;cursor:pointer">⇄</button>
+        </div>
+        <div class="form-group">
+          <label style="color:rgba(255,255,255,0.5)">Destino</label>
+          <input type="text" id="destino" class="form-control" value="Madrid (MAD)" />
+        </div>
+        <div class="form-group">
+          <label style="color:rgba(255,255,255,0.5)">Ida</label>
+          <input type="date" id="fecha-ida" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label style="color:rgba(255,255,255,0.5)">Pasajeros / Clase</label>
+          <select id="clase" class="form-control">
+            <option>1 pas. · Económica</option>
+            <option>1 pas. · Ejecutiva</option>
+            <option>2 pas. · Económica</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="white-space:nowrap">Buscar</button>
+      </form>
     </div>
-</section>
+  </div>
 
-<!-- FOOTER -->
-<div id="footer"></div>
-<script type="module" src="/src/scripts/vuelos.ts"></script>
+  <!-- RESULTADOS -->
+  <section class="flight-results">
+    <div class="container">
+      <div class="results-header">
+        <div>
+          <h1 style="font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:4px">Buenos Aires →
+            Madrid</h1>
+          <div class="results-count">Mostrando <span id="count">8</span> vuelos disponibles · Lun 14 jul 2025</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:13px;color:var(--gray-500)">Ordenar por:</span>
+          <select id="sort-vuelos" class="sort-select" onchange="sortFlights(this.value)">
+            <option value="precio">Precio</option>
+            <option value="duracion">Duración</option>
+            <option value="salida">Hora de salida</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filtros rápidos -->
+      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+        <button class="btn quick-filter" data-flight-filter="directos"
+          style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarDirectos()">Solo
+          directos</button>
+        <button class="btn quick-filter" data-flight-filter="manana"
+          style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarManana()">Salida
+          mañana</button>
+        <button class="btn quick-filter" data-flight-filter="baratos"
+          style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarBaratos()">Menos
+          de $800</button>
+        <button class="btn quick-filter" data-flight-filter="temprano"
+          style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)"
+          onclick="filtrarTemprano()">Mañana temprano</button>
+        <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--gray-500)"
+          onclick="limpiarFiltrosVuelos()">Limpiar</button>
+      </div>
+
+      <div class="flight-list" id="flight-list">
+        <!-- Vuelos generados por JS -->
+      </div>
+    </div>
+    <div id="modal-detalle"
+      style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:2rem;width:90%;max-width:480px;position:relative;">
+        <button onclick="cerrarModal()"
+          style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+        <div id="modal-contenido"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div id="footer"></div>
+  <script type="module" src="/src/scripts/vuelos.ts"></script>
 </body>
+
 </html>

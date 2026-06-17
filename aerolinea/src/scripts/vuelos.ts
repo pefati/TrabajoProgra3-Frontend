@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, isLoggedIn, isPerfilCompleto } from './auth';
+import { initAuth, apiFetch, showToast, isLoggedIn, isPerfilCompleto, actualizarContadorCarrito } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -31,8 +31,8 @@ function renderFlights(lista: any[]) {
     }
 
     container.innerHTML = lista.map(v => {
-        const salida = v.fechaSalida ? new Date(v.fechaSalida).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : (v.horaSalida || '—');
-        const llegada = v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : (v.horaLlegada || '—');
+        const salida = v.horaSalida?.slice(0, 5) || (v.fechaSalida ? new Date(v.fechaSalida).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
+        const llegada = v.horaLlegada?.slice(0, 5) || (v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
         const origen = v.aeropuertoOrigen?.ciudad || v.origen || '—';
         const destino = v.aeropuertoDestino?.ciudad || v.destino || '—';
         const precio = v.precioVuelo ?? v.precio ?? 0;
@@ -102,17 +102,6 @@ function renderFlights(lista: any[]) {
     }
 };
 
-async function actualizarContadorCarrito() {
-    try {
-        const carrito = await apiFetch('/api/carrito');
-        const count = carrito?.items?.length ?? 0;
-        const badge = document.getElementById('nav-carrito-count');
-        if (badge) {
-            badge.textContent = count.toString();
-            badge.style.display = count > 0 ? 'flex' : 'none';
-        }
-    } catch { }
-}
 if (isLoggedIn()) actualizarContadorCarrito();
 
 
@@ -178,13 +167,16 @@ document.getElementById('modal-detalle')?.addEventListener('click', function (e)
 });
 
 
-(window as any).elegirVuelo = function (id: number) {
+(window as any).elegirVuelo = async function (id: number) {
     if (!isLoggedIn()) { showToast('Iniciá sesión para comprar', 'warn'); return; }
     if (!isPerfilCompleto()) return;
-    const v = vuelosActuales.find(x => x.id === id);
-    if (v) {
-        sessionStorage.setItem('vuelo_seleccionado', JSON.stringify(v));
-        window.location.href = 'asientos.html';
+    try {
+        await apiFetch(`/api/carrito/items?vueloId=${id}&cantidad=1&clase=ECONOMICA`, { method: 'POST' });
+        showToast('Vuelo agregado al carrito ✓');
+        await actualizarContadorCarrito();
+        window.location.href = 'carrito.html';
+    } catch (err: any) {
+        showToast(err.message || 'Error al agregar al carrito', 'error');
     }
 };
 

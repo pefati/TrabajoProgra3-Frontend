@@ -166,6 +166,18 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
   return text || null;
 }
 
+export async function actualizarContadorCarrito() {
+    try {
+        const carrito = await apiFetch('/api/carrito');
+        const count = carrito?.items?.length ?? 0;
+        const badge = document.getElementById('nav-carrito-count');
+        if (badge) {
+            badge.textContent = count.toString();
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    } catch { }
+}
+
 export function showToast(msg: string, type: 'info' | 'success' | 'warn' | 'error' = 'info') {
   const t = document.createElement('div');
   t.className = 'toast';

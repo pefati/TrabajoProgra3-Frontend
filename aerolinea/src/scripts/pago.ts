@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast, isPerfilCompleto } from './auth';
+import { initAuth, apiFetch, showToast, isPerfilCompleto, actualizarContadorCarrito } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -12,10 +12,8 @@ let extras = 0;
 let seatExtra = 0;
 const impuestos = 85;
 
-const vuelo = JSON.parse(sessionStorage.getItem('vuelo_seleccionado') || '{}');
-const asiento = JSON.parse(sessionStorage.getItem('asiento_seleccionado') || '{}');
-
-const basePago: number = vuelo.precioVuelo ?? vuelo.precio ?? 689;
+let basePago = 0;
+let cartItems: any[] = [];
 
 let mpPublicKey: string = '';
 let cardFormInstance: any = null;
@@ -28,33 +26,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  await cargarDatosCarrito();
   restaurarFormulario();
-
-  const flightSummary = document.getElementById('flight-summary-info');
-  if (flightSummary && vuelo.id) {
-    const origen = vuelo.aeropuertoOrigen?.ciudad || vuelo.origen || '—';
-    const destino = vuelo.aeropuertoDestino?.ciudad || vuelo.destino || '—';
-    flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
-        <div style="font-size:13px;color:var(--gray-500)">Vuelo #${vuelo.id} · ${vuelo.escala ? '1 escala' : 'Directo'}</div>`;
-  }
-
-  const tarifaBaseEl = document.getElementById('tarifa-base');
-  if (tarifaBaseEl) tarifaBaseEl.textContent = '$' + basePago.toLocaleString('es-AR');
-
-  if (asiento.id) {
-    const asientoDisplay = document.getElementById('asiento-display');
-    const asientoPrecio = document.getElementById('asiento-precio');
-    if (asientoDisplay) asientoDisplay.textContent = asiento.id;
-    if (asientoPrecio) asientoPrecio.textContent = asiento.precio > 0 ? '+$' + asiento.precio : '$0';
-    seatExtra = asiento.precio || 0;
-    calcTotal();
-  }
-
   calcTotal();
-
   await fetchPublicKey();
   initCardForm();
 });
+
+async function cargarDatosCarrito() {
+  try {
+    const carrito = await apiFetch('/api/carrito');
+    if (!carrito.items || carrito.items.length === 0) {
+      showToast('El carrito está vacío', 'warn');
+      setTimeout(() => window.location.href = 'carrito.html', 1500);
+      return;
+    }
+
+    const itemsConDetalle = await Promise.all(carrito.items.map(async (item: any) => {
+      try {
+        const v = await fetch('/api/vuelos/' + item.vueloId).then(r => r.json());
+        return { ...item, vuelo: v };
+      } catch { return { ...item, vuelo: null }; }
+    }));
+
+    cartItems = itemsConDetalle;
+    basePago = itemsConDetalle.reduce((sum: number, item: any) => {
+      return sum + (item.vuelo?.precioVuelo ?? 0) * item.cantidad;
+    }, 0);
+
+    const flightSummary = document.getElementById('flight-summary-info');
+    if (flightSummary) {
+      if (itemsConDetalle.length === 1) {
+        const item = itemsConDetalle[0];
+        const v = item.vuelo;
+        const origen = v?.aeropuertoOrigen?.ciudad || '—';
+        const destino = v?.aeropuertoDestino?.ciudad || '—';
+        flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
+            <div style="font-size:13px;color:var(--gray-500)">Vuelo #${v?.id} · ${v?.escala ? '1 escala' : 'Directo'} · ${item.cantidad} pasaje(s)</div>`;
+      } else {
+        let html = '<div style="font-weight:600;margin-bottom:8px">Resumen del carrito</div>';
+        itemsConDetalle.forEach((item: any) => {
+          const v = item.vuelo;
+          const origen = v?.aeropuertoOrigen?.ciudad || '—';
+          const destino = v?.aeropuertoDestino?.ciudad || '—';
+          html += `<div style="font-size:13px;color:var(--gray-500)">• ${origen} → ${destino} × ${item.cantidad} pasaje(s) — $${((v?.precioVuelo ?? 0) * item.cantidad).toLocaleString('es-AR')}</div>`;
+        });
+        flightSummary.innerHTML = html;
+      }
+    }
+
+    const tarifaBaseEl = document.getElementById('tarifa-base');
+    if (tarifaBaseEl) tarifaBaseEl.textContent = '$' + basePago.toLocaleString('es-AR');
+  } catch (err: any) {
+    showToast(err.message || 'Error al cargar carrito', 'error');
+  }
+}
+
+const asientosSeleccionados: { id: string; clase: string; precio: number }[] = JSON.parse(sessionStorage.getItem('asientos_seleccionados') || '[]');
+if (asientosSeleccionados.length > 0) {
+  seatExtra = asientosSeleccionados.reduce((sum, s) => sum + (s.precio || 0), 0);
+  document.addEventListener('DOMContentLoaded', () => {
+    const asientoDisplay = document.getElementById('asiento-display');
+    const asientoPrecio = document.getElementById('asiento-precio');
+    if (asientoDisplay) asientoDisplay.textContent = asientosSeleccionados.length + ' asientos';
+    if (asientoPrecio) asientoPrecio.textContent = seatExtra > 0 ? '+$' + seatExtra.toLocaleString('es-AR') : '$0';
+  });
+}
 
 async function fetchPublicKey() {
   try {
@@ -179,8 +216,10 @@ async function procesarPago() {
 
     if (result.status === 'approved') {
       sessionStorage.removeItem('vuelo_seleccionado');
-      sessionStorage.removeItem('asiento_seleccionado');
+      sessionStorage.removeItem('asientos_seleccionados');
       ['nombre','apellido','email','telefono','cuil','situacionFiscal','eqBodega','eqExtra','seguro'].forEach(k => sessionStorage.removeItem('pago_' + k));
+
+      await actualizarContadorCarrito();
 
       const codeEl = document.getElementById('booking-code');
       if (codeEl) codeEl.textContent = result.bookingCode || 'AC-' + Date.now().toString(36).toUpperCase();
