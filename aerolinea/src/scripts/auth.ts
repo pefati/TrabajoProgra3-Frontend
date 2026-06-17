@@ -1,19 +1,21 @@
 
-let _email: string = '';
 let _perfilCompleto: boolean = false;
 let _role: string = '';
 let _nombre: string = '';
 
 let _authPromise: Promise<void> | null = null;
 
-export function setSession(_token: string, email: string, _userId: number, perfilCompleto: boolean, role: string) {
-  _email = email;
+function getCookie(name: string): string {
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()\[\]\\\/+^]/g, '\\$&') + '=([^;]*)'));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+export function setSession(_token: string, _email: string, _userId: number, perfilCompleto: boolean, role: string) {
   _perfilCompleto = perfilCompleto;
   _role = role;
 }
 
 export function clearSession() {
-  _email = '';
   _perfilCompleto = false;
   _role = '';
   _nombre = '';
@@ -22,7 +24,7 @@ export function clearSession() {
 }
 
 export function isLoggedIn(): boolean {
-  return !!_email;
+  return !!getCookie('user_email');
 }
 
 export function isPerfilCompleto(): boolean {
@@ -39,26 +41,37 @@ export function isAdmin(): boolean {
 
 export function initAuth(): Promise<void> {
   if (!_authPromise) {
+    if (isLoggedIn()) {
+      const guest = document.getElementById('guest-actions');
+      const user = document.getElementById('user-actions');
+      if (guest) guest.style.display = 'none';
+      if (user) user.style.display = 'flex';
+    } else {
+      const guest = document.getElementById('guest-actions');
+      const user = document.getElementById('user-actions');
+      if (guest) guest.style.display = 'flex';
+      if (user) user.style.display = 'none';
+    }
     _authPromise = fetchAuth();
   }
   return _authPromise;
 }
 
 async function fetchAuth(): Promise<void> {
+  if (!isLoggedIn()) return;
   try {
     const data = await apiFetch('/api/auth/perfil');
-    _email = data.email || '';
     _perfilCompleto = data.isVerified === true;
     _role = data.role || '';
-    _nombre = [data.nombre, data.apellido].filter(Boolean).join(' ') || _email.split('@')[0];
+    _nombre = [data.nombre, data.apellido].filter(Boolean).join(' ') || getCookie('user_email').split('@')[0];
     applyUserUI();
   } catch {
+    clearSession();
     applyGuestUI();
   }
 }
 
 function applyGuestUI() {
-  _email = '';
   _perfilCompleto = false;
   _role = '';
   _nombre = '';
@@ -74,7 +87,7 @@ function applyUserUI() {
   if (guestActions) guestActions.style.display = 'none';
   if (userActions) userActions.style.display = 'flex';
 
-  const email = _email;
+  const email = getCookie('user_email');
   const nombre = _nombre || email.split('@')[0];
   const role = _role;
 

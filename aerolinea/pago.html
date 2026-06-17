@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AeroCielo — Pago seguro</title>
   <link rel="stylesheet" href="/src/styles/styles.css" />
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
-
-<!--navbar-->
 <div id="navbar-container"></div>
 
-<!-- Progreso -->
-<div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0; margin-top: 88px; box-shadow: inset 0 2px 4px var(--light-blue-1);";>
+<div style="background:var(--white);border-bottom:1px solid var(--gray-500);padding:16px 0;margin-top:88px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
   <div class="container">
     <div style="display:flex;align-items:center;gap:0;max-width:500px;margin:0 auto">
       <div style="display:flex;flex-direction:column;align-items:center;flex:1">
@@ -33,15 +31,13 @@
   </div>
 </div>
 
-<section style="padding:40px 0 80px; box-shadow: inset 0 2px 4px var(--light-blue-1);";>
+<section style="padding:40px 0 80px;box-shadow:inset 0 2px 4px var(--light-blue-1)">
   <div class="container">
     <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:28px">Finalizá tu reserva</h1>
     <div id="flight-summary-info" style="background:var(--navy);color:white;border-radius:var(--radius-md);padding:16px 20px;margin-bottom:24px;font-size:14px"></div>
 
     <div class="checkout-layout">
-      <!-- Formularios -->
       <div>
-        <!-- Pasajero -->
         <div class="checkout-section">
           <h2 class="checkout-section-title">
             <span class="checkout-step-num">1</span> Datos del pasajero
@@ -56,24 +52,6 @@
               <input type="text" class="form-control" placeholder="Ej. González" id="apellido" />
             </div>
           </div>
-          <div class="checkout-grid-3" style="margin-bottom:16px">
-            <div class="form-group">
-              <label>Tipo de documento</label>
-              <select class="form-control">
-                <option>DNI</option>
-                <option>Pasaporte</option>
-                <option>Cédula</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Número de documento</label>
-              <input type="text" class="form-control" placeholder="Ej. 35123456" />
-            </div>
-            <div class="form-group">
-              <label>Fecha de nacimiento</label>
-              <input type="date" class="form-control" />
-            </div>
-          </div>
           <div class="checkout-grid-2">
             <div class="form-group">
               <label>Email</label>
@@ -81,7 +59,7 @@
             </div>
             <div class="form-group">
               <label>Teléfono</label>
-              <input type="tel" class="form-control" placeholder="+54 11 1234 5678" />
+              <input type="tel" class="form-control" placeholder="+54 11 1234 5678" id="telefono" />
             </div>
           </div>
           <div class="checkout-grid-2" style="margin-top:16px">
@@ -101,7 +79,6 @@
           </div>
         </div>
 
-        <!-- Equipaje -->
         <div class="checkout-section">
           <h2 class="checkout-section-title">
             <span class="checkout-step-num">2</span> Equipaje y extras
@@ -134,63 +111,72 @@
           </div>
         </div>
 
-        <!-- Pago -->
         <div class="checkout-section">
           <h2 class="checkout-section-title">
-            <span class="checkout-step-num">3</span> Método de pago
+            <span class="checkout-step-num">3</span> Datos de la tarjeta
           </h2>
-          <div class="form-group" style="margin-bottom:16px">
-            <label>Método de pago</label>
-            <select class="form-control" id="metodo-pago">
-              <option value="TARJETA_CREDITO">Tarjeta de crédito</option>
-              <option value="TARJETA_DEBITO">Tarjeta de débito</option>
-              <option value="TRANSFERENCIA">Transferencia bancaria</option>
-            </select>
-          </div>
-          <div class="card-icons">
-            <span class="card-icon">VISA</span>
-            <span class="card-icon">MC</span>
-            <span class="card-icon">AMEX</span>
-            <span class="card-icon">DEBIT</span>
-          </div>
-          <div style="margin-bottom:16px">
-            <div class="form-group">
-              <label>Número de tarjeta</label>
-              <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" id="card-num" oninput="formatCard(this)" />
-            </div>
-          </div>
-          <div class="checkout-grid-3">
-            <div class="form-group" style="grid-column:span 2">
-              <label>Nombre en la tarjeta</label>
-              <input type="text" class="form-control" placeholder="Tal como figura en la tarjeta" />
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;grid-column:span 1">
+
+          <form id="mp-card-form">
+            <div class="checkout-grid-2">
               <div class="form-group">
-                <label>Venc.</label>
-                <input type="text" class="form-control" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" />
+                <label>Número de tarjeta</label>
+                <input type="text" class="form-control" id="cardNumber" placeholder="Ej. 4509 9535 6623 3704" inputmode="numeric" />
+              </div>
+              <div class="form-group">
+                <label>Nombre del titular</label>
+                <input type="text" class="form-control" id="cardholderName" placeholder="Como figura en la tarjeta" />
+              </div>
+            </div>
+            <div class="checkout-grid-2" style="margin-top:16px">
+              <div class="form-group">
+                <label>Vencimiento</label>
+                <input type="text" class="form-control" id="expirationDate" placeholder="MM / AA" inputmode="numeric" />
               </div>
               <div class="form-group">
                 <label>CVV</label>
-                <input type="text" class="form-control" placeholder="123" maxlength="4" />
+                <input type="text" class="form-control" id="securityCode" placeholder="123" inputmode="numeric" />
               </div>
             </div>
-          </div>
-
-          <div style="margin-top:20px">
-            <div class="form-group">
-              <label>Cuotas</label>
-              <select class="form-control">
-                <option>1 cuota sin interés</option>
-                <option>3 cuotas sin interés</option>
-                <option>6 cuotas sin interés</option>
-                <option>12 cuotas (con interés)</option>
+            <div class="checkout-grid-2" style="margin-top:16px">
+              <div class="form-group">
+                <label>Tipo de documento</label>
+                <select class="form-control" id="docType">
+                  <option value="DNI">DNI</option>
+                  <option value="CI">Cédula</option>
+                  <option value="PASS">Pasaporte</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Número de documento</label>
+                <input type="text" class="form-control" id="docNumber" placeholder="Ej. 35123456" inputmode="numeric" />
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:16px">
+              <label>Banco emisor</label>
+              <select class="form-control" id="issuer">
+                <option value="">Seleccioná tu banco</option>
               </select>
             </div>
-          </div>
+            <div class="form-group" style="margin-top:16px">
+              <label>Cuotas</label>
+              <select class="form-control" id="installments">
+                <option value="1">1 cuota</option>
+              </select>
+            </div>
+
+            <div id="mp-card-error" style="display:none;padding:12px;background:#fdf0ee;color:#c0392b;border-radius:var(--radius);margin-top:16px;font-size:14px"></div>
+
+            <button type="submit" id="btn-pagar" class="btn btn-dark" style="width:100%;margin-top:20px;padding:14px;font-size:16px;justify-content:center">
+              Pagar $<span id="total-pagar">0</span>
+            </button>
+
+            <div id="mp-loading" style="display:none;text-align:center;padding:24px;color:var(--gray-500);font-size:14px">
+              Procesando pago...
+            </div>
+          </form>
         </div>
       </div>
 
-      <!-- Resumen de orden -->
       <div class="order-summary">
         <h2 style="font-size:16px;font-weight:600;margin-bottom:16px">Resumen de tu reserva</h2>
         <div class="summary-flight-info">
@@ -206,7 +192,7 @@
         <div class="summary-line-list">
           <div class="summary-line">
             <span class="summary-line-label">Tarifa base</span>
-            <span>$689</span>
+            <span id="tarifa-base">$0</span>
           </div>
           <div class="summary-line">
             <span class="summary-line-label">Asiento <span id="asiento-display">—</span></span>
@@ -225,34 +211,26 @@
             <span>$29</span>
           </div>
           <div class="summary-line">
-            <span class="summary-line-label">Impuestos</span>
-            <span id="impuestos">$85</span>
+            <span class="summary-line-label">Impuestos y tasas</span>
+            <span>$85</span>
           </div>
         </div>
 
         <div class="summary-total">
           <span class="summary-total-label">Total a pagar</span>
-          <span class="summary-total-amount" id="grand-total">$774</span>
+          <span class="summary-total-amount" id="grand-total">$0</span>
         </div>
-
-        <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:20px" id="btn-pagar" onclick="confirmarPago()">
-          🔒 Confirmar y pagar
-        </button>
-        <p style="font-size:11px;color:var(--gray-500);text-align:center;margin-top:10px">
-          Pago 100% seguro · SSL encriptado
-        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Modal de confirmación -->
 <div id="confirm-modal" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:999;align-items:center;justify-content:center">
   <div style="background:var(--white);border-radius:var(--radius-lg);padding:48px;text-align:center;max-width:440px;animation:fadeInUp 0.4s ease">
     <div style="font-size:56px;margin-bottom:16px">🎉</div>
     <h2 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:8px">¡Reserva confirmada!</h2>
     <p style="color:var(--gray-500);margin-bottom:6px">Tu número de reserva es:</p>
-    <p style="  font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--pink);margin-bottom:20px" id="booking-code">AC-2025-XXXX</p>
+    <p style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--pink);margin-bottom:20px" id="booking-code">AC-2025-XXXX</p>
     <p style="font-size:14px;color:var(--gray-500);margin-bottom:28px">Te enviamos la confirmación a tu email. ¡Buen viaje!</p>
     <div style="display:flex;gap:12px;justify-content:center">
       <a href="reservas.html" class="btn btn-dark">Ver mis reservas</a>
@@ -261,7 +239,6 @@
   </div>
 </div>
 
-<!-- FOOTER -->
 <div id="footer"></div>
 <script type="module" src="/src/scripts/pago.ts"></script>
 </body>
