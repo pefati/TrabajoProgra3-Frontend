@@ -219,43 +219,28 @@
 
         <div class="order-summary">
           <h2 style="font-size:16px;font-weight:600;margin-bottom:16px">Resumen de tu reserva</h2>
-          <div class="summary-flight-info">
-            <div class="summary-route">
-              <span>EZE</span>
-              <span style="color:var(--white);font-size:14px">→</span>
-              <span>MAD</span>
+            <div class="summary-flight-info" id="summary-flight-info">
+                <div class="summary-route">
+                    <span id="summary-origen">—</span>
+                    <span style="color:var(--white);font-size:14px">→</span>
+                    <span id="summary-destino">—</span>
+                </div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6)" id="summary-vuelo-info"></div>
             </div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.6)">Vuelo AC801 · Lun 14 jul 2025</div>
-            <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">08:15 → 22:30 · Directo · 14h 15m
-            </div>
-          </div>
 
-          <div class="summary-line-list">
             <div class="summary-line">
-              <span class="summary-line-label">Tarifa base</span>
-              <span id="tarifa-base">$0</span>
-            </div>
-            <div class="summary-line">
-              <span class="summary-line-label">Asiento <span id="asiento-display">—</span></span>
-              <span id="asiento-precio">$0</span>
-            </div>
-            <div class="summary-line" id="eq-bodega-line" style="display:none">
-              <span class="summary-line-label">Equipaje 23kg</span>
-              <span>$45</span>
-            </div>
-            <div class="summary-line" id="eq-extra-line" style="display:none">
-              <span class="summary-line-label">Equipaje extra</span>
-              <span>$75</span>
-            </div>
-            <div class="summary-line" id="seguro-line" style="display:none">
-              <span class="summary-line-label">Seguro de viaje</span>
-              <span>$29</span>
+                <span class="summary-line-label">Tarifa base</span>
+                <span id="tarifa-base">$0</span>
             </div>
             <div class="summary-line">
-              <span class="summary-line-label">Impuestos y tasas</span>
-              <span>$85</span>
+                <span class="summary-line-label">Asiento <span id="asiento-display">—</span></span>
+                <span id="asiento-precio">$0</span>
             </div>
-          </div>
+            <div id="extras-lines"></div>
+            <div class="summary-line">
+                <span class="summary-line-label">Impuestos y tasas</span>
+                <span>$85</span>
+            </div>
 
           <div class="summary-total">
             <span class="summary-total-label">Total a pagar</span>

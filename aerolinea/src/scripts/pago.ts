@@ -45,13 +45,22 @@ async function cargarDatosCarrito() {
       setTimeout(() => window.location.href = 'carrito.html', 1500);
       return;
     }
-
     const itemsConDetalle = await Promise.all(carrito.items.map(async (item: any) => {
+
       try {
         const v = await fetch('/api/vuelos/' + item.vueloId).then(r => r.json());
         return { ...item, vuelo: v };
       } catch { return { ...item, vuelo: null }; }
+
     }));
+
+      const v = itemsConDetalle[0]?.vuelo;
+      const origen = v?.aeropuertoOrigen?.codigoIata || v?.aeropuertoOrigen?.ciudad || '—';
+      const destino = v?.aeropuertoDestino?.codigoIata || v?.aeropuertoDestino?.ciudad || '—';
+      document.getElementById('summary-origen')!.textContent = origen;
+      document.getElementById('summary-destino')!.textContent = destino;
+      document.getElementById('summary-vuelo-info')!.textContent =
+          `Vuelo #${v?.id} · ${v?.escala ? '1 escala' : 'Directo'}`;
 
     cartItems = itemsConDetalle;
     basePago = itemsConDetalle.reduce((sum: number, item: any) => {
@@ -361,6 +370,27 @@ function renderExtras() {
 function recalcularExtras() {
     extras = [...equipajesSeleccionados.values(), ...asistenciasSeleccionadas.values()]
         .reduce((sum, p) => sum + p, 0);
+
+    const extrasLines = document.getElementById('extras-lines');
+    if (extrasLines) {
+        let html = '';
+        equipajesSeleccionados.forEach((precio, id) => {
+            const eq = equipajes.find((e: any) => e.id === id);
+            if (eq) html += `<div class="summary-line">
+                <span class="summary-line-label">${eq.tipo} (${eq.peso}kg)</span>
+                <span>+$${precio.toLocaleString('es-AR')}</span>
+            </div>`;
+        });
+        asistenciasSeleccionadas.forEach((precio, id) => {
+            const as = asistencias.find((a: any) => a.id === id);
+            if (as) html += `<div class="summary-line">
+                <span class="summary-line-label">${as.nombrePlan}</span>
+                <span>+$${precio.toLocaleString('es-AR')}</span>
+            </div>`;
+        });
+        extrasLines.innerHTML = html;
+    }
+
     calcTotal();
     reiniciarCardForm();
 }
