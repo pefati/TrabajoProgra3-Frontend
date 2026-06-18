@@ -51,6 +51,7 @@ function renderFlights(lista: any[]) {
                         <div class="flight-duration">${formatearDuracion(v)}</div>
                         <div class="flight-line-bar"></div>
                         <div class="flight-stops ${!v.escala ? 'direct' : ''}">${v.escala ? '1 escala' : 'Directo'}</div>
+                    </div>
                     <div>
                         <div class="flight-time">${llegada}</div>
                         <div class="flight-city">${destino}</div>
