@@ -1,4 +1,4 @@
-import { initAuth, apiFetch } from './auth';
+import { initAuth, apiFetch, showToast } from './auth';
 fetch('/src/components/navbar.html')
     .then(res => res.text())
     .then(html => {
@@ -11,13 +11,17 @@ fetch("/src/components/footer.html")
         document.getElementById('footer')!.innerHTML = html;
     });
 
-let basePrice = 689;
+let basePrice = 0;
 let seatsNeeded = 1;
 let selectedSeats: { id: string; clase: string; precio: number }[] = [];
+let asientosData: any[] = [];
+let vueloId: number | null = null;
 
-const takenSeats = new Set(['1A', '1C', '2B', '2D', '3A', '4C', '5B', '6D', '7A', '7C', '8B', '9A', '9D', '10C', '11B', '12A', '13D', '14B', '15C', '16A', '17B', '18D', '19C', '20A']);
-
-const seatPrices: Record<string, number> = { 'Primera': 300, 'Ejecutiva': 80, 'Económica': 0 };
+function clasePorFila(rowNum: number): string {
+    if (rowNum <= 2) return 'Primera';
+    if (rowNum <= 6) return 'Ejecutiva';
+    return 'Económica';
+}
 
 (async () => {
     try {
@@ -25,69 +29,106 @@ const seatPrices: Record<string, number> = { 'Primera': 300, 'Ejecutiva': 80, 'E
         if (carrito?.items?.length > 0) {
             seatsNeeded = carrito.items.reduce((sum: number, i: any) => sum + i.cantidad, 0);
             const first = carrito.items[0];
+            vueloId = first.vueloId;
             const v = await fetch('/api/vuelos/' + first.vueloId).then(r => r.json());
             if (v?.precioVuelo) basePrice = v.precioVuelo;
+
+            const asientos = await fetch('/api/asientos/vuelo/' + first.vueloId).then(r => r.json());
+            asientosData = Array.isArray(asientos) ? asientos : [];
 
             const origen = v?.aeropuertoOrigen?.ciudad || '—';
             const destino = v?.aeropuertoDestino?.ciudad || '—';
             document.getElementById('vuelo-info')!.textContent = `${origen} → ${destino} · ${seatsNeeded} pasaje(s)`;
             document.getElementById('base-price')!.textContent = '$' + basePrice.toLocaleString('es-AR');
+            buildCabin();
         }
     } catch {}
     document.getElementById('asientos-progress')!.textContent = `Seleccioná 0 de ${seatsNeeded} asientos`;
 })();
+
+function asientoOcupado(codigo: string): boolean {
+    const a = asientosData.find(s => s.codigo === codigo);
+    return a ? a.ocupado === true : false;
+}
+
+function precioExtraPorCodigo(codigo: string): number {
+    const a = asientosData.find(s => s.codigo === codigo);
+    return a?.precioExtra ?? 0;
+}
 
 function buildCabin() {
     const cabin = document.getElementById('cabin-map');
     if (!cabin) return;
     let html = '<div class="cabin-plane-nose">✈</div>';
 
-    html += '<div class="cabin-section-label">Primera clase · Asiento incluido</div>';
-    for (let r = 1; r <= 2; r++) {
-        html += buildRow(r, ['A', 'C'], ['E', 'G'], 'first-class', 'Primera');
+    const filas = new Set<number>();
+    asientosData.forEach(a => {
+        const match = a.codigo?.match(/^(\d+)/);
+        if (match) filas.add(parseInt(match[1], 10));
+    });
+
+    if (filas.size === 0) {
+        cabin.innerHTML = html + '<p style="text-align:center;padding:40px;color:var(--gray-500)">No hay asientos disponibles para este vuelo.</p>';
+        return;
     }
 
-    html += '<div class="cabin-section-label">Clase ejecutiva</div>';
-    for (let r = 3; r <= 6; r++) {
-        html += buildRow(r, ['A', 'B', 'C'], ['D', 'E', 'F'], 'biz', 'Ejecutiva');
+    const maxFila = Math.max(...filas);
+
+    html += '<div class="cabin-section-label">Primera clase</div>';
+    for (let r = 1; r <= Math.min(2, maxFila); r++) {
+        html += buildRowDesdeData(r, 'Primera');
     }
 
-    html += '<div class="cabin-section-label">Clase económica</div>';
-    for (let r = 7; r <= 25; r++) {
-        html += buildRow(r, ['A', 'B', 'C'], ['D', 'E', 'F'], 'eco', 'Económica');
+    if (maxFila >= 3) {
+        html += '<div class="cabin-section-label">Clase ejecutiva</div>';
+        for (let r = 3; r <= Math.min(6, maxFila); r++) {
+            html += buildRowDesdeData(r, 'Ejecutiva');
+        }
+    }
+
+    if (maxFila >= 7) {
+        html += '<div class="cabin-section-label">Clase económica</div>';
+        for (let r = 7; r <= maxFila; r++) {
+            html += buildRowDesdeData(r, 'Económica');
+        }
     }
 
     cabin.innerHTML = html;
 }
 
-function buildRow(rowNum: number, leftCols: string[], rightCols: string[], zone: string, clase: string) {
+function columnasPorFila(rowNum: number): { left: string[]; right: string[] } {
+    const asis = asientosData.filter(a => {
+        const match = a.codigo?.match(/^(\d+)/);
+        return match && parseInt(match[1], 10) === rowNum;
+    });
+    const cols = asis.map((a: any) => a.codigo.replace(/^\d+/, '')).sort();
+    const mid = Math.ceil(cols.length / 2);
+    return { left: cols.slice(0, mid), right: cols.slice(mid) };
+}
+
+function buildRowDesdeData(rowNum: number, clase: string): string {
+    const { left, right } = columnasPorFila(rowNum);
+    if (left.length === 0 && right.length === 0) return '';
+
     let html = `<div class="seat-row"><span class="seat-row-num">${rowNum}</span>`;
 
-    [...leftCols].forEach(col => {
-        const id = rowNum + col;
-        const isTaken = takenSeats.has(id);
-        const isFirst = zone === 'first-class';
-        const isSelected = selectedSeats.some(s => s.id === id);
-        html += `<div class="seat ${isTaken ? 'taken' : ''} ${isFirst ? 'first-class' : ''} ${isSelected ? 'selected' : ''}"
-      id="seat-${id}" onclick="${isTaken ? '' : `toggleSeat('${id}','${clase}')`}"
-      title="${isTaken ? 'Ocupado' : id + ' · ' + clase}">
-      ${isTaken ? '' : id}
-    </div>`;
-    });
+    const buildSeats = (cols: string[]) => {
+        cols.forEach(col => {
+            const id = rowNum + col;
+            const ocupado = asientoOcupado(id);
+            const isFirst = clase === 'Primera';
+            const isSelected = selectedSeats.some(s => s.id === id);
+            html += `<div class="seat ${ocupado ? 'taken' : ''} ${isFirst ? 'first-class' : ''} ${isSelected ? 'selected' : ''}"
+          id="seat-${id}" onclick="${ocupado ? '' : `toggleSeat('${id}','${clase}')`}"
+          title="${ocupado ? 'Ocupado' : id + ' · ' + clase}">
+          ${ocupado ? '' : id}
+        </div>`;
+        });
+    };
 
+    buildSeats(left);
     html += '<div class="seat-aisle"></div>';
-
-    [...rightCols].forEach(col => {
-        const id = rowNum + col;
-        const isTaken = takenSeats.has(id);
-        const isFirst = zone === 'first-class';
-        const isSelected = selectedSeats.some(s => s.id === id);
-        html += `<div class="seat ${isTaken ? 'taken' : ''} ${isFirst ? 'first-class' : ''} ${isSelected ? 'selected' : ''}"
-      id="seat-${id}" onclick="${isTaken ? '' : `toggleSeat('${id}','${clase}')`}"
-      title="${isTaken ? 'Ocupado' : id + ' · ' + clase}">
-      ${isTaken ? '' : id}
-    </div>`;
-    });
+    buildSeats(right);
 
     html += '</div>';
     return html;
@@ -100,10 +141,10 @@ function buildRow(rowNum: number, leftCols: string[], rightCols: string[], zone:
         document.getElementById('seat-' + id)?.classList.remove('selected');
     } else {
         if (selectedSeats.length >= seatsNeeded) {
-            import('./auth').then(m => m.showToast(`Ya seleccionaste ${seatsNeeded} asientos`, 'warn'));
+            showToast(`Ya seleccionaste ${seatsNeeded} asientos`, 'warn');
             return;
         }
-        const extra = seatPrices[clase] || 0;
+        const extra = precioExtraPorCodigo(id);
         selectedSeats.push({ id, clase, precio: extra });
         document.getElementById('seat-' + id)?.classList.add('selected');
     }
@@ -145,5 +186,3 @@ function actualizarResumen() {
     }
     window.location.href = 'pago.html';
 };
-
-buildCabin();

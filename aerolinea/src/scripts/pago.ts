@@ -10,8 +10,8 @@ fetch('/src/components/footer.html')
 
 let extras = 0;
 let seatExtra = 0;
-const TASA_IMPUESTO = 0.15;
-const TASA_SERVICIO = 0.025;
+let TASA_IMPUESTO = 0.15;
+let TASA_SERVICIO = 0.025;
 let impuestos = 0;
 let servicio = 0;
 
@@ -35,6 +35,14 @@ async function autoFillPerfil() {
   } catch {}
 }
 
+async function fetchTarifas() {
+  try {
+    const data = await apiFetch('/api/config/tarifas', { method: 'GET' });
+    if (data.tasaImpuesto != null) TASA_IMPUESTO = data.tasaImpuesto;
+    if (data.tasaServicio != null) TASA_SERVICIO = data.tasaServicio;
+  } catch {}
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();
   if (!isPerfilCompleto()) {
@@ -42,6 +50,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => window.location.href = 'perfil.html', 1500);
     return;
   }
+
+  await fetchTarifas();
+  const pctImp = Math.round(TASA_IMPUESTO * 100);
+  const pctServ = Math.round(TASA_SERVICIO * 100);
+  const impLabel = document.getElementById('impuestos-label');
+  if (impLabel) impLabel.textContent = `Impuestos y tasas (${pctImp}%)`;
+  const servLabel = document.getElementById('servicio-label');
+  if (servLabel) servLabel.textContent = `Tarifa por servicio (${pctServ}%)`;
 
   await cargarDatosCarrito();
   await cargarExtras();
@@ -235,11 +251,6 @@ async function procesarPago() {
     const cuil = (document.getElementById('cuil') as HTMLInputElement)?.value?.trim() || '';
     const situacionFiscal = (document.getElementById('situacion-fiscal') as HTMLSelectElement)?.value || 'Consumidor Final';
 
-    /*let equipajeId: number | null = null;
-    const bodega = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked;
-    const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
-    if (bodega) equipajeId = 1;
-    else if (extra) equipajeId = 2;*/
       const equipajeId = [...equipajesSeleccionados.keys()];
       const asistenciaId = asistenciasSeleccionadas.size > 0 ? [...asistenciasSeleccionadas.keys()][0] : null;
 
@@ -266,7 +277,7 @@ async function procesarPago() {
     if (result.status === 'approved') {
       sessionStorage.removeItem('vuelo_seleccionado');
       sessionStorage.removeItem('asientos_seleccionados');
-      ['nombre','apellido','email','telefono','cuil','situacionFiscal','eqBodega','eqExtra','seguro'].forEach(k => sessionStorage.removeItem('pago_' + k));
+      ['nombre','apellido','email','telefono','cuil','situacionFiscal'].forEach(k => sessionStorage.removeItem('pago_' + k));
 
       await actualizarContadorCarrito();
 
@@ -319,22 +330,7 @@ document.addEventListener('input', (e) => {
   }
 });
 
-/*(window as any).actualizarExtras = function () {
-    extras = 0;
-    const bodega = (document.getElementById('eq-bodega') as HTMLInputElement)?.checked;
-    const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
-    const seguro = (document.getElementById('seguro') as HTMLInputElement)?.checked;
-    if (bodega) extras += 45;
-    if (extra) extras += 75;
-    if (seguro) extras += 29;
 
-    const lines = [['eq-bodega-line', bodega], ['eq-extra-line', extra], ['seguro-line', seguro]];
-    lines.forEach(([id, show]) => {
-        const el = document.getElementById(id as string);
-        if (el) el.style.display = show ? 'flex' : 'none';
-    });
-    calcTotal();
-};*/
 
 // Variables para guardar los datos reales
 let equipajes: any[] = [];
