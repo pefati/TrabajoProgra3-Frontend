@@ -15,12 +15,20 @@ export function setSession(_token: string, _email: string, _userId: number, perf
   _role = role;
 }
 
-export function clearSession() {
+export async function clearSession() {
   _perfilCompleto = false;
   _role = '';
   _nombre = '';
   _authPromise = null;
-  fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } finally {
+    document.cookie = 'user_email=; Max-Age=0; path=/';
+  }
 }
 
 export function isLoggedIn(): boolean {
@@ -129,9 +137,9 @@ function applyUserUI() {
 
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', (e) => {
+    logoutBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      clearSession();
+      await clearSession();
       window.location.href = 'index.html';
     });
   }

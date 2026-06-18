@@ -39,7 +39,6 @@ window.addEventListener('scroll', () => {
         origen: (document.getElementById('origen') as HTMLInputElement).value,
         destino: dest,
         fechaIda: (document.getElementById('fecha-ida') as HTMLInputElement).value,
-        fechaVuelta: (document.getElementById('fecha-vuelta') as HTMLInputElement).value,
         pasajeros: (document.getElementById('pasajeros') as HTMLSelectElement).value,
         clase: (document.getElementById('clase') as HTMLSelectElement).value,
     });
