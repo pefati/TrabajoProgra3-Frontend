@@ -66,8 +66,8 @@ function renderFlights(lista: any[]) {
             <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
             <button class="btn" style="padding:6px 14px;font-size:16px;" 
                             title="Agregar al carrito"
-                            onclick="event.stopPropagation();agregarAlCarrito(${v.id})">
-                            <img src="/images/carrito.png" alt="Agregar al carrito" style="width:20px;height:20px;"></button>
+                              onclick="event.stopPropagation();agregarAlCarrito(${v.id})">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
                 <button class="btn btn-primary" onclick="event.stopPropagation();elegirVuelo(${v.id})">Elegir →</button>
                 <button class="btn ${isFav ? 'btn-dark' : ''}" style="padding:6px 12px;font-size:12px;border:1px solid var(--navy)" 
                     id="fav-btn-${v.id}" onclick="event.stopPropagation();toggleFavorito(${v.id})">
