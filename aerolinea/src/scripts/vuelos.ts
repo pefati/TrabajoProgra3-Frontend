@@ -117,8 +117,14 @@ if (isLoggedIn()) actualizarContadorCarrito();
     const horaLlegada = v.horaLlegada || (v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
     const precio = v.precioVuelo ?? v.precio ?? 0;
 
+    const nombreOrigen = v.aeropuertoOrigen?.nombre || origen;
+    const nombreDestino = v.aeropuertoDestino?.nombre || destino;
+    const codOrigen = v.aeropuertoOrigen?.codigoIata || '';
+    const codDestino = v.aeropuertoDestino?.codigoIata || '';
+
     document.getElementById('modal-contenido')!.innerHTML = `
-        <h2 style="font-size:18px;font-weight:600;margin-bottom:1.5rem">${origen} → ${destino}</h2>
+        <h2 style="font-size:18px;font-weight:600;margin-bottom:0.25rem">${origen} → ${destino}</h2>
+        <div style="font-size:13px;color:#888;margin-bottom:1.5rem">${codOrigen ? codOrigen + ' · ' : ''}${nombreOrigen} → ${codDestino ? codDestino + ' · ' : ''}${nombreDestino}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
             <div>
                 <div style="font-size:11px;color:#888;margin-bottom:2px">Fecha salida</div>
@@ -138,13 +144,14 @@ if (isLoggedIn()) actualizarContadorCarrito();
             </div>
             <div>
                 <div style="font-size:11px;color:#888;margin-bottom:2px">Escala</div>
-                <div style="font-weight:500">${v.escala ? 'Sí' : 'No'}</div>
+                <div style="font-weight:500">${v.escala ? 'Sí (1 escala)' : 'Directo'}</div>
             </div>
             <div>
                 <div style="font-size:11px;color:#888;margin-bottom:2px">Estado</div>
                 <div style="font-weight:500">${v.estado || '—'}</div>
             </div>
         </div>
+        ${v.escala ? `<div style="background:#FAEEDA;padding:10px 14px;border-radius:var(--radius-md);margin-bottom:1rem;font-size:13px"><strong>🔄 Escala</strong> — Este vuelo realiza una escala intermedia.</div>` : ''}
         <div style="border-top:1px solid #eee;padding-top:1rem;display:flex;justify-content:space-between;align-items:center">
             <div>
                 <div style="font-size:11px;color:#888">Precio por persona</div>
@@ -269,8 +276,11 @@ async function fetchVuelos() {
 
     const url = '/api/vuelos/filtrar?' + searchParams.toString();
 
-    const h1 = document.querySelector('.results-header h1');
-    if (h1) h1.textContent = `${oCiudad} → ${dCiudad}`;
+    const routeTitle = document.getElementById('route-title');
+    if (routeTitle) {
+        routeTitle.style.display = '';
+        routeTitle.textContent = (oCiudad && dCiudad) ? `${oCiudad} → ${dCiudad}` : 'Todos los vuelos';
+    }
 
     const fechaEl = document.getElementById('fecha-resultados');
     if (fechaEl) {

@@ -8,6 +8,8 @@ fetch('/src/components/footer.html')
     .then(res => res.text())
     .then(html => { document.getElementById('footer')!.innerHTML = html; });
 
+let todosLosAeropuertos: any[] = [];
+
 function crearModal(html: string, onSubmit: (data: any) => Promise<void>) {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -34,6 +36,16 @@ function crearModal(html: string, onSubmit: (data: any) => Promise<void>) {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
 
+function validarAeropuerto(data: any): string | null {
+    if (!data.nombre?.trim()) return 'El nombre es obligatorio.';
+    if (data.nombre.trim().length < 3) return 'El nombre debe tener al menos 3 caracteres.';
+    if (!data.codigoIata?.trim()) return 'El código IATA es obligatorio.';
+    if (!/^[A-Za-z]{3}$/.test(data.codigoIata.trim())) return 'El código IATA debe tener exactamente 3 letras.';
+    if (!data.ciudad?.trim()) return 'La ciudad es obligatoria.';
+    if (!data.pais?.trim()) return 'El país es obligatorio.';
+    return null;
+}
+
 function mostrarModalNuevo() {
     crearModal(`
         <h2>Nuevo aeropuerto</h2>
@@ -43,7 +55,7 @@ function mostrarModalNuevo() {
         </div>
         <div class="form-group">
             <label>Código IATA</label>
-            <input type="text" name="codigoIata" class="form-control" placeholder="EZE" maxlength="3" required />
+            <input type="text" name="codigoIata" class="form-control" placeholder="EZE" maxlength="3" style="text-transform:uppercase" required />
         </div>
         <div class="form-group">
             <label>Ciudad</label>
@@ -55,6 +67,9 @@ function mostrarModalNuevo() {
         </div>
         <button type="submit" class="btn-submit">Guardar aeropuerto</button>
     `, async (data) => {
+        const err = validarAeropuerto(data);
+        if (err) { showToast(err, 'error'); throw new Error(err); }
+        data.codigoIata = data.codigoIata.toUpperCase();
         await apiFetch('/api/aeropuertos', { method: 'POST', body: JSON.stringify(data) });
         showToast('Aeropuerto creado con éxito', 'success');
     });
@@ -69,7 +84,7 @@ function mostrarModalEditar(a: any) {
         </div>
         <div class="form-group">
             <label>Código IATA</label>
-            <input type="text" name="codigoIata" class="form-control" value="${a.codigoIata || ''}" maxlength="3" required />
+            <input type="text" name="codigoIata" class="form-control" value="${a.codigoIata || ''}" maxlength="3" style="text-transform:uppercase" required />
         </div>
         <div class="form-group">
             <label>Ciudad</label>
@@ -81,6 +96,9 @@ function mostrarModalEditar(a: any) {
         </div>
         <button type="submit" class="btn-submit">Guardar cambios</button>
     `, async (data) => {
+        const err = validarAeropuerto(data);
+        if (err) { showToast(err, 'error'); throw new Error(err); }
+        data.codigoIata = data.codigoIata.toUpperCase();
         await apiFetch('/api/aeropuertos/' + a.id, { method: 'PUT', body: JSON.stringify(data) });
         showToast('Aeropuerto actualizado', 'success');
     });
@@ -91,37 +109,58 @@ async function cargarAeropuertos() {
     tbody.innerHTML = '<tr><td colspan="6"><div class="empty-msg"><div class="empty-icon">⏳</div>Cargando aeropuertos...</div></td></tr>';
     try {
         const aeropuertos = await apiFetch('/api/aeropuertos');
-        if (!aeropuertos.length) {
-            tbody.innerHTML = '<tr><td colspan="6"><div class="empty-msg"><div class="empty-icon">📍</div>No hay aeropuertos registrados todavía.</div></td></tr>';
-            return;
-        }
-        tbody.innerHTML = aeropuertos.map((a: any) => `
-            <tr>
-                <td>${a.id}</td>
-                <td><strong>${a.nombre}</strong></td>
-                <td><span class="badge badge-info">${a.codigoIata}</span></td>
-                <td>${a.ciudad}</td>
-                <td>${a.pais}</td>
-                <td><div class="table-actions">
-                    <button class="btn-icon btn-icon-edit" data-editar="${a.id}">✎ Editar</button>
-                    <button class="btn-icon btn-icon-delete" data-eliminar="${a.id}">✕</button>
-                </div></td>
-            </tr>
-        `).join('');
-
-        tbody.querySelectorAll('[data-editar]').forEach(btn => btn.addEventListener('click', () => {
-            const a = aeropuertos.find((x: any) => x.id === parseInt((btn as HTMLElement).dataset.editar!));
-            if (a) mostrarModalEditar(a);
-        }));
-        tbody.querySelectorAll('[data-eliminar]').forEach(btn => btn.addEventListener('click', async () => {
-            const id = (btn as HTMLElement).dataset.eliminar!;
-            if (!confirm('¿Eliminar aeropuerto #' + id + '?')) return;
-            await apiFetch('/api/aeropuertos/' + id, { method: 'DELETE' });
-            showToast('Aeropuerto eliminado', 'success');
-            cargarAeropuertos();
-        }));
+        todosLosAeropuertos = aeropuertos;
+        renderTablaAeropuertos(aeropuertos);
     } catch (err: any) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-msg" style="color:var(--danger)">' + err.message + '</div></td></tr>'; }
 }
+
+function renderTablaAeropuertos(lista: any[]) {
+    const tbody = document.getElementById('tabla-aeropuertos')!;
+    if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-msg"><div class="empty-icon">📍</div>No hay aeropuertos registrados todavía.</div></td></tr>';
+        return;
+    }
+    tbody.innerHTML = lista.map((a: any) => `
+        <tr>
+            <td>${a.id}</td>
+            <td><strong>${a.nombre}</strong></td>
+            <td><span class="badge badge-info">${a.codigoIata}</span></td>
+            <td>${a.ciudad}</td>
+            <td>${a.pais}</td>
+            <td><div class="table-actions">
+                <button class="btn-icon btn-icon-edit" data-editar="${a.id}">✎ Editar</button>
+                <button class="btn-icon btn-icon-delete" data-eliminar="${a.id}">✕</button>
+            </div></td>
+        </tr>
+    `).join('');
+
+    tbody.querySelectorAll('[data-editar]').forEach(btn => btn.addEventListener('click', () => {
+        const a = todosLosAeropuertos.find((x: any) => x.id === parseInt((btn as HTMLElement).dataset.editar!));
+        if (a) mostrarModalEditar(a);
+    }));
+    tbody.querySelectorAll('[data-eliminar]').forEach(btn => btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.eliminar!;
+        if (!confirm('¿Eliminar aeropuerto #' + id + '?')) return;
+        await apiFetch('/api/aeropuertos/' + id, { method: 'DELETE' });
+        showToast('Aeropuerto eliminado', 'success');
+        cargarAeropuertos();
+    }));
+}
+
+(window as any).filtrarAeropuertos = function () {
+    const q = ((document.getElementById('search-input') as HTMLInputElement)?.value || '').toLowerCase();
+    let filtrados = todosLosAeropuertos;
+    if (q) {
+        filtrados = filtrados.filter((a: any) =>
+            String(a.id).includes(q) ||
+            (a.nombre || '').toLowerCase().includes(q) ||
+            (a.ciudad || '').toLowerCase().includes(q) ||
+            (a.pais || '').toLowerCase().includes(q) ||
+            (a.codigoIata || '').toLowerCase().includes(q)
+        );
+    }
+    renderTablaAeropuertos(filtrados);
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();

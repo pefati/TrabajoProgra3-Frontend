@@ -58,25 +58,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  const nacimientoInput = document.getElementById('p-nacimiento') as HTMLInputElement;
+  if (nacimientoInput) nacimientoInput.max = new Date().toISOString().split('T')[0];
+
   cargarPerfil();
 
   const form = document.getElementById('perfil-form') as HTMLFormElement;
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const nombre = (document.getElementById('p-nombre') as HTMLInputElement).value.trim();
+      const apellido = (document.getElementById('p-apellido') as HTMLInputElement).value.trim();
+      const telefono = (document.getElementById('p-telefono') as HTMLInputElement).value.trim();
+      const dni = (document.getElementById('p-dni') as HTMLInputElement).value.trim();
+      const sexo = (document.getElementById('p-sexo') as HTMLSelectElement).value;
+      const nacimiento = (document.getElementById('p-nacimiento') as HTMLInputElement).value;
+
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(nombre)) { showToast('El nombre solo puede contener letras y espacios.', 'error'); return; }
+      if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(apellido)) { showToast('El apellido solo puede contener letras y espacios.', 'error'); return; }
+      if (!telefono) { showToast('El teléfono es obligatorio.', 'error'); return; }
+      if (!dni || !/^\d+$/.test(dni)) { showToast('El número de documento solo puede contener dígitos.', 'error'); return; }
+      if (!sexo) { showToast('Seleccioná un género.', 'error'); return; }
+      if (!nacimiento) { showToast('La fecha de nacimiento es obligatoria.', 'error'); return; }
+      if (new Date(nacimiento) >= new Date()) { showToast('La fecha de nacimiento debe ser anterior a hoy.', 'error'); return; }
+
       const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
       btn.disabled = true;
       btn.textContent = 'Guardando...';
 
-      const body = {
-        nombre: (document.getElementById('p-nombre') as HTMLInputElement).value,
-        apellido: (document.getElementById('p-apellido') as HTMLInputElement).value,
-        telefono: (document.getElementById('p-telefono') as HTMLInputElement).value,
-        numeroIdentificador: (document.getElementById('p-dni') as HTMLInputElement).value,
-        identificador: (document.getElementById('p-identificador') as HTMLSelectElement).value,
-        sexo: (document.getElementById('p-sexo') as HTMLSelectElement).value,
-        fechaNacimiento: (document.getElementById('p-nacimiento') as HTMLInputElement).value,
-      };
+      const body = { nombre, apellido, telefono, numeroIdentificador: dni, identificador: (document.getElementById('p-identificador') as HTMLSelectElement).value, sexo, fechaNacimiento: nacimiento };
 
       try {
         const endpoint = isPerfilCompleto() ? '/api/auth/perfil' : '/api/auth/completarPerfil';

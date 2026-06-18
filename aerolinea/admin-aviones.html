@@ -21,13 +21,23 @@
     <a href="admin-reservas.html"><span class="icon">🎫</span> Reservas</a>
   </aside>
   <section class="admin-content">
-    <div class="admin-toolbar">
-      <div class="admin-header" style="margin-bottom:0">
-        <h1>Aviones</h1>
-        <p>Registrar y gestionar la flota de aviones.</p>
+      <div class="admin-toolbar">
+        <div class="admin-header" style="margin-bottom:0">
+          <h1>Aviones</h1>
+          <p>Registrar y gestionar la flota de aviones.</p>
+        </div>
+        <button class="btn btn-dark" id="btn-nuevo-avion">+ Nuevo avión</button>
       </div>
-      <button class="btn btn-dark" id="btn-nuevo-avion">+ Nuevo avión</button>
-    </div>
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <input type="text" class="form-control" id="search-input" placeholder="Buscar por identificador o modelo..." style="max-width:320px" oninput="filtrarAviones()" />
+        <select class="form-control" id="filter-estado" style="max-width:180px" onchange="filtrarAviones()">
+          <option value="">Todos los estados</option>
+          <option value="DISPONIBLE">Disponible</option>
+          <option value="MANTENIMIENTO">Mantenimiento</option>
+          <option value="ACTIVO">Activo</option>
+          <option value="BAJA">Baja</option>
+        </select>
+      </div>
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>

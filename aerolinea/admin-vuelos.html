@@ -21,13 +21,24 @@
     <a href="admin-reservas.html"><span class="icon">🎫</span> Reservas</a>
   </aside>
   <section class="admin-content">
-    <div class="admin-toolbar">
-      <div class="admin-header" style="margin-bottom:0">
-        <h1>Vuelos</h1>
-        <p>Crear, editar y eliminar vuelos.</p>
+      <div class="admin-toolbar">
+        <div class="admin-header" style="margin-bottom:0">
+          <h1>Vuelos</h1>
+          <p>Crear, editar y eliminar vuelos.</p>
+        </div>
+        <button class="btn btn-dark" id="btn-nuevo-vuelo">+ Nuevo vuelo</button>
       </div>
-      <button class="btn btn-dark" id="btn-nuevo-vuelo">+ Nuevo vuelo</button>
-    </div>
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <input type="text" class="form-control" id="search-input" placeholder="Buscar por ID, origen, destino..." style="max-width:320px" oninput="filtrarVuelos()" />
+        <select class="form-control" id="filter-estado" style="max-width:180px" onchange="filtrarVuelos()">
+          <option value="">Todos los estados</option>
+          <option value="PROGRAMADO">Programado</option>
+          <option value="BOARDING">Boarding</option>
+          <option value="ACTIVO">Activo</option>
+          <option value="CANCELADO">Cancelado</option>
+          <option value="REPROGRAMADO">Reprogramado</option>
+        </select>
+      </div>
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>

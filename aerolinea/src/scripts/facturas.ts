@@ -38,7 +38,8 @@ async function cargarFacturas() {
                 <div style="flex:1">
                     <div class="booking-route">Factura #${f.id}</div>
                     <div class="booking-details">Reserva #${f.reserva?.id || '—'} · ${metodo[f.metodoDePago] || f.metodoDePago || '—'}</div>
-                    <div style="font-size:12px;color:var(--gray-500);margin-top:4px">CUIL: ${f.cuil || f.CUIL || '—'} · ${f.situacionFiscal || '—'}</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-top:4px">Total: $${f.reserva?.valor?.toLocaleString('es-AR') || '—'}</div>
+                    <div style="font-size:12px;color:var(--gray-500);margin-top:2px">CUIL: ${f.cuil || f.CUIL || '—'} · ${f.situacionFiscal || '—'}</div>
                 </div>
                 <div class="booking-date">
                     <div class="booking-date-day">${fecha.split('/')[0]}</div>

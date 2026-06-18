@@ -18,6 +18,7 @@ const statusBadge: Record<string, string> = {
 
 let aeropuertos: any[] = [];
 let aviones: any[] = [];
+let todosLosVuelos: any[] = [];
 
 async function cargarAeropuertos() {
     aeropuertos = await apiFetch('/api/aeropuertos');
@@ -208,40 +209,63 @@ async function cargarVuelos() {
     tbody.innerHTML = '<tr><td colspan="9"><div class="empty-msg"><div class="empty-icon">⏳</div>Cargando vuelos...</div></td></tr>';
     try {
         const vuelos = await apiFetch('/api/vuelos');
-        if (!vuelos.length) {
-            tbody.innerHTML = '<tr><td colspan="9"><div class="empty-msg"><div class="empty-icon">✈</div>No hay vuelos registrados todavía.</div></td></tr>';
-            return;
-        }
-        tbody.innerHTML = vuelos.map((v: any) => `
-            <tr>
-                <td>${v.id}</td>
-                <td><strong>${v.aeropuertoOrigen?.nombre || '—'}</strong></td>
-                <td><strong>${v.aeropuertoDestino?.nombre || '—'}</strong></td>
-                <td>${v.fechaSalida || '—'}</td>
-                <td>${v.fechaLlegada || '—'}</td>
-                <td><strong>$${v.precioVuelo?.toFixed(2) || '—'}</strong></td>
-                <td><span class="badge ${statusBadge[v.estado] || 'badge-info'}">${v.estado || '—'}</span></td>
-                <td>${v.avion?.modelo || '—'}</td>
-                <td><div class="table-actions">
-                    <button class="btn-icon btn-icon-edit" data-editar="${v.id}">✎ Editar</button>
-                    <button class="btn-icon btn-icon-delete" data-eliminar="${v.id}">✕</button>
-                </div></td>
-            </tr>
-        `).join('');
-
-        tbody.querySelectorAll('[data-editar]').forEach(btn => btn.addEventListener('click', async () => {
-            const v = vuelos.find((x: any) => x.id === parseInt((btn as HTMLElement).dataset.editar!));
-            if (v) { await cargarAeropuertos(); await cargarAviones(); mostrarModalEditar(v); }
-        }));
-        tbody.querySelectorAll('[data-eliminar]').forEach(btn => btn.addEventListener('click', async () => {
-            const id = (btn as HTMLElement).dataset.eliminar!;
-            if (!confirm('¿Eliminar vuelo #' + id + '?')) return;
-            await apiFetch('/api/vuelos/' + id, { method: 'DELETE' });
-            showToast('Vuelo eliminado', 'success');
-            cargarVuelos();
-        }));
+        todosLosVuelos = vuelos;
+        renderTablaVuelos(vuelos);
     } catch (err: any) { tbody.innerHTML = '<tr><td colspan="9"><div class="empty-msg" style="color:var(--danger)">' + err.message + '</div></td></tr>'; }
 }
+
+function renderTablaVuelos(vuelos: any[]) {
+    const tbody = document.getElementById('tabla-vuelos')!;
+    if (!vuelos.length) {
+        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-msg"><div class="empty-icon">✈</div>No hay vuelos registrados todavía.</div></td></tr>';
+        return;
+    }
+    tbody.innerHTML = vuelos.map((v: any) => `
+        <tr>
+            <td>${v.id}</td>
+            <td><strong>${v.aeropuertoOrigen?.nombre || '—'}</strong></td>
+            <td><strong>${v.aeropuertoDestino?.nombre || '—'}</strong></td>
+            <td>${v.fechaSalida || '—'}</td>
+            <td>${v.fechaLlegada || '—'}</td>
+            <td><strong>$${v.precioVuelo?.toFixed(2) || '—'}</strong></td>
+            <td><span class="badge ${statusBadge[v.estado] || 'badge-info'}">${v.estado || '—'}</span></td>
+            <td>${v.avion?.modelo || '—'}</td>
+            <td><div class="table-actions">
+                <button class="btn-icon btn-icon-edit" data-editar="${v.id}">✎ Editar</button>
+                <button class="btn-icon btn-icon-delete" data-eliminar="${v.id}">✕</button>
+            </div></td>
+        </tr>
+    `).join('');
+
+    tbody.querySelectorAll('[data-editar]').forEach(btn => btn.addEventListener('click', async () => {
+        const v = todosLosVuelos.find((x: any) => x.id === parseInt((btn as HTMLElement).dataset.editar!));
+        if (v) { await cargarAeropuertos(); await cargarAviones(); mostrarModalEditar(v); }
+    }));
+    tbody.querySelectorAll('[data-eliminar]').forEach(btn => btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.eliminar!;
+        if (!confirm('¿Eliminar vuelo #' + id + '?')) return;
+        await apiFetch('/api/vuelos/' + id, { method: 'DELETE' });
+        showToast('Vuelo eliminado', 'success');
+        cargarVuelos();
+    }));
+}
+
+(window as any).filtrarVuelos = function () {
+    const q = ((document.getElementById('search-input') as HTMLInputElement)?.value || '').toLowerCase();
+    const estado = (document.getElementById('filter-estado') as HTMLSelectElement)?.value || '';
+    let filtrados = todosLosVuelos;
+    if (q) {
+        filtrados = filtrados.filter((v: any) =>
+            String(v.id).includes(q) ||
+            (v.aeropuertoOrigen?.nombre || '').toLowerCase().includes(q) ||
+            (v.aeropuertoDestino?.nombre || '').toLowerCase().includes(q) ||
+            (v.aeropuertoOrigen?.ciudad || '').toLowerCase().includes(q) ||
+            (v.aeropuertoDestino?.ciudad || '').toLowerCase().includes(q)
+        );
+    }
+    if (estado) filtrados = filtrados.filter((v: any) => v.estado === estado);
+    renderTablaVuelos(filtrados);
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();

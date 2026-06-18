@@ -21,13 +21,16 @@
     <a href="admin-reservas.html"><span class="icon">🎫</span> Reservas</a>
   </aside>
   <section class="admin-content">
-    <div class="admin-toolbar">
-      <div class="admin-header" style="margin-bottom:0">
-        <h1>Aeropuertos</h1>
-        <p>Registrar y gestionar aeropuertos.</p>
+      <div class="admin-toolbar">
+        <div class="admin-header" style="margin-bottom:0">
+          <h1>Aeropuertos</h1>
+          <p>Registrar y gestionar aeropuertos.</p>
+        </div>
+        <button class="btn btn-dark" id="btn-nuevo-aeropuerto">+ Nuevo aeropuerto</button>
       </div>
-      <button class="btn btn-dark" id="btn-nuevo-aeropuerto">+ Nuevo aeropuerto</button>
-    </div>
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <input type="text" class="form-control" id="search-input" placeholder="Buscar por nombre, ciudad, país o código IATA..." style="max-width:360px" oninput="filtrarAeropuertos()" />
+      </div>
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>

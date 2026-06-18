@@ -10,7 +10,10 @@ fetch('/src/components/footer.html')
 
 let extras = 0;
 let seatExtra = 0;
-const impuestos = 85;
+const TASA_IMPUESTO = 0.15;
+const TASA_SERVICIO = 0.025;
+let impuestos = 0;
+let servicio = 0;
 
 let basePago = 0;
 let cartItems: any[] = [];
@@ -20,6 +23,17 @@ let cardFormInstance: any = null;
 
 const equipajesSeleccionados = new Map<number, number>(); // id -> precio
 const asistenciasSeleccionadas = new Map<number, number>();
+
+async function autoFillPerfil() {
+  try {
+    const data = await apiFetch('/api/auth/perfil');
+    if (data.nombre) (document.getElementById('nombre') as HTMLInputElement).value = data.nombre;
+    if (data.apellido) (document.getElementById('apellido') as HTMLInputElement).value = data.apellido;
+    if (data.email) (document.getElementById('email') as HTMLInputElement).value = data.email;
+    if (data.telefono) (document.getElementById('telefono') as HTMLInputElement).value = data.telefono;
+    guardarFormulario();
+  } catch {}
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initAuth();
@@ -32,6 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await cargarDatosCarrito();
   await cargarExtras();
   restaurarFormulario();
+  if (!sessionStorage.getItem('pago_nombre')) await autoFillPerfil();
+  cargarAsientos();
   calcTotal();
   await fetchPublicKey();
   initCardForm();
@@ -86,15 +102,18 @@ async function cargarDatosCarrito() {
   }
 }
 
-const asientosSeleccionados: { id: string; clase: string; precio: number }[] = JSON.parse(sessionStorage.getItem('asientos_seleccionados') || '[]');
-if (asientosSeleccionados.length > 0) {
-  seatExtra = asientosSeleccionados.reduce((sum, s) => sum + (s.precio || 0), 0);
-  document.addEventListener('DOMContentLoaded', () => {
+function cargarAsientos() {
+  const raw = sessionStorage.getItem('asientos_seleccionados');
+  if (!raw) return;
+  try {
+    const asientos: { id: string; clase: string; precio: number }[] = JSON.parse(raw);
+    if (asientos.length === 0) return;
+    seatExtra = asientos.reduce((sum, s) => sum + (s.precio || 0), 0);
     const asientoDisplay = document.getElementById('asiento-display');
     const asientoPrecio = document.getElementById('asiento-precio');
-    if (asientoDisplay) asientoDisplay.textContent = asientosSeleccionados.length + ' asientos';
+    if (asientoDisplay) asientoDisplay.textContent = asientos.length + ' asientos';
     if (asientoPrecio) asientoPrecio.textContent = seatExtra > 0 ? '+$' + seatExtra.toLocaleString('es-AR') : '$0';
-  });
+  } catch {}
 }
 
 async function fetchPublicKey() {
@@ -107,7 +126,7 @@ async function fetchPublicKey() {
 }
 
 function getTotal(): number {
-  return basePago + seatExtra + extras + impuestos;
+  return basePago + seatExtra + extras + impuestos + servicio;
 }
 
 function initCardForm() {
@@ -179,6 +198,28 @@ function initCardForm() {
 async function procesarPago() {
   if (!cardFormInstance) return;
 
+  const nombre = (document.getElementById('nombre') as HTMLInputElement)?.value?.trim() || '';
+  const apellido = (document.getElementById('apellido') as HTMLInputElement)?.value?.trim() || '';
+  const email = (document.getElementById('email') as HTMLInputElement)?.value?.trim() || '';
+  const telefono = (document.getElementById('telefono') as HTMLInputElement)?.value?.trim() || '';
+  const cuil = (document.getElementById('cuil') as HTMLInputElement)?.value?.trim() || '';
+
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(nombre)) { showToast('El nombre solo puede contener letras.', 'error'); return; }
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(apellido)) { showToast('El apellido solo puede contener letras.', 'error'); return; }
+  if (!email || !email.includes('@')) { showToast('Ingresá un email válido.', 'error'); return; }
+  if (!telefono) { showToast('El teléfono es obligatorio.', 'error'); return; }
+  if (!cuil) { showToast('El CUIL/CUIT es obligatorio.', 'error'); return; }
+
+  const expiryEl = document.getElementById('expirationDate') as HTMLInputElement;
+  if (expiryEl) {
+    const val = expiryEl.value.replace(/\s/g, '');
+    const parts = val.split('/');
+    if (parts.length === 2) {
+      const mm = parseInt(parts[0], 10);
+      if (mm < 1 || mm > 12) { showToast('El mes de vencimiento debe estar entre 01 y 12.', 'error'); return; }
+    }
+  }
+
   const btn = document.getElementById('btn-pagar') as HTMLButtonElement;
   const errorEl = document.getElementById('mp-card-error') as HTMLDivElement;
   const loadingEl = document.getElementById('mp-loading') as HTMLDivElement;
@@ -215,6 +256,8 @@ async function procesarPago() {
         payerDocNumber: cardData?.identificationNumber || '',
         equipajeId,
         asistenciaId,
+        asientoExtra: seatExtra,
+        servicioExtra: servicio,
         cuil,
         situacionFiscal,
       }),
@@ -358,9 +401,25 @@ function renderExtras() {
     recalcularExtras();
 };
 
+function actualizarLineasExtras() {
+    const container = document.getElementById('extras-summary');
+    if (!container) return;
+    const lines: string[] = [];
+    equipajesSeleccionados.forEach((precio, id) => {
+        const eq = equipajes.find(e => e.id === id);
+        if (eq) lines.push(`<div class="summary-line"><span class="summary-line-label">${eq.tipo} (${eq.peso} kg)</span><span>+$${precio.toLocaleString('es-AR')}</span></div>`);
+    });
+    asistenciasSeleccionadas.forEach((precio, id) => {
+        const as = asistencias.find(a => a.id === id);
+        if (as) lines.push(`<div class="summary-line"><span class="summary-line-label">${as.nombrePlan}</span><span>+$${precio.toLocaleString('es-AR')}</span></div>`);
+    });
+    container.innerHTML = lines.join('');
+}
+
 function recalcularExtras() {
     extras = [...equipajesSeleccionados.values(), ...asistenciasSeleccionadas.values()]
         .reduce((sum, p) => sum + p, 0);
+    actualizarLineasExtras();
     calcTotal();
     reiniciarCardForm();
 }
@@ -373,7 +432,14 @@ function reiniciarCardForm() {
     initCardForm();
 }
 function calcTotal() {
-    const total = basePago + seatExtra + extras + impuestos;
+    impuestos = Math.round(basePago * TASA_IMPUESTO);
+    const subtotal = basePago + seatExtra + extras + impuestos;
+    servicio = Math.round(subtotal * TASA_SERVICIO);
+    const total = subtotal + servicio;
+    const impuestosEl = document.getElementById('impuestos-monto');
+    if (impuestosEl) impuestosEl.textContent = '$' + impuestos.toLocaleString('es-AR');
+    const servicioEl = document.getElementById('servicio-monto');
+    if (servicioEl) servicioEl.textContent = '$' + servicio.toLocaleString('es-AR');
     const el = document.getElementById('grand-total');
     if (el) el.textContent = '$' + total.toLocaleString('es-AR');
     const btnTotal = document.getElementById('total-pagar');

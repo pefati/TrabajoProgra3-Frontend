@@ -17,7 +17,7 @@
   <div class="flight-search-bar" style="margin-top:72px">
     <div class="container">
       <form onsubmit="actualizarBusqueda(event)"
-        style="display:grid;grid-template-columns:1fr 30px 1fr 1fr 1fr auto;gap:12px;align-items:end">
+        style="display:grid;grid-template-columns:1fr 30px 1fr 1fr auto;gap:12px;align-items:end">
         <div class="form-group">
           <label style="color:rgba(255,255,255,0.5)">Origen</label>
           <input type="text" id="origen" class="form-control" placeholder="Narnia"/>
@@ -34,14 +34,6 @@
           <label style="color:rgba(255,255,255,0.5)">Ida</label>
           <input type="date" id="fecha-ida" class="form-control" />
         </div>
-        <div class="form-group">
-          <label style="color:rgba(255,255,255,0.5)">Pasajeros / Clase</label>
-          <select id="clase" class="form-control">
-            <option>1 pas. · Económica</option>
-            <option>1 pas. · Ejecutiva</option>
-            <option>2 pas. · Económica</option>
-          </select>
-        </div>
         <button type="submit" class="btn btn-primary" style="white-space:nowrap">Buscar</button>
       </form>
     </div>
@@ -52,6 +44,7 @@
     <div class="container">
       <div class="results-header">
         <div>
+            <h1 id="route-title" style="font-size:20px;font-weight:700;margin-bottom:4px"></h1>
             <div class="results-count">Mostrando <span id="count">0</span> vuelos disponibles · <span id="fecha-resultados"></span></div>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
