@@ -10,6 +10,7 @@ fetch('/src/components/footer.html')
 
 let extras = 0;
 let seatExtra = 0;
+let asientosSeleccionados: number[] = [];
 let TASA_IMPUESTO = 0.15;
 let TASA_SERVICIO = 0.025;
 let impuestos = 0;
@@ -69,6 +70,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   initCardForm();
 });
 
+function formatearFecha(f: string): string {
+  const d = new Date(f + 'T00:00:00');
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function calcularDuracion(hSal: string, hLle: string): string {
+  const [h1, m1] = hSal.split(':').map(Number);
+  const [h2, m2] = hLle.split(':').map(Number);
+  let min = (h2 * 60 + m2) - (h1 * 60 + m1);
+  if (min < 0) min += 24 * 60;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return `${h}h ${m > 0 ? m + 'm' : ''}`.trim();
+}
+
 async function cargarDatosCarrito() {
   try {
     const carrito = await apiFetch('/api/carrito');
@@ -95,17 +113,24 @@ async function cargarDatosCarrito() {
       if (itemsConDetalle.length === 1) {
         const item = itemsConDetalle[0];
         const v = item.vuelo;
-        const origen = v?.aeropuertoOrigen?.ciudad || '—';
-        const destino = v?.aeropuertoDestino?.ciudad || '—';
-        flightSummary.innerHTML = `<div style="font-weight:600">${origen} → ${destino}</div>
-            <div style="font-size:13px;color:var(--gray-500)">Vuelo #${v?.id} · ${v?.escala ? '1 escala' : 'Directo'} · ${item.cantidad} pasaje(s)</div>`;
+        const codOrigen = v?.aeropuertoOrigen?.codigoIata || '—';
+        const codDestino = v?.aeropuertoDestino?.codigoIata || '—';
+        const fecha = v?.fechaSalida ? formatearFecha(v.fechaSalida) : '';
+        const hSal = v?.horaSalida || '';
+        const hLle = v?.horaLlegada || '';
+        const duracion = v?.horaSalida && v?.horaLlegada ? calcularDuracion(v.horaSalida, v.horaLlegada) : '';
+        const escala = v?.escala ? '1 escala' : 'Directo';
+        flightSummary.innerHTML =
+          `<div class="summary-route"><span>${codOrigen}</span><span style="color:var(--white);font-size:14px">→</span><span>${codDestino}</span></div>` +
+          `<div style="font-size:13px;color:rgba(255,255,255,0.6)">Vuelo #${v?.id} · ${fecha}</div>` +
+          `<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">${hSal} → ${hLle} · ${escala} · ${duracion}</div>`;
       } else {
-        let html = '<div style="font-weight:600;margin-bottom:8px">Resumen del carrito</div>';
+        let html = '<div class="summary-route" style="font-weight:600;margin-bottom:8px">Resumen del carrito</div>';
         itemsConDetalle.forEach((item: any) => {
           const v = item.vuelo;
-          const origen = v?.aeropuertoOrigen?.ciudad || '—';
-          const destino = v?.aeropuertoDestino?.ciudad || '—';
-          html += `<div style="font-size:13px;color:var(--gray-500)">• ${origen} → ${destino} × ${item.cantidad} pasaje(s) — $${((v?.precioVuelo ?? 0) * item.cantidad).toLocaleString('es-AR')}</div>`;
+          const codOrigen = v?.aeropuertoOrigen?.codigoIata || '—';
+          const codDestino = v?.aeropuertoDestino?.codigoIata || '—';
+          html += `<div style="font-size:13px;color:rgba(255,255,255,0.6)">• ${codOrigen} → ${codDestino} × ${item.cantidad} pasaje(s) — $${((v?.precioVuelo ?? 0) * item.cantidad).toLocaleString('es-AR')}</div>`;
         });
         flightSummary.innerHTML = html;
       }
@@ -122,9 +147,10 @@ function cargarAsientos() {
   const raw = sessionStorage.getItem('asientos_seleccionados');
   if (!raw) return;
   try {
-    const asientos: { id: string; clase: string; precio: number }[] = JSON.parse(raw);
+    const asientos: { id: string; clase: string; precio: number; entityId?: number }[] = JSON.parse(raw);
     if (asientos.length === 0) return;
     seatExtra = asientos.reduce((sum, s) => sum + (s.precio || 0), 0);
+    asientosSeleccionados = asientos.map(s => s.entityId).filter((id): id is number => id != null);
     const asientoDisplay = document.getElementById('asiento-display');
     const asientoPrecio = document.getElementById('asiento-precio');
     if (asientoDisplay) asientoDisplay.textContent = asientos.length + ' asientos';
@@ -267,6 +293,7 @@ async function procesarPago() {
         payerDocNumber: cardData?.identificationNumber || '',
         equipajeId,
         asistenciaId,
+        asientosSeleccionados,
         asientoExtra: seatExtra,
         servicioExtra: servicio,
         cuil,

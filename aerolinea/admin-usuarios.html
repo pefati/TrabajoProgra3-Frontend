@@ -27,6 +27,16 @@
         <p>Listar y cambiar roles de usuarios registrados.</p>
       </div>
     </div>
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <input type="text" class="form-control" id="search-input" placeholder="Buscar por nombre, email o teléfono..." style="max-width:320px" oninput="filtrarUsuarios()" />
+      <select class="form-control" id="filter-rol" style="max-width:180px" onchange="filtrarUsuarios()">
+        <option value="">Todos los roles</option>
+        <option value="ROLE_ADMIN">Admin</option>
+        <option value="ROLE_EMPLEADO">Empleado</option>
+        <option value="ROLE_USUARIO">Usuario</option>
+        <option value="ROLE_INCOMPLETO">Incompleto</option>
+      </select>
+    </div>
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>
