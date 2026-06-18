@@ -73,7 +73,7 @@ AeroGest es una plataforma web que centraliza la gestión de operaciones de una 
 ### Frontend
 ![TypeScript](https://img.shields.io/badge/TypeScript-blue) ![Vite](https://img.shields.io/badge/Vite-purple) ![CSS](https://img.shields.io/badge/CSS3-navy)
 
-- Vite · TypeScript · HTML · CSS · Bootstrap
+- Vite · TypeScript · HTML · CSS
 
 ### Infraestructura
 - Google Cloud · Docker · Nginx · Pterodactyl Panel
@@ -143,6 +143,8 @@ src/main/java/
 | GET | `/api/auth/verify` |
 | POST | `/api/auth/verify-2fa` |
 | POST | `/api/auth/toggle-2fa` |
+| POST | `/api/auth/forgot-password` |
+| POST | `/api/auth/reset-password` |
 | POST | `/api/auth/logout` |
 
 ### Vuelos `/api/vuelos`
@@ -184,7 +186,7 @@ src/main/java/
 - **Facturas** `/api/facturas` — GET, POST, descarga PDF
 - **Compras** `/api/compras/confirmar` — POST
 - **Mercado Pago** `/api/mercadopago` — integración de pagos
-- **Asientos** `/asientos/vuelo/{vueloId}` — GET
+- **Asientos** `/api/asientos/avion/{avionId}` — GET
 - **Asignaciones** `/api/asignacion` — CRUD completo
 - **Personas** `/api/personas` — CRUD + filtros
 - **Admin usuarios** `/api/admin/users` — cambio de roles
