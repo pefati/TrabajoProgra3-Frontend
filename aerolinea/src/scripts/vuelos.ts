@@ -104,6 +104,14 @@ function renderFlights(lista: any[]) {
 
 if (isLoggedIn()) actualizarContadorCarrito();
 
+function formatearFecha(fecha: string): string {
+    const [anio, mes, dia] = fecha.split('-').map(Number);
+    return new Date(anio, mes - 1, dia).toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
 
 (window as any).verDetalle = function (id: number) {
     const v = vuelosActuales.find(x => x.id === id);
@@ -111,8 +119,8 @@ if (isLoggedIn()) actualizarContadorCarrito();
 
     const origen = v.aeropuertoOrigen?.ciudad || v.origen || '—';
     const destino = v.aeropuertoDestino?.ciudad || v.destino || '—';
-    const fechaSalida = v.fechaSalida ? new Date(v.fechaSalida).toLocaleDateString('es-AR') : '—';
-    const fechaLlegada = v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleDateString('es-AR') : '—';
+    const fechaSalida = v.fechaSalida ? formatearFecha(v.fechaSalida) : '—';
+    const fechaLlegada = v.fechaLlegada ? formatearFecha(v.fechaLlegada) : '—';
     const horaSalida = v.horaSalida || (v.fechaSalida ? new Date(v.fechaSalida).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
     const horaLlegada = v.horaLlegada || (v.fechaLlegada ? new Date(v.fechaLlegada).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '—');
     const precio = v.precioVuelo ?? v.precio ?? 0;
