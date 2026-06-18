@@ -317,18 +317,33 @@ function toggleFiltro(filtro: string) {
 function aplicarFiltros() {
     let lista = [...vuelosActuales];
 
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    const mananaStr = manana.toISOString().split('T')[0];
+
     if (filtrosActivos.has('directos')) {
         lista = lista.filter(v => !v.escala);
     }
+
     if (filtrosActivos.has('manana')) {
-        lista = lista.filter(v => {
-            const hora = obtenerHora(v.fechaSalida, v.horaSalida);
-            return hora >= 6 && hora < 12;
-        });
+
+        lista = lista.filter(v => v.fechaSalida === mananaStr);
     }
+
     if (filtrosActivos.has('baratos')) {
         lista = lista.filter(v => (v.precioVuelo ?? v.precio ?? 0) < 800);
     }
+<<<<<<< HEAD
+=======
+
+    if (filtrosActivos.has('temprano')) {
+
+        lista = lista.filter(v => {
+            const hora = obtenerHora(v.fechaSalida, v.horaSalida);
+            return v.fechaSalida === mananaStr && hora < 14;
+        });
+    }
+>>>>>>> 86d300cf499b36a1f8877c3ca2deb5e699bf22e7
 
     const sort = document.getElementById('sort-vuelos') as HTMLSelectElement | null;
     if (sort?.value) ordenarVuelos(lista, sort.value);
@@ -344,9 +359,9 @@ function ordenarVuelos(lista: any[], criterio: string) {
     if (criterio === 'duracion-desc') lista.sort((a, b) => calcularDuracion(b) - calcularDuracion(a));
 }
 
-function obtenerHora(fechaSalida?: string, horaSalida?: string) {
-    if (fechaSalida) return new Date(fechaSalida).getHours();
+function obtenerHora(fechaSalida?: string, horaSalida?: string): number {
     if (horaSalida) return parseInt(horaSalida.slice(0, 2), 10);
+    if (fechaSalida) return new Date(fechaSalida).getHours();
     return 99;
 }
 

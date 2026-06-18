@@ -32,7 +32,7 @@ No se requiere instalación. Solo necesitás conexión a Internet y un navegador
 | Proyecto | Enlace |
 |-----------|---------|
 | 🔧 Backend | [Ver repositorio](https://github.com/pefati/TrabajoProgra3-Backend) |
-| 🎨 Frontend | [Ver repositorio](LINK_DEL_FRONTEND) |
+| 🎨 Frontend | [Ver repositorio](https://github.com/pefati/TrabajoProgra3-Frontend) |
 
 
 ### Usuarios de prueba
