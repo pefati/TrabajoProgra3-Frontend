@@ -199,8 +199,8 @@ async function procesarPago() {
     const extra = (document.getElementById('eq-extra') as HTMLInputElement)?.checked;
     if (bodega) equipajeId = 1;
     else if (extra) equipajeId = 2;*/
-      const equipajeId = equipajeIdSeleccionado;
-      const asistenciaId = asistenciaIdSeleccionada;
+      const equipajeId = [...equipajesSeleccionados.keys()];
+      const asistenciaId = asistenciasSeleccionadas.size > 0 ? [...asistenciasSeleccionadas.keys()][0] : null;
 
     const result = await apiFetch('/api/mercadopago/procesar-pago', {
       method: 'POST',
@@ -214,7 +214,7 @@ async function procesarPago() {
         payerDocType: cardData?.identificationType || 'DNI',
         payerDocNumber: cardData?.identificationNumber || '',
         equipajeId,
-        asistenciaId: null,
+        asistenciaId,
         cuil,
         situacionFiscal,
       }),
@@ -362,8 +362,16 @@ function recalcularExtras() {
     extras = [...equipajesSeleccionados.values(), ...asistenciasSeleccionadas.values()]
         .reduce((sum, p) => sum + p, 0);
     calcTotal();
+    reiniciarCardForm();
 }
 
+function reiniciarCardForm() {
+    if (cardFormInstance) {
+        cardFormInstance.unmount();
+        cardFormInstance = null;
+    }
+    initCardForm();
+}
 function calcTotal() {
     const total = basePago + seatExtra + extras + impuestos;
     const el = document.getElementById('grand-total');
