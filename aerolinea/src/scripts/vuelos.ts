@@ -363,8 +363,10 @@ function calcularDuracion(v: any) {
 }
 
 function formatearDuracion(v: any): string {
-    if (!v.fechaSalida || !v.fechaLlegada) return '—';
-    const ms = new Date(v.fechaLlegada).getTime() - new Date(v.fechaSalida).getTime();
+    if (!v.fechaSalida || !v.fechaLlegada || !v.horaSalida || !v.horaLlegada) return '—';
+    const salida = new Date(`${v.fechaSalida}T${v.horaSalida}`);
+    const llegada = new Date(`${v.fechaLlegada}T${v.horaLlegada}`);
+    const ms = llegada.getTime() - salida.getTime();
     const horas = Math.floor(ms / 3600000);
     const minutos = Math.floor((ms % 3600000) / 60000);
     return `${horas}h ${minutos}m`;

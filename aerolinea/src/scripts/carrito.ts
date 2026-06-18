@@ -12,7 +12,7 @@ let carritoData: any = null;
 
 async function cargarCarrito() {
     const container = document.getElementById('carrito-list');
-    if (container) container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--gray-500)">Cargando carrito...</div>';
+    if (container) container.innerHTML = '<div style="padding:40px 40px 80px 40px;text-align:center;color:var(--gray-500)">Cargando carrito...</div>';
 
     try {
         const data = await apiFetch('/api/carrito');
