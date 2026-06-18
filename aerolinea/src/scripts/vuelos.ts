@@ -48,10 +48,9 @@ function renderFlights(lista: any[]) {
                         <div class="flight-city">${origen}</div>
                     </div>
                     <div class="flight-line">
-                        <div class="flight-duration">—</div>
+                        <div class="flight-duration">${formatearDuracion(v)}</div>
                         <div class="flight-line-bar"></div>
                         <div class="flight-stops ${!v.escala ? 'direct' : ''}">${v.escala ? '1 escala' : 'Directo'}</div>
-                    </div>
                     <div>
                         <div class="flight-time">${llegada}</div>
                         <div class="flight-city">${destino}</div>
@@ -359,6 +358,14 @@ function obtenerHora(fechaSalida?: string, horaSalida?: string) {
 function calcularDuracion(v: any) {
     if (!v.fechaSalida || !v.fechaLlegada) return Number.MAX_SAFE_INTEGER;
     return new Date(v.fechaLlegada).getTime() - new Date(v.fechaSalida).getTime();
+}
+
+function formatearDuracion(v: any): string {
+    if (!v.fechaSalida || !v.fechaLlegada) return '—';
+    const ms = new Date(v.fechaLlegada).getTime() - new Date(v.fechaSalida).getTime();
+    const horas = Math.floor(ms / 3600000);
+    const minutos = Math.floor((ms % 3600000) / 60000);
+    return `${horas}h ${minutos}m`;
 }
 
 fetchVuelos();
