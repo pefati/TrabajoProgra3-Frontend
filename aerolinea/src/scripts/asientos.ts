@@ -33,8 +33,11 @@ function clasePorFila(rowNum: number): string {
             const v = await fetch('/api/vuelos/' + first.vueloId).then(r => r.json());
             if (v?.precioVuelo) basePrice = v.precioVuelo;
 
-            const asientos = await fetch('/api/asientos/vuelo/' + first.vueloId).then(r => r.json());
-            asientosData = Array.isArray(asientos) ? asientos : [];
+            const avionId = v?.avion?.id;
+            if (avionId) {
+                const asientos = await fetch('/api/asientos/avion/' + avionId).then(r => r.json());
+                asientosData = Array.isArray(asientos) ? asientos : [];
+            }
 
             const origen = v?.aeropuertoOrigen?.ciudad || '—';
             const destino = v?.aeropuertoDestino?.ciudad || '—';

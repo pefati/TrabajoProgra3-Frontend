@@ -50,9 +50,12 @@
         <div style="display:flex;align-items:center;gap:12px">
           <span style="font-size:13px;color:var(--gray-500)">Ordenar por:</span>
           <select id="sort-vuelos" class="sort-select" onchange="sortFlights(this.value)">
-            <option value="precio">Precio</option>
-            <option value="duracion">Duración</option>
-            <option value="salida">Hora de salida</option>
+            <option value="precio-asc">Precio ↑</option>
+            <option value="precio-desc">Precio ↓</option>
+            <option value="salida-asc">Salida ↑</option>
+            <option value="salida-desc">Salida ↓</option>
+            <option value="duracion-asc">Duración ↑</option>
+            <option value="duracion-desc">Duración ↓</option>
           </select>
         </div>
       </div>
@@ -68,9 +71,6 @@
         <button class="btn quick-filter" data-flight-filter="baratos"
           style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)" onclick="filtrarBaratos()">Menos
           de $800</button>
-        <button class="btn quick-filter" data-flight-filter="temprano"
-          style="padding:8px 16px;font-size:12px;border:1px solid var(--light-blue-1)"
-          onclick="filtrarTemprano()">Mañana temprano</button>
         <button class="btn" style="padding:8px 16px;font-size:12px;border:1px solid var(--gray-500)"
           onclick="limpiarFiltrosVuelos()">Limpiar</button>
       </div>

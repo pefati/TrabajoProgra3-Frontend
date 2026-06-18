@@ -227,9 +227,6 @@ document.getElementById('modal-detalle')?.addEventListener('click', function (e)
 (window as any).filtrarBaratos = function () {
     toggleFiltro('baratos');
 };
-(window as any).filtrarTemprano = function () {
-    toggleFiltro('temprano');
-};
 (window as any).limpiarFiltrosVuelos = function () {
     filtrosActivos.clear();
     document.querySelectorAll('.quick-filter.active').forEach(el => el.classList.remove('active'));
@@ -332,12 +329,6 @@ function aplicarFiltros() {
     if (filtrosActivos.has('baratos')) {
         lista = lista.filter(v => (v.precioVuelo ?? v.precio ?? 0) < 800);
     }
-    if (filtrosActivos.has('temprano')) {
-        lista = lista.filter(v => {
-            const hora = obtenerHora(v.fechaSalida, v.horaSalida);
-            return hora >= 0 && hora < 8;
-        });
-    }
 
     const sort = document.getElementById('sort-vuelos') as HTMLSelectElement | null;
     if (sort?.value) ordenarVuelos(lista, sort.value);
@@ -345,9 +336,12 @@ function aplicarFiltros() {
 }
 
 function ordenarVuelos(lista: any[], criterio: string) {
-    if (criterio === 'precio') lista.sort((a, b) => (a.precioVuelo ?? a.precio ?? 0) - (b.precioVuelo ?? b.precio ?? 0));
-    if (criterio === 'salida') lista.sort((a, b) => new Date(a.fechaSalida || 0).getTime() - new Date(b.fechaSalida || 0).getTime());
-    if (criterio === 'duracion') lista.sort((a, b) => calcularDuracion(a) - calcularDuracion(b));
+    if (criterio === 'precio-asc') lista.sort((a, b) => (a.precioVuelo ?? a.precio ?? 0) - (b.precioVuelo ?? b.precio ?? 0));
+    if (criterio === 'precio-desc') lista.sort((a, b) => (b.precioVuelo ?? b.precio ?? 0) - (a.precioVuelo ?? a.precio ?? 0));
+    if (criterio === 'salida-asc') lista.sort((a, b) => new Date(a.fechaSalida || 0).getTime() - new Date(b.fechaSalida || 0).getTime());
+    if (criterio === 'salida-desc') lista.sort((a, b) => new Date(b.fechaSalida || 0).getTime() - new Date(a.fechaSalida || 0).getTime());
+    if (criterio === 'duracion-asc') lista.sort((a, b) => calcularDuracion(a) - calcularDuracion(b));
+    if (criterio === 'duracion-desc') lista.sort((a, b) => calcularDuracion(b) - calcularDuracion(a));
 }
 
 function obtenerHora(fechaSalida?: string, horaSalida?: string) {
