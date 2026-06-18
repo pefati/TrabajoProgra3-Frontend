@@ -13,6 +13,7 @@ const cards: { icon: string; title: string; desc: string; link: string; countUrl
     { icon: '📍', title: 'Aeropuertos', desc: 'Registrar y administrar aeropuertos.', link: 'admin-aeropuertos.html', countUrl: '/api/aeropuertos' },
     { icon: '🛩', title: 'Aviones', desc: 'Gestionar la flota de aviones.', link: 'admin-aviones.html', countUrl: '/api/aviones' },
     { icon: '👥', title: 'Usuarios', desc: 'Listar y cambiar roles de usuarios.', link: 'admin-usuarios.html', countUrl: '/api/auth/usuarios' },
+    { icon: '🎫', title: 'Reservas', desc: 'Listar y aceptar reservas.', link: 'admin-reservas.html', countUrl: '/api/reservas' },
 ];
 
 async function loadCards() {

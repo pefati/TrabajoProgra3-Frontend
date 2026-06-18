@@ -13,7 +13,7 @@ fetch("/src/components/footer.html")
 
 let basePrice = 0;
 let seatsNeeded = 1;
-let selectedSeats: { id: string; clase: string; precio: number }[] = [];
+let selectedSeats: { id: string; clase: string; precio: number; entityId: number }[] = [];
 let asientosData: any[] = [];
 let vueloId: number | null = null;
 
@@ -33,8 +33,11 @@ function clasePorFila(rowNum: number): string {
             const v = await fetch('/api/vuelos/' + first.vueloId).then(r => r.json());
             if (v?.precioVuelo) basePrice = v.precioVuelo;
 
-            const asientos = await fetch('/api/asientos/vuelo/' + first.vueloId).then(r => r.json());
-            asientosData = Array.isArray(asientos) ? asientos : [];
+            const avionId = v?.avion?.id;
+            if (avionId) {
+                const asientos = await fetch('/api/asientos/avion/' + avionId).then(r => r.json());
+                asientosData = Array.isArray(asientos) ? asientos : [];
+            }
 
             const origen = v?.aeropuertoOrigen?.ciudad || '—';
             const destino = v?.aeropuertoDestino?.ciudad || '—';
@@ -45,6 +48,15 @@ function clasePorFila(rowNum: number): string {
     } catch {}
     document.getElementById('asientos-progress')!.textContent = `Seleccioná 0 de ${seatsNeeded} asientos`;
 })();
+
+function extraerFila(codigo: string): number {
+    const match = codigo.match(/(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+}
+
+function extraerColumna(codigo: string): string {
+    return codigo.replace(/^[A-Za-z]?\d+/, '');
+}
 
 function asientoOcupado(codigo: string): boolean {
     const a = asientosData.find(s => s.codigo === codigo);
@@ -63,8 +75,8 @@ function buildCabin() {
 
     const filas = new Set<number>();
     asientosData.forEach(a => {
-        const match = a.codigo?.match(/^(\d+)/);
-        if (match) filas.add(parseInt(match[1], 10));
+        const fila = extraerFila(a.codigo || '');
+        if (fila) filas.add(fila);
     });
 
     if (filas.size === 0) {
@@ -97,13 +109,16 @@ function buildCabin() {
 }
 
 function columnasPorFila(rowNum: number): { left: string[]; right: string[] } {
-    const asis = asientosData.filter(a => {
-        const match = a.codigo?.match(/^(\d+)/);
-        return match && parseInt(match[1], 10) === rowNum;
-    });
-    const cols = asis.map((a: any) => a.codigo.replace(/^\d+/, '')).sort();
+    const asis = asientosData.filter(a => extraerFila(a.codigo || '') === rowNum);
+    const cols = asis.map(a => ({
+        codigo: a.codigo,
+        col: extraerColumna(a.codigo || '')
+    })).sort((a, b) => a.col.localeCompare(b.col));
     const mid = Math.ceil(cols.length / 2);
-    return { left: cols.slice(0, mid), right: cols.slice(mid) };
+    return {
+        left: cols.map(c => c.codigo).slice(0, mid),
+        right: cols.map(c => c.codigo).slice(mid)
+    };
 }
 
 function buildRowDesdeData(rowNum: number, clase: string): string {
@@ -112,16 +127,16 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
 
     let html = `<div class="seat-row"><span class="seat-row-num">${rowNum}</span>`;
 
-    const buildSeats = (cols: string[]) => {
-        cols.forEach(col => {
-            const id = rowNum + col;
-            const ocupado = asientoOcupado(id);
+    const buildSeats = (codes: string[]) => {
+        codes.forEach(codigo => {
+            const ocupado = asientoOcupado(codigo);
             const isFirst = clase === 'Primera';
-            const isSelected = selectedSeats.some(s => s.id === id);
+            const isSelected = selectedSeats.some(s => s.id === codigo);
+            const display = extraerColumna(codigo);
             html += `<div class="seat ${ocupado ? 'taken' : ''} ${isFirst ? 'first-class' : ''} ${isSelected ? 'selected' : ''}"
-          id="seat-${id}" onclick="${ocupado ? '' : `toggleSeat('${id}','${clase}')`}"
-          title="${ocupado ? 'Ocupado' : id + ' · ' + clase}">
-          ${ocupado ? '' : id}
+          id="seat-${codigo}" onclick="${ocupado ? '' : `toggleSeat('${codigo}','${clase}')`}"
+          title="${ocupado ? 'Ocupado' : codigo + ' · ' + clase}">
+          ${ocupado ? '' : display}
         </div>`;
         });
     };
@@ -134,19 +149,21 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
     return html;
 }
 
-(window as any).toggleSeat = function (id: string, clase: string) {
-    const idx = selectedSeats.findIndex(s => s.id === id);
+(window as any).toggleSeat = function (codigo: string, clase: string) {
+    const idx = selectedSeats.findIndex(s => s.id === codigo);
     if (idx >= 0) {
         selectedSeats.splice(idx, 1);
-        document.getElementById('seat-' + id)?.classList.remove('selected');
+        document.getElementById('seat-' + codigo)?.classList.remove('selected');
     } else {
         if (selectedSeats.length >= seatsNeeded) {
             showToast(`Ya seleccionaste ${seatsNeeded} asientos`, 'warn');
             return;
         }
-        const extra = precioExtraPorCodigo(id);
-        selectedSeats.push({ id, clase, precio: extra });
-        document.getElementById('seat-' + id)?.classList.add('selected');
+        const asiento = asientosData.find(a => a.codigo === codigo);
+        const entityId = asiento?.id;
+        const extra = precioExtraPorCodigo(codigo);
+        selectedSeats.push({ id: codigo, clase, precio: extra, entityId });
+        document.getElementById('seat-' + codigo)?.classList.add('selected');
     }
     actualizarResumen();
 };

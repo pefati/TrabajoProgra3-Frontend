@@ -53,9 +53,7 @@
         <div class="search-card">
           <h2 class="sr-only">Buscador de vuelos</h2>
           <div class="search-card-header">
-            <div class="search-tab active" onclick="setTab(this,'ida-vuelta')">Ida y vuelta</div>
             <div class="search-tab" onclick="setTab(this,'solo-ida')">Solo ida</div>
-            <div class="search-tab" onclick="setTab(this,'multiciudad')">Multiciudad</div>
           </div>
 
           <form onsubmit="buscarVuelos(event)">
@@ -78,10 +76,6 @@
               <div class="form-group">
                 <label for="fecha-ida">Ida</label>
                 <input type="date" id="fecha-ida" class="form-control" />
-              </div>
-              <div class="form-group" id="fecha-vuelta-group">
-                <label for="fecha-vuelta">Vuelta</label>
-                <input type="date" id="fecha-vuelta" class="form-control" />
               </div>
             </div>
 

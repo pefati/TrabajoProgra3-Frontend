@@ -63,6 +63,7 @@
 .admin-content {
   flex: 1;
   min-width: 0;
+    padding-bottom: 20px;
 }
 
 .admin-header {
