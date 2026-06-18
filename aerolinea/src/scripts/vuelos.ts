@@ -370,6 +370,6 @@ function formatearDuracion(v: any): string {
     const horas = Math.floor(ms / 3600000);
     const minutos = Math.floor((ms % 3600000) / 60000);
     return `${horas}h ${minutos}m`;
-}
+}   
 
 fetchVuelos();
