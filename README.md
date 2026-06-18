@@ -27,6 +27,13 @@ AeroGest se encuentra desplegado en producción y accesible desde cualquier nave
 🔗 **[https://aerogest.ddns.net/](https://aerogest.ddns.net/)**
 
 No se requiere instalación. Solo necesitás conexión a Internet y un navegador actualizado.
+## Repositorios
+
+| Proyecto | Enlace |
+|-----------|---------|
+| 🔧 Backend | [Ver repositorio](https://github.com/pefati/TrabajoProgra3-Backend) |
+| 🎨 Frontend | [Ver repositorio](LINK_DEL_FRONTEND) |
+
 
 ### Usuarios de prueba
 
