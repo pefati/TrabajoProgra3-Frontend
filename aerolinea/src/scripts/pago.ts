@@ -21,6 +21,8 @@ let cartItems: any[] = [];
 
 let mpPublicKey: string = '';
 let cardFormInstance: any = null;
+let lastCardAmount: number = 0;
+let isCardMounted: boolean = false;
 
 const equipajesSeleccionados = new Map<number, number>(); // id -> precio
 const asistenciasSeleccionadas = new Map<number, number>();
@@ -68,6 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   calcTotal();
   await fetchPublicKey();
   initCardForm();
+  lastCardAmount = getTotal();
 });
 
 function formatearFecha(f: string): string {
@@ -193,10 +196,11 @@ function initCardForm() {
       issuer: { id: 'issuer', placeholder: 'Banco emisor' },
     },
     callbacks: {
-      onFormMounted: (error: any) => {
-        if (error) showToast('Error al montar el formulario de pago', 'error');
-      },
-      onSubmit: (event: Event) => {
+        onFormMounted: (error: any) => {
+            isCardMounted = !error;
+            if (error) showToast('Error al montar el formulario de pago', 'error');
+        },
+        onSubmit: (event: Event) => {
         event.preventDefault();
         procesarPago();
       },
@@ -238,7 +242,11 @@ function initCardForm() {
 }
 
 async function procesarPago() {
-  if (!cardFormInstance) return;
+    if (!cardFormInstance) return;
+    if (!isCardMounted) {
+        showToast('El formulario de pago se está cargando, intentá de nuevo', 'warn');
+        return;
+    }
 
   const nombre = (document.getElementById('nombre') as HTMLInputElement)?.value?.trim() || '';
   const apellido = (document.getElementById('apellido') as HTMLInputElement)?.value?.trim() || '';
@@ -251,6 +259,13 @@ async function procesarPago() {
   if (!email || !email.includes('@')) { showToast('Ingresá un email válido.', 'error'); return; }
   if (!telefono) { showToast('El teléfono es obligatorio.', 'error'); return; }
   if (!cuil) { showToast('El CUIL/CUIT es obligatorio.', 'error'); return; }
+  const cuilLimpio = cuil.replace(/[-\s]/g, '');
+  if (!/^\d{11}$/.test(cuilLimpio)) { showToast('El CUIL/CUIT debe tener 11 dígitos (ej: 20-35123456-1).', 'error'); return; }
+
+  const docType = (document.getElementById('docType') as HTMLSelectElement)?.value || 'DNI';
+  const docNumber = (document.getElementById('docNumber') as HTMLInputElement)?.value?.trim() || '';
+  if (!docNumber) { showToast('El número de documento es obligatorio.', 'error'); return; }
+  if (docType === 'DNI' && !/^\d{7,8}$/.test(docNumber)) { showToast('El DNI debe tener entre 7 y 8 dígitos.', 'error'); return; }
 
   const expiryEl = document.getElementById('expirationDate') as HTMLInputElement;
   if (expiryEl) {
@@ -448,7 +463,11 @@ function recalcularExtras() {
 }
 
 function reiniciarCardForm() {
+    const newAmount = getTotal();
+    if (newAmount === lastCardAmount) return;
+    lastCardAmount = newAmount;
     if (cardFormInstance) {
+        isCardMounted = false;
         cardFormInstance.unmount();
         cardFormInstance = null;
     }

@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(apellido)) { showToast('El apellido solo puede contener letras y espacios.', 'error'); return; }
       if (!telefono) { showToast('El teléfono es obligatorio.', 'error'); return; }
       if (!dni || !/^\d+$/.test(dni)) { showToast('El número de documento solo puede contener dígitos.', 'error'); return; }
+      if (dni.length < 7 || dni.length > 8) { showToast('El número de documento debe tener entre 7 y 8 dígitos.', 'error'); return; }
       if (!sexo) { showToast('Seleccioná un género.', 'error'); return; }
       if (!nacimiento) { showToast('La fecha de nacimiento es obligatoria.', 'error'); return; }
       if (new Date(nacimiento) >= new Date()) { showToast('La fecha de nacimiento debe ser anterior a hoy.', 'error'); return; }
