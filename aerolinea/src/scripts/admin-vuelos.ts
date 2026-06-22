@@ -53,6 +53,16 @@ function crearModal(html: string, onSubmit: (data: any) => Promise<void>) {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
 
+function validarDuracionVuelo(data: any): boolean {
+    const salida = new Date(data.fechaSalida + 'T' + data.horaSalida);
+    const llegada = new Date(data.fechaLlegada + 'T' + data.horaLlegada);
+    const horas = (llegada.getTime() - salida.getTime()) / 3600000;
+    if (horas <= 0) { showToast('La fecha/hora de llegada debe ser posterior a la salida', 'error'); return false; }
+    if (data.escala === 'false' && horas > 18) { showToast('Un vuelo directo no puede durar más de 18 horas', 'error'); return false; }
+    if (data.escala === 'true' && horas > 36) { showToast('La duración total del vuelo no puede exceder las 36 horas', 'error'); return false; }
+    return true;
+}
+
 function mostrarModalNuevo() {
     const aeropuertoOpts = aeropuertos.map(a => `<option value="${a.id}">${a.nombre} (${a.ciudad})</option>`).join('');
     const avionOpts = aviones.map(a => `<option value="${a.id}">${a.identificador} - ${a.modelo}</option>`).join('');
@@ -111,6 +121,7 @@ function mostrarModalNuevo() {
         </div>
         <button type="submit" class="btn-submit">Guardar vuelo</button>
     `, async (data) => {
+        if (!validarDuracionVuelo(data)) return;
         const body = {
             aeropuertoOrigen: { id: parseInt(data.aeropuertoOrigenId) },
             aeropuertoDestino: { id: parseInt(data.aeropuertoDestinoId) },
@@ -187,6 +198,7 @@ function mostrarModalEditar(v: any) {
         </div>
         <button type="submit" class="btn-submit">Guardar cambios</button>
     `, async (data) => {
+        if (!validarDuracionVuelo(data)) return;
         const body = {
             aeropuertoOrigenId: parseInt(data.aeropuertoOrigenId),
             aeropuertoDestinoId: parseInt(data.aeropuertoDestinoId),

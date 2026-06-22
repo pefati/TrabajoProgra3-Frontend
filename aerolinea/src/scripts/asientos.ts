@@ -193,7 +193,7 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
 function actualizarResumen() {
     const count = selectedSeats.length;
     const totalExtra = selectedSeats.reduce((sum, s) => sum + s.precio, 0);
-    const total = basePric  e * seatsNeeded + totalExtra;
+    const total = basePrice * seatsNeeded + totalExtra;
 
     document.getElementById('asientos-progress')!.textContent =
         count > 0
