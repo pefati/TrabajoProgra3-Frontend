@@ -16,11 +16,26 @@ let seatsNeeded = 1;
 let selectedSeats: { id: string; clase: string; precio: number; entityId: number }[] = [];
 let asientosData: any[] = [];
 let vueloId: number | null = null;
+let avionId: number | null = null;
 
 function clasePorFila(rowNum: number): string {
     if (rowNum <= 2) return 'Primera';
     if (rowNum <= 6) return 'Ejecutiva';
     return 'Económica';
+}
+
+async function cargarAsientos() {
+    if (!avionId) return;
+    try {
+        const asientos = await fetch('/api/asientos/avion/' + avionId).then(r => r.json());
+        asientosData = Array.isArray(asientos) ? asientos : [];
+        selectedSeats = selectedSeats.filter(s => {
+            const a = asientosData.find((ad: any) => ad.codigo === s.id);
+            return a && a.ocupado !== true;
+        });
+        buildCabin();
+        actualizarResumen();
+    } catch {}
 }
 
 (async () => {
@@ -33,7 +48,7 @@ function clasePorFila(rowNum: number): string {
             const v = await fetch('/api/vuelos/' + first.vueloId).then(r => r.json());
             if (v?.precioVuelo) basePrice = v.precioVuelo;
 
-            const avionId = v?.avion?.id;
+            avionId = v?.avion?.id;
             if (avionId) {
                 const asientos = await fetch('/api/asientos/avion/' + avionId).then(r => r.json());
                 asientosData = Array.isArray(asientos) ? asientos : [];
@@ -46,8 +61,12 @@ function clasePorFila(rowNum: number): string {
             buildCabin();
         }
     } catch {}
-    document.getElementById('asientos-progress')!.textContent = `Seleccioná 0 de ${seatsNeeded} asientos`;
+    actualizarResumen();
 })();
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) cargarAsientos();
+});
 
 function extraerFila(codigo: string): number {
     const match = codigo.match(/(\d+)/);
@@ -150,10 +169,13 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
 }
 
 (window as any).toggleSeat = function (codigo: string, clase: string) {
+    const el = document.getElementById('seat-' + codigo);
+    if (!el || el.classList.contains('taken')) return;
+
     const idx = selectedSeats.findIndex(s => s.id === codigo);
     if (idx >= 0) {
         selectedSeats.splice(idx, 1);
-        document.getElementById('seat-' + codigo)?.classList.remove('selected');
+        el.classList.remove('selected');
     } else {
         if (selectedSeats.length >= seatsNeeded) {
             showToast(`Ya seleccionaste ${seatsNeeded} asientos`, 'warn');
@@ -163,7 +185,7 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
         const entityId = asiento?.id;
         const extra = precioExtraPorCodigo(codigo);
         selectedSeats.push({ id: codigo, clase, precio: extra, entityId });
-        document.getElementById('seat-' + codigo)?.classList.add('selected');
+        el.classList.add('selected');
     }
     actualizarResumen();
 };
@@ -171,14 +193,17 @@ function buildRowDesdeData(rowNum: number, clase: string): string {
 function actualizarResumen() {
     const count = selectedSeats.length;
     const totalExtra = selectedSeats.reduce((sum, s) => sum + s.precio, 0);
-    const total = basePrice * seatsNeeded + totalExtra;
+    const total = basePric  e * seatsNeeded + totalExtra;
 
-    document.getElementById('asientos-progress')!.textContent = `Seleccionaste ${count} de ${seatsNeeded} asientos`;
+    document.getElementById('asientos-progress')!.textContent =
+        count > 0
+            ? `Seleccionaste ${count} de ${seatsNeeded} asientos`
+            : `Seleccioná 0 de ${seatsNeeded} asientos (se asignarán automáticamente en clase económica)`;
 
     const seatNames = document.getElementById('asientos-seleccionados');
     if (seatNames) {
         if (count === 0) {
-            seatNames.textContent = 'Ninguno aún';
+            seatNames.textContent = 'Ninguno aún — se asignarán en clase económica al pagar';
         } else {
             seatNames.innerHTML = selectedSeats.map(s =>
                 `<span style="display:inline-block;background:var(--navy);color:white;padding:2px 8px;border-radius:4px;margin:2px;font-size:13px">${s.id}</span>`
@@ -192,14 +217,34 @@ function actualizarResumen() {
     const totalEl = document.getElementById('total-price');
     if (totalEl) totalEl.textContent = '$' + total.toLocaleString('es-AR');
 
-    (document.getElementById('btn-continue') as HTMLButtonElement).disabled = count !== seatsNeeded;
+    (document.getElementById('btn-continue') as HTMLButtonElement).disabled = false;
 
     sessionStorage.setItem('asientos_seleccionados', JSON.stringify(selectedSeats));
 }
 
-(window as any).continuarPago = function () {
-    if (!selectedSeats) {
-        sessionStorage.removeItem('asiento_seleccionado');
+(window as any).continuarPago = async function () {
+    const idsToCheck = selectedSeats.map(s => s.entityId).filter(id => id != null);
+    if (idsToCheck.length > 0) {
+        try {
+            const res = await fetch('/api/asientos/verificar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(idsToCheck)
+            });
+            const ocupados: Record<number, boolean> = await res.json();
+            const tomados = selectedSeats.filter(s => ocupados[s.entityId] === true);
+            if (tomados.length > 0) {
+                const codes = tomados.map(s => s.id).join(', ');
+                showToast(`Los asientos ${codes} ya no están disponibles. Se asignarán automáticamente.`, 'warn');
+                tomados.forEach(s => {
+                    document.getElementById('seat-' + s.id)?.classList.remove('selected');
+                });
+                selectedSeats = selectedSeats.filter(s => ocupados[s.entityId] !== true);
+                sessionStorage.setItem('asientos_seleccionados', JSON.stringify(selectedSeats));
+                actualizarResumen();
+            }
+        } catch {}
     }
+    sessionStorage.setItem('asientos_seleccionados', JSON.stringify(selectedSeats));
     window.location.href = 'pago.html';
 };
