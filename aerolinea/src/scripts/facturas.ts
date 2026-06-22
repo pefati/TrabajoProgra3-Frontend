@@ -33,12 +33,15 @@ async function cargarFacturas() {
                 TARJETA_DEBITO: 'Tarjeta de débito',
                 TRANSFERENCIA: 'Transferencia bancaria',
             };
+            const cuotasText = f.cuotas && f.cuotas > 1
+                ? ` · ${f.cuotas} cuotas de $${((f.totalPagado ?? f.reserva?.valor ?? 0) / f.cuotas).toLocaleString('es-AR', {minimumFractionDigits:2})}`
+                : '';
             return `
             <div class="booking-card">
                 <div style="flex:1">
                     <div class="booking-route">Factura #${f.id}</div>
-                    <div class="booking-details">Reserva #${f.reserva?.id || '—'} · ${metodo[f.metodoDePago] || f.metodoDePago || '—'}</div>
-                    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-top:4px">Total: $${f.reserva?.valor?.toLocaleString('es-AR') || '—'}</div>
+                    <div class="booking-details">Reserva #${f.reserva?.id || '—'} · ${metodo[f.metodoDePago] || f.metodoDePago || '—'}${cuotasText}</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-top:4px">Total: $${(f.totalPagado ?? f.reserva?.valor ?? 0).toLocaleString('es-AR')}</div>
                     <div style="font-size:12px;color:var(--gray-500);margin-top:2px">CUIL: ${f.cuil || f.CUIL || '—'} · ${f.situacionFiscal || '—'}</div>
                 </div>
                 <div class="booking-date">

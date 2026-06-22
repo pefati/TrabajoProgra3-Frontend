@@ -1,4 +1,4 @@
-import { initAuth, apiFetch, showToast } from './auth';
+import { initAuth, apiFetch, showToast, actualizarContadorCarrito } from './auth';
 
 fetch('/src/components/navbar.html')
     .then(res => res.text())
@@ -82,9 +82,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 };
 
-(window as any).elegirVuelo = function (id: number, vuelo: any) {
-    sessionStorage.setItem('vuelo_seleccionado', JSON.stringify(vuelo));
-    window.location.href = 'asientos.html';
+(window as any).elegirVuelo = async function (id: number, vuelo: any) {
+    try {
+        await apiFetch(`/api/carrito/items?vueloId=${id}&cantidad=1&clase=ECONOMICA`, { method: 'POST' });
+        await actualizarContadorCarrito();
+        window.location.href = 'carrito.html';
+    } catch (err: any) {
+        showToast(err.message || 'Error al agregar al carrito', 'error');
+    }
 };
 
 cargarFavoritos();
