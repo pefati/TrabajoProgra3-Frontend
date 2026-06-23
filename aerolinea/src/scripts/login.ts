@@ -73,7 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err: any) {
             showToast(err.message || 'Error al iniciar sesión', 'error');
         } finally {
-            if (form.dataset.step !== '2fa') {
+            if (form.dataset.step === '2fa') {
+                btn.disabled = false;
+                btn.textContent = 'Verificar Código';
+            } else {
                 btn.disabled = false;
                 btn.textContent = 'Ingresar';
             }
