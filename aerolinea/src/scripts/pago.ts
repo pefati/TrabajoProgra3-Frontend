@@ -256,8 +256,10 @@ async function procesarPago() {
 
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(nombre)) { showToast('El nombre solo puede contener letras.', 'error'); return; }
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(apellido)) { showToast('El apellido solo puede contener letras.', 'error'); return; }
-  if (!email || !email.includes('@')) { showToast('Ingresá un email válido.', 'error'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Ingresá un email válido.', 'error'); return; }
   if (!telefono) { showToast('El teléfono es obligatorio.', 'error'); return; }
+  const telefonoLimpio = telefono.replace(/[\s\-()+]/g, '');
+  if(! /^\d{10,11}$/.test(telefonoLimpio)) { showToast('El teléfono debe tener 10/11 dígitos (ej: 02234567890/+54 223 456-7890).', 'error'); return; }
   if (!cuil) { showToast('El CUIL/CUIT es obligatorio.', 'error'); return; }
   const cuilLimpio = cuil.replace(/[-\s]/g, '');
   if (!/^\d{11}$/.test(cuilLimpio)) { showToast('El CUIL/CUIT debe tener 11 dígitos (ej: 20-35123456-1).', 'error'); return; }
