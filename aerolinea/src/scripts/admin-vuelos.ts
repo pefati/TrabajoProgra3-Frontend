@@ -65,7 +65,9 @@ function validarDuracionVuelo(data: any): boolean {
 
 function mostrarModalNuevo() {
     const aeropuertoOpts = aeropuertos.map(a => `<option value="${a.id}">${a.nombre} (${a.ciudad})</option>`).join('');
-    const avionOpts = aviones.map(a => `<option value="${a.id}">${a.identificador} - ${a.modelo}</option>`).join('');
+    const avionOpts = aviones
+        .filter(a => a.estado === 'DISPONIBLE' || a.estado === 'ACTIVO')
+        .map(a => `<option value="${a.id}">${a.identificador} - ${a.modelo}</option>`).join('');
     crearModal(`
         <h2>Nuevo vuelo</h2>
         <div class="form-grid">
@@ -144,8 +146,13 @@ function mostrarModalEditar(v: any) {
         `<option value="${a.id}" ${a.id === v.aeropuertoOrigen?.id ? 'selected' : ''}>${a.nombre} (${a.ciudad})</option>`).join('');
     const aeropuertoDestOpts = aeropuertos.map(a =>
         `<option value="${a.id}" ${a.id === v.aeropuertoDestino?.id ? 'selected' : ''}>${a.nombre} (${a.ciudad})</option>`).join('');
-    const avionOpts = aviones.map(a =>
-        `<option value="${a.id}" ${a.id === v.avion?.id ? 'selected' : ''}>${a.identificador} - ${a.modelo}</option>`).join('');
+    const avionOpts = aviones
+        .filter(a => a.estado === 'DISPONIBLE' || a.estado === 'ACTIVO' || a.id === v.avion?.id)
+        .map(a => {
+            const sel = a.id === v.avion?.id ? 'selected' : '';
+            const warn = (a.estado !== 'DISPONIBLE' && a.estado !== 'ACTIVO') ? ' ⚠ No disponible' : '';
+            return `<option value="${a.id}" ${sel}>${a.identificador} - ${a.modelo}${warn}</option>`;
+        }).join('');
     crearModal(`
         <h2>Editar vuelo #${v.id}</h2>
         <div class="form-grid">
